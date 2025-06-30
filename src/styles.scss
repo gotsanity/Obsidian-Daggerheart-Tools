@@ -77,4 +77,41 @@
         padding: 0;
         padding-bottom: 1rem;
     }
+
+    .tracker {
+        padding: 0.5rem;
+        margin: 0.5rem;
+        background-color: var(--background-primary);
+    }
+
+    .tracker .toggle-list {
+        list-style-type: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin: 0;
+        
+    }
+
+    .tracker .toggle-list .hp-label {
+        text-transform: uppercase;
+        padding-right: 0.5rem;
+    }
+
+    .tracker .toggle-list .stress-label {
+        text-transform: capitalize;
+        padding-right: 0.5rem;
+    }
+
+    .tracker .toggle-list li {
+        margin: 0;
+    }
+
+    .tracker .toggle-list li:first-child {
+        min-width: 60px;
+    }
+
+    .tracker .toggle-list li:nth-child(3n+1):not(:first-child) {
+        padding-right: 0.75rem;
+    }
 }

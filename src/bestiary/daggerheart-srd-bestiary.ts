@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 export interface Adversary {
     image?: string;
     name: string;
@@ -5,7 +7,7 @@ export interface Adversary {
     subtype?: string;
     hp: number;
     source?: string | string[];
-    stress?: number;
+    stress: number;
     tier?: string;
     motives_and_tactics?: string;
     difficulty?: number;
@@ -37,6 +39,7 @@ export interface Adversary {
 
     extends?: string | string[];
     bestiary?: boolean;
+    tracked?: boolean;
 
     [key: string]: any;
 }
@@ -49,6 +52,7 @@ export interface Feat {
 export const BESTIARY: Adversary[] = [
   {
     name: "Acid Burrower",
+    id: 'c09b1e63-b5b5-4ef4-851c-8d88e150b5b8',
     tier: "1",
     source: "Daggerheart SRD",
     type: "Solo",
@@ -84,6 +88,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Bear",
+    id: '4d13c6f8-7393-4aeb-8a4b-850f6b11554f',
     tier: "1",
     type: "Bruiser",
     description: "A large bear with thick fur and powerful claws.",
@@ -114,6 +119,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Cave Ogre",
+    id: '805b1f60-714d-4956-8201-054f5421e53c',
     tier: "1",
     type: "Solo",
     description: "A massive humanoid who sees all sapient life as food.",
@@ -148,6 +154,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Construct",
+    id: 'bdc694b0-b9c3-439e-8c1a-a2e73a6a929b',
     tier: "1",
     type: "Solo",
     description: "A roughly humanoid being of stone and steel, assembled and animated by magic.",
@@ -185,6 +192,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Courtier",
+    id: '179fbc82-a8b4-451e-9a23-20a597fb7caa',
     tier: "1",
     type: "Social",
     description: "An ambitious and ostentatiously dressed socialite.",
@@ -211,6 +219,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Deeproot Defender",
+    id: '5861ed30-04f8-4709-bc0c-b5283cce1210',
     tier: "1",
     type: "Bruiser",
     description: "A burly vegetable-person with grasping vines.",
@@ -237,6 +246,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Dire Wolf",
+    id: '8568f441-8506-4273-b535-289651a0e4a1',
     tier: "1",
     type: "Skulk",
     description: "A large wolf with menacing teeth, seldom encountered alone.",
@@ -263,6 +273,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Mosquitoes",
+    id: '8d780c51-39b6-4cc1-a92a-0c8c74dc0678',
     tier: "1",
     type: "Horde (5/HP)",
     description: "Dozens of fist-sized mosquitoes, flying together for protection.",
@@ -293,6 +304,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Rat",
+    id: 'e8874079-119a-4cbf-a82b-0fa9702b851f',
     tier: "1",
     type: "Minion",
     description: "A cat-sized rodent skilled at scavenging and survival.",
@@ -319,6 +331,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Scorpion",
+    id: '15420760-97a0-4339-9686-2b1ef9c49997',
     tier: "1",
     type: "Bruiser",
     description: "A human-sized insect with tearing claws and a stinging tail.",
@@ -349,6 +362,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Glass Snake",
+    id: 'd092f7e8-ed40-4812-82f4-12d63c5fee42',
     tier: "1",
     type: "Standard",
     description: "A clear serpent with a massive head that leaves behind a glass shard trail wherever they go.",
@@ -378,6 +392,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Harrier",
+    id: 'a7a79bef-a4de-419a-b66c-b2d7ad393694',
     tier: "1",
     type: "Standard",
     description: "A nimble fighter armed with javelins.",
@@ -404,6 +419,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Archer Guard",
+    id: 'deeb0761-cff0-4ee1-95b2-8272f9ffa127',
     tier: "1",
     type: "Ranged",
     description: "A tall guard bearing a longbow and quiver with arrows fletched in the settlement’s colors.",
@@ -426,6 +442,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Bladed Guard",
+    id: '0b13b559-fae3-4016-9e9d-84a8bd4dcfff',
     tier: "1",
     type: "Standard",
     description: "An armored guard bearing a sword and shield painted in the settlement’s colors.",
@@ -452,6 +469,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Head Guard",
+    id: '6ba66919-342d-4f73-a548-37dbca955e6d',
     tier: "1",
     type: "Leader",
     description: "A seasoned guard with a mace, a whistle, and a bellowing voice.",
@@ -482,6 +500,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Bandit",
+    id: 'd6686341-d9b8-4624-b16a-cf391b8c33ec',
     tier: "1",
     type: "Standard",
     description: "A cunning criminal in a cloak bearing one of the gang’s iconic knives.",
@@ -508,6 +527,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Hexer",
+    id: '08377708-88fc-4a96-bc27-c7a45d668deb',
     tier: "1",
     type: "Support",
     description: "A staff-wielding bandit in a cloak adorned with magical paraphernalia, using curses to vex their foes.",
@@ -534,6 +554,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Kneebreaker",
+    id: '60b3d448-b62e-4103-b70d-c65c48ef5039',
     tier: "1",
     type: "Bruiser",
     description: "An imposing brawler carrying a large club.",
@@ -560,6 +581,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Lackey",
+    id: 'b164051d-6797-4168-a9c4-672f2b58d742',
     tier: "1",
     type: "Minion",
     description: "A thief with simple clothes and small daggers, eager to prove themselves.",
@@ -586,6 +608,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Lieutenant",
+    id: '99cf361d-4d0b-443a-823e-66a16f4fa81a',
     tier: "1",
     type: "Leader",
     description: "A seasoned bandit in quality leathers with a strong voice and cunning eyes.",
@@ -620,6 +643,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Shadow",
+    id: '4c158981-9478-4025-96ae-97fa57357ee5',
     tier: "1",
     type: "Skulk",
     description: "A nimble scoundrel bearing a wicked knife and utilizing shadow magic to isolate targets.",
@@ -646,6 +670,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Jagged Knife Sniper",
+    id: '26b37196-824f-45d0-956a-7d167b735f22',
     tier: "1",
     type: "Ranged",
     description: "A lanky bandit striking from cover with a shortbow.",
@@ -668,6 +693,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Merchant",
+    id: '4476d82d-2b6a-4add-a236-def60dd6688f',
     tier: "1",
     type: "Social",
     description: "A finely dressed trader with a keen eye for financial gain.",
@@ -694,6 +720,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Minor Chaos Elemental",
+    id: '1b935a98-cf1e-4ac3-977d-fd4121711494',
     tier: "1",
     type: "Solo",
     description: "A coruscating mass of uncontrollable magic.",
@@ -731,6 +758,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Minor Fire Elemental",
+    id: '54bca498-7b47-4245-8f5d-1607ba6b0873',
     tier: "1",
     type: "Solo",
     description: "A living flame the size of a large bonfire.",
@@ -768,6 +796,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Minor Demon",
+    id: 'fe12874c-fd34-4fac-8411-965b1ec4ef1a',
     tier: "1",
     type: "Solo",
     description: "A crimson-hued creature from the Circles Below, consumed by rage against all mortals.",
@@ -805,6 +834,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Minor Treant",
+    id: '8a0dfc45-2fa7-43dd-aa78-e7338dde2aa6',
     tier: "1",
     type: "Minion",
     description: "An ambulatory sapling rising up to defend their forest.",
@@ -830,6 +860,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Green Ooze",
+    id: '1657b30e-f602-4f7a-895c-45216a5945c1',
     tier: "1",
     type: "Skulk",
     description: "A moving mound of translucent green slime.",
@@ -864,6 +895,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Tiny Green Ooze",
+    id: '1e47c79f-3963-44c6-a0e6-8e288b3b9ea5',
     tier: "1",
     type: "Skulk",
     description: "A small moving mound of translucent green slime.",
@@ -885,6 +917,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Red Ooze",
+    id: 'd45ef9a6-5fae-4a4e-aad2-81bccdc37f3d',
     tier: "1",
     type: "Skulk",
     description: "A moving mound of translucent flaming red slime.",
@@ -915,6 +948,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Tiny Red Ooze",
+    id: 'a7fde24c-df73-4da8-a613-caf4ae2971ba',
     tier: "1",
     type: "Skulk",
     description: "A small moving mound of translucent flaming red slime.",
@@ -936,6 +970,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Petty Noble",
+    id: 'f46b1aec-9bf4-48ae-8242-e960ca125238',
     tier: "1",
     type: "Social",
     description: "A richly dressed and adorned aristocrat brimming with hubris.",
@@ -966,6 +1001,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Pirate Captain",
+    id: 'b79bd170-1c94-48dc-8667-27d465c22155',
     tier: "1",
     type: "Leader",
     description: "A charismatic sea dog with an impressive hat, eager to raid and plunder.",
@@ -1000,6 +1036,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Pirate Raiders",
+    id: '55e9ed0d-4418-4a88-9228-88fd71ed2b38',
     tier: "1",
     type: "Horde (3/HP)",
     description: "Seafaring scoundrels moving in a ravaging pack.",
@@ -1026,6 +1063,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Pirate Tough",
+    id: 'b310570c-4051-40d3-9131-09d5df7f64eb',
     tier: "1",
     type: "Bruiser",
     description: "A thickly muscled and tattooed pirate with melon-sized fists.",
@@ -1052,6 +1090,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Sellsword",
+    id: 'c15e12ab-0b16-4258-9acf-e61292f9e25f',
     tier: "1",
     type: "Minion",
     description: "An armed mercenary testing their luck.",
@@ -1077,6 +1116,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Skeleton Archer",
+    id: 'b7c6a0b2-c2c3-4419-bcf9-1f30139c3be5',
     tier: "1",
     type: "Ranged",
     description: "A fragile skeleton with a shortbow and arrows.",
@@ -1102,6 +1142,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Skeleton Dredge",
+    id: '23f0a1a5-79bf-419a-8a1d-184b2355aed2',
     tier: "1",
     type: "Minion",
     description: "A clattering pile of bones.",
@@ -1127,6 +1168,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Skeleton Knight",
+    id: 'aef44e13-4c9f-475a-b03e-32c6af53d97c',
     tier: "1",
     type: "Bruiser",
     description: "A large armored skeleton with a huge blade.",
@@ -1156,6 +1198,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Skeleton Warrior",
+    id: '1c3d378d-1ed9-429f-b87d-3a555e27fb1b',
     tier: "1",
     type: "Standard",
     description: "A dirt-covered skeleton armed with a rusted blade.",
@@ -1181,6 +1224,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Spellblade",
+    id: '7f83a8ab-5487-4cff-a320-4b13041bcdc7',
     tier: "1",
     type: "Leader",
     description: "A mercenary combining swordplay and magic to deadly effect.",
@@ -1215,6 +1259,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Swarm of Rats",
+    id: 'a81c2fae-0509-4632-a7e2-38d128581864',
     tier: "1",
     type: "Horde (10/HP)",
     description: "A skittering mass of ordinary rodents moving as one like a ravenous wave.",
@@ -1240,6 +1285,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Sylvan Soldier",
+    id: '8e3b2127-7e45-4292-9d81-0ed688f31dc1',
     tier: "1",
     type: "Standard",
     description: "A faerie warrior adorned in armor made of leaves and bark.",
@@ -1270,6 +1316,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Tangle Bramble Swarm",
+    id: '9447f721-ad63-4fd5-bd4e-19cf450d7add',
     tier: "1",
     type: "Horde (3/HP)",
     description: "A cluster of animated, blood-drinking tumbleweeds, each the size of a large gourd.",
@@ -1300,6 +1347,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Tangle Bramble",
+    id: '6c524f14-6660-4db0-b4c3-00842339801c',
     tier: "1",
     type: "Minion",
     description: "An animate, blood-drinking tumbleweed.",
@@ -1329,6 +1377,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Brawny Zombie",
+    id: '3bb973b0-7af5-4cb7-8dc6-13725b253a19',
     tier: "1",
     type: "Bruiser",
     description: "A large corpse, decay-bloated and angry.",
@@ -1359,6 +1408,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Young Dryad",
+    id: '9ec76b5f-0325-40f1-9b46-0b0447e84f69',
     tier: "1",
     type: "Leader",
     description: "An imperious tree-person leading their forest’s defenses.",
@@ -1389,6 +1439,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Patchwork Zombie Hulk",
+    id: '1dbe7c82-aa40-4815-af07-0f07c2f222b8',
     tier: "1",
     type: "Solo",
     description: "A towering gestalt of corpses moving as one, with torso-sized limbs and fists as large as a grown halfling.",
@@ -1423,6 +1474,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Rotted Zombie",
+    id: '941230f5-8453-41aa-b8f5-302cf92cb664',
     tier: "1",
     type: "Minion",
     description: "A decaying corpse ambling toward their prey.",
@@ -1448,6 +1500,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Shambling Zombie",
+    id: '1de0a59c-f46d-4bbb-a1f8-429323f42c6a',
     tier: "1",
     type: "Standard",
     description: "An animated corpse that moves shakily, driven only by hunger.",
@@ -1473,6 +1526,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Zombie Pack",
+    id: '0bf4e6fe-8c09-4e9d-a6a8-e443ff14cab9',
     tier: "1",
     type: "Horde (2/HP)",
     description: "A group of shambling corpses instinctively moving together.",
@@ -1498,6 +1552,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Archer Squadron",
+    id: 'bc332560-5787-41aa-849b-27c8e0151d53',
     tier: "2",
     type: "Horde (2/HP)",
     description: "A group of trained archers bearing massive bows.",
@@ -1527,6 +1582,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Assassin Poisoner",
+    id: '39482a72-c7a8-4d15-89ab-58f65a93febc',
     tier: "2",
     type: "Skulk",
     description: "A cunning scoundrel skilled in both poisons and ambushing.",
@@ -1557,6 +1613,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Apprentice Assassin",
+    id: 'd12de86e-15d6-4fc6-8117-5a58dfcfeb65',
     tier: "2",
     type: "Minion",
     description: "A young trainee eager to prove themselves.",
@@ -1583,6 +1640,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Master Assassin",
+    id: 'd67a2125-f903-4138-b215-5eb46fd8147f',
     tier: "2",
     type: "Leader",
     description: "A seasoned killer with a threatening voice and a deadly blade.",
@@ -1617,6 +1675,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Battle Box",
+    id: '6eb8b16f-4adb-47c4-9153-cec489c572e2',
     tier: "2",
     type: "Solo",
     description: "A cube-shaped construct with a different rune on each of their six sides.",
@@ -1651,6 +1710,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Chaos Skull",
+    id: '02a80374-05c5-4765-909b-62a921df1c64',
     tier: "2",
     type: "Ranged",
     description: "A floating humanoid skull animated by scintillating magic.",
@@ -1684,6 +1744,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Conscript",
+    id: 'c7ec041b-c836-4890-9b67-f4e7df23c8b4',
     tier: "2",
     type: "Minion",
     description: "A poorly trained civilian pressed into war.",
@@ -1709,6 +1770,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Courtesan",
+    id: '09a546a0-3861-4a70-a056-e41ff274ae91',
     tier: "2",
     type: "Social",
     description: "An accomplished manipulator and master of the social arts.",
@@ -1731,6 +1793,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Cult Adept",
+    id: 'ecdb7d9f-5c14-45b7-86cc-314dd9926634',
     tier: "2",
     type: "Support",
     description: "An experienced mage wielding shadow and fear.",
@@ -1765,6 +1828,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Cult Fang",
+    id: '04a136aa-d083-4f99-91f0-fcd0d01ef2b4',
     tier: "2",
     type: "Skulk",
     description: "A professional killer-turned-cultist.",
@@ -1790,6 +1854,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Cult Initiate",
+    id: 'db39edc2-2e98-45bf-8725-95e50f3dfe48',
     tier: "2",
     type: "Minion",
     description: "A low-ranking cultist in simple robes, eager to gain power.",
@@ -1815,6 +1880,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Demonic Hound Pack",
+    id: '6c194e4a-5b61-452c-800f-428aa091b9e4',
     tier: "2",
     type: "Horde (1/HP)",
     description: "Unnatural hounds lit from within by hellfire.",
@@ -1845,6 +1911,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Electric Eels",
+    id: 'e5aaa33e-c9f4-472b-9537-7fdf4ff1d839',
     tier: "2",
     type: "Horde (2/HP)",
     description: "A swarm of eels that encircle and electrocute.",
@@ -1870,6 +1937,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Elite Soldier",
+    id: '0d7b03ed-ae94-4155-bc32-83b572d19a4f',
     tier: "2",
     type: "Standard",
     description: "An armored squire or experienced commoner looking to advance.",
@@ -1895,6 +1963,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Failed Experiment",
+    id: '4a81c814-ced3-4064-8890-fc5f63c6fe5f',
     tier: "2",
     type: "Standard",
     description: "A magical necromantic experiment gone wrong, leaving them warped and ungainly.",
@@ -1925,6 +1994,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Beastmaster",
+    id: '94d100c8-51af-4034-b78a-ea965103704f',
     tier: "2",
     type: "Leader",
     description: "A leather-clad warrior bearing a whip and massive bow.",
@@ -1955,6 +2025,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Brawler",
+    id: '347bbaa6-00d4-43bc-b7f4-ea09757caa00',
     tier: "2",
     type: "Bruiser",
     description: "An especially muscular giant wielding a warhammer larger than a human.",
@@ -1985,6 +2056,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Eagle",
+    id: '83207634-4d7a-493b-b222-96066019188e',
     tier: "2",
     type: "Skulk",
     description: "A giant bird of prey with blood-stained talons.",
@@ -2018,6 +2090,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Giant Recruit",
+    id: '36538c6c-d620-40fc-bffe-76eca19dc1e9',
     tier: "2",
     type: "Minion",
     description: "A giant fighter undergoing borrowed armor.",
@@ -2043,6 +2116,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Gorgon",
+    id: '0ff44d36-a544-4d0f-b054-d22363d3f8e4',
     tier: "2",
     type: "Solo",
     description: "A snake-headed, scaled humanoid with a gilded bow, enraged that their peace has been disturbed.",
@@ -2081,6 +2155,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Juvenile Flickerfly",
+    id: '432846d0-930e-4105-8f15-243b882d5ca8',
     tier: "2",
     type: "Solo",
     description: "A horse-sized insect with iridescent scales and crystalline wings moving faster than the eye can see.",
@@ -2114,6 +2189,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Knight of the Realm",
+    id: '9c417f4a-e453-42b0-b8bd-4ba1cefb693f',
     tier: "2",
     type: "Leader",
     description: "A decorated soldier with heavy armor and a powerful steed.",
@@ -2148,6 +2224,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Masked Thief",
+    id: '024804a3-d096-4d3c-bc6c-bd6a3d2d743d',
     tier: "2",
     type: "Skulk",
     description: "A cunning thief with acrobatic skill and a flair for the dramatic.",
@@ -2174,6 +2251,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Merchant Baron",
+    id: '44594a99-487c-49db-a9c7-937235cec221',
     tier: "2",
     type: "Social",
     description: "An accomplished merchant with a large operation under their command.",
@@ -2200,6 +2278,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Minotaur Wrecker",
+    id: '7f31d430-1a8c-4dad-b896-ce1562a099f9',
     tier: "2",
     type: "Bruiser",
     description: "A massive bull-headed hybrid with a quick temper.",
@@ -2230,6 +2309,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Mortal Hunter",
+    id: '958c032f-51f0-401b-a6ea-ab20e96a13e7',
     tier: "2",
     type: "Leader",
     description: "An undead figure wearing a heavy leather coat, with searching eyes and a cruelly cut demeanor.",
@@ -2264,6 +2344,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Royal Advisor",
+    id: 'c4e2114e-eac5-4d1b-9db3-d33e0b0f44c6',
     tier: "2",
     type: "Social",
     description: "A high-ranking courtier with the ear of the local nobility.",
@@ -2294,6 +2375,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Secret-Keeper",
+    id: 'ec286371-1aa3-42b1-909c-bfc24e626ced',
     tier: "2",
     type: "Leader",
     description: "A clandestine leader with a direct channel to the Fallen Gods.",
@@ -2328,6 +2410,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Shark",
+    id: 'ff09e2b8-9d2a-4fd9-bf15-b828408472e7',
     tier: "2",
     type: "Bruiser",
     description: "A large aquatic predator, always on the move.",
@@ -2358,6 +2441,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Siren",
+    id: 'ff849d42-db30-4e19-a53b-25b08ae7e946',
     tier: "2",
     type: "Skulk",
     description: "A half fish person with shimmering scales and an irresistible voice.",
@@ -2384,6 +2468,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Spectral Archer",
+    id: '2b167008-0d49-4294-8916-63ac10354b50',
     tier: "2",
     type: "Ranged",
     description: "A ghostly fighter with an ethereal bow, unable to move on while their charge is vulnerable.",
@@ -2410,6 +2495,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Spectral Captain",
+    id: '0910451e-147c-4b05-80da-4a48f01c32c1',
     tier: "2",
     type: "Leader",
     description: "A ghostly commander leading their troops beyond death.",
@@ -2444,6 +2530,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Spectral Guardian",
+    id: 'fb5eafdd-440f-445c-9bcd-913edbc06d89',
     tier: "2",
     type: "Standard",
     description: "A ghostly fighter with spears and swords, anchored by duty.",
@@ -2470,6 +2557,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Spy",
+    id: 'b5271e75-5cb8-4685-ba89-00a4d48ed601',
     tier: "2",
     type: "Social",
     description: "A skilled espionage agent with a knack for being in the right place to overhear secrets.",
@@ -2496,6 +2584,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Stonewraith",
+    id: '194afc91-39e7-4e76-97f1-8b4a3754363a',
     tier: "2",
     type: "Skulk",
     description: "A prowling hunter, like a slinking mountain lion, with a slate-gray stone body.",
@@ -2530,6 +2619,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "War Wizard",
+    id: 'c7fa6a3c-6441-4274-aee7-e54c5077ec92',
     tier: "2",
     type: "Ranged",
     description: "A battle-hardened mage trained in destructive magic.",
@@ -2568,6 +2658,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Adult Flickerfly",
+    id: 'c258b235-3cee-47e0-b2e5-4dc79afae977',
     tier: "3",
     type: "Solo",
     description: "A winged insect the size of a large house with iridescent scales and wings that move too fast to track.",
@@ -2613,6 +2704,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Demon of Avarice",
+    id: '085241da-3a63-475a-a742-6f274a7e4905',
     tier: "3",
     type: "Support",
     description: "A regal cloaked monstrosity with circular horns adorned with treasure.",
@@ -2643,6 +2735,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Demon of Despair",
+    id: '8bab216b-b7db-46dd-9e18-33e9e2b345fb',
     tier: "3",
     type: "Skulk",
     description: "A cloaked one-creature with long limbs, seeping shadows.",
@@ -2677,6 +2770,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Demon of Hubris",
+    id: 'e2d24302-0f25-41f0-ad8a-2f94e97f379b',
     tier: "3",
     type: "Leader",
     description: "A perfectly beautiful and infinitely cruel demon with a gleaming spear and elegant robes.",
@@ -2715,6 +2809,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Demon of Jealousy",
+    id: '5dc08a77-3465-4b7a-9043-911f28d845bb',
     tier: "3",
     type: "Ranged",
     description: "A fickle creature of spindly limbs and insatiable desires.",
@@ -2749,6 +2844,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Demon of Wrath",
+    id: '6a5441ad-e3ff-4b93-aea1-744151f02aea',
     tier: "3",
     type: "Bruiser",
     description: "A hulking demon with boulder-sized fists, driven by endless rage.",
@@ -2783,6 +2879,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Dire Bat",
+    id: 'c5fbd7fa-3117-415f-8688-2ae982026fb1',
     tier: "3",
     type: "Skulk",
     description: "A winged pet endlessly loyal to their vampire owner.",
@@ -2813,6 +2910,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Dryad",
+    id: '59cada8b-33c5-43e2-8379-f7c19c7a5acb',
     tier: "3",
     type: "Leader",
     description: "A nature spirit in the form of a humanoid tree.",
@@ -2843,6 +2941,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Elemental Spark",
+    id: 'e91246ca-80ce-4b42-ad7e-95bde6eccb5c',
     tier: "3",
     type: "Minion",
     description: "A blazing mote of elemental fire.",
@@ -2868,6 +2967,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Greater Earth Elemental",
+    id: '7df4133d-5340-4d32-b746-3b8401cdf1da',
     tier: "3",
     type: "Bruiser",
     description: "A living landslide of boulders and dust, as large as a house.",
@@ -2905,6 +3005,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Greater Water Elemental",
+    id: '43f5bcfd-c770-449f-8ee3-ed608c3e35eb',
     tier: "3",
     type: "Support",
     description: "A huge living wave that crashes down upon enemies.",
@@ -2934,6 +3035,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Huge Green Ooze",
+    id: '7a20d8fa-524d-4012-ac1a-69284e43fd59',
     tier: "3",
     type: "Skulk",
     description: "A translucent green mound of acid taller than most humans.",
@@ -2968,6 +3070,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Hydra",
+    id: 'd42f74d9-fbce-44a1-899c-f524eae25af0',
     tier: "3",
     type: "Solo",
     description: "A quadrupedal scaled beast with multiple long-necked heads, each filled with menacing fangs.",
@@ -3005,6 +3108,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Monarch",
+    id: '0a246e68-d7e1-4eb9-89a6-a5def3858cdb',
     tier: "3",
     type: "Social",
     description: "The sovereign ruler of a nation, unearthed in the privilege of tradition and wielding unmatched power in their domain.",
@@ -3035,6 +3139,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Oak Treant",
+    id: '226c9297-506f-4c91-a631-422874a451d2',
     tier: "3",
     type: "Bruiser",
     description: "A sturdy animated old-growth tree.",
@@ -3065,6 +3170,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Treant Sapling",
+    id: '1920fdb6-cb84-4afa-9348-0bc553006b4d',
     tier: "3",
     type: "Minion",
     description: "A small, sentient tree sapling.",
@@ -3090,6 +3196,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Head Vampire",
+    id: '2c3bcc02-1582-48c8-be3b-64f7bb8ef8b4',
     tier: "3",
     type: "Leader",
     description: "A captivating undead dressed in aristocratic finery.",
@@ -3128,6 +3235,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Vampire",
+    id: 'd74c2918-a83b-47fd-a597-3d0ffd9d8cba',
     tier: "3",
     type: "Standard",
     description: "An intelligent undead with blood-stained lips and a predator’s smile.",
@@ -3154,6 +3262,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Vault Guardian Sentinel",
+    id: 'd08193d4-f770-46dd-80fc-ea31347d1f22',
     tier: "3",
     type: "Bruiser",
     description: "A dust-covered golden construct with boxy limbs and a huge mace for a hand.",
@@ -3187,6 +3296,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Vault Guardian Turret",
+    id: 'e5283e5c-fcb2-4b55-9ddb-a140341f593f',
     tier: "3",
     type: "Ranged",
     description: "A massive hulking turret with reinforced armor and twelve piston-driven mechanical legs.",
@@ -3220,6 +3330,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Vault Guardian Gaoler",
+    id: '761540d9-44ba-4384-95d7-5e8b14eb9824',
     tier: "3",
     type: "Support",
     description: "A boxy, dust-covered construct with thick metallic swinging doors on their torso.",
@@ -3245,6 +3356,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Young Ice Dragon",
+    id: 'd59483e4-1402-4646-9c20-541119bfa5ba',
     tier: "3",
     type: "Solo",
     description: "A glacier-blue dragon with four powerful limbs and frost-tinged wings.",
@@ -3291,6 +3403,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Arch-Necromancer",
+    id: '1dc35dcc-0b25-4f5b-aad0-73a1edeec97e',
     tier: "4",
     type: "Leader",
     description: "A decaying mage adorned in dark, tattered robes.",
@@ -3329,6 +3442,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Fallen Shock Troop",
+    id: '0f8597f6-10aa-42fd-8fee-922c1ab645b4',
     tier: "4",
     type: "Minion",
     description: "A cursed soul bound to the Fallen’s will.",
@@ -3358,6 +3472,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Fallen Sorcerer",
+    id: 'b73a17d8-de1a-42ef-9d75-c13f981527e5',
     tier: "4",
     type: "Support",
     description: "Warped mage bound by the bargains they made in life.",
@@ -3392,6 +3507,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Fallen Warlord: Realm-Breaker",
+    id: 'b99a1e9d-6e13-470b-91ba-d47fc9b7ef1c',
     tier: "4",
     type: "Solo",
     description: "A fallen God, wreathed in rage and resentment, bearing millennia of experience in breaking heroes’ spirits.",
@@ -3434,6 +3550,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Fallen Warlord: Undefeated Champion",
+    id: '9b7486d2-6eec-43e4-a8c4-17e6c512fa77',
     tier: "4",
     type: "Solo",
     description: "That which only the most feared have a chance to fear.",
@@ -3480,6 +3597,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Hallowed Archer",
+    id: '53a62c65-f050-4aec-a12d-a078330b402a',
     tier: "4",
     type: "Ranged",
     description: "Spirit soldiers with sanctified bows.",
@@ -3505,6 +3623,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Hallowed Soldier",
+    id: '6d7bb4aa-9a8f-4c0f-bd2e-8786d582d8d3',
     tier: "4",
     type: "Minion",
     description: "Souls of the faithful, lifted up with divine weaponry.",
@@ -3534,6 +3653,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "High Seraph",
+    id: '50aad591-4fa1-4e0c-93a4-ef70138dce5f',
     tier: "4",
     type: "Leader",
     description: "A divine champion, head of a hallowed host of warriors who enforce their god’s will.",
@@ -3572,6 +3692,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Kraken",
+    id: '1861ab1b-90e8-4e28-9945-73b53b3f2b71',
     tier: "4",
     type: "Solo",
     description: "A legendary beast of the sea, bigger than the largest galleon, with sucker-laden tentacles and a terrifying maw.",
@@ -3610,6 +3731,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Oracle of Doom",
+    id: '0233286c-9921-44e9-8d6c-4dd2f041287b',
     tier: "4",
     type: "Solo",
     description: "A towering immortal and incarnation of fate, cursed to only see bad outcomes.",
@@ -3652,6 +3774,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Outer Realms Abomination",
+    id: '8a5047f4-6fd3-497f-8336-499d28705646',
     tier: "4",
     type: "Bruiser",
     description: "A chaotic mockery of life, constantly in flux.",
@@ -3685,6 +3808,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Outer Realms Corrupter",
+    id: '4e4c7d2c-50db-4a40-98ef-4e107b4851e9',
     tier: "4",
     type: "Support",
     description: "A shifting, formless mass seemingly made of chromatic light.",
@@ -3710,6 +3834,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Outer Realms Thrall",
+    id: '5e9d60c7-a5b7-427d-bafd-4de74b3da3d7',
     tier: "4",
     type: "Minion",
     description: "A vaguely humanoid form stripped of memory and identity.",
@@ -3735,6 +3860,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Volcanic Dragon: Ashen Tyrant",
+    id: 'd8e6e728-90bc-494e-8936-e8ee4d48c14b',
     tier: "4",
     type: "Solo",
     description: "A legendary, lava-hardened dragon. No enemy has ever had the insolence to wound the dragon so.",
@@ -3777,6 +3903,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Volcanic Dragon: Molten Scourge",
+    id: '65624716-f9bc-4370-b251-a7026868ce97',
     tier: "4",
     type: "Solo",
     description: "Engaged by their wounds, the dragon bursts into molten lava.",
@@ -3815,6 +3942,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Volcanic Dragon: Obsidian Predator",
+    id: 'b6dcd401-67a2-4b7b-9f45-da17ee4e8b8f',
     tier: "4",
     type: "Solo",
     description: "A massive winged creature with obsidian scales and impossibly sharp claws.",
@@ -3857,6 +3985,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Perfected Zombie",
+    id: '0210cc03-0303-4041-8874-1091762e2d92',
     tier: "4",
     type: "Bruiser",
     description: "A towering, muscular zombie with magically infused strength and skill.",
@@ -3890,6 +4019,7 @@ export const BESTIARY: Adversary[] = [
   },
   {
     name: "Zombie Legion",
+    id: 'b9d03f0b-cef6-4fde-96eb-7d86b505026d',
     tier: "4",
     type: "Horde (3/HP)",
     description: "A large pack of undead, still powerful despite their rotting flesh.",

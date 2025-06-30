@@ -241,7 +241,6 @@ z"/>
             /** Get Parameters */
             let params: AdversaryParameters = parseYaml(source);
 
-			console.log("yaml", params, source, ctx)
             el.addClass("dht-plugin-container");
             el.parentElement?.addClass("dht-plugin-parent");
 
@@ -253,7 +252,6 @@ z"/>
             });
 
             ctx.addChild(adversary);
-			console.log(adversary)
         } catch (e) {
             console.error(`Obsidian Statblock Error:\n${e}`);
             let pre = createEl("pre");
