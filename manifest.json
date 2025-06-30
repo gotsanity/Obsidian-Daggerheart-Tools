@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "daggerheart-tools",
+	"name": "Daggerheart Tools",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Adds in Daggerheart Compatible features to Obsidian",
+	"author": "gotsanity",
+	"authorUrl": "https://github.com/gotsanity/obsidian-daggerheart-tools",
+	"fundingUrl": "",
 	"isDesktopOnly": false
 }

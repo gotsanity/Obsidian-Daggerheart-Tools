@@ -1,0 +1,71 @@
+.dht-adversary {
+    margin: 1rem;    
+
+    .narrow {
+        max-width: 400px;
+    }
+
+    .two-cols {
+        display: flex;
+        flex-flow: wrap;
+        flex-direction: column;
+    }
+
+    h1, .description {
+        margin: 0;
+    }
+
+    h3 {
+        margin: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .description {
+        font-style: italic;
+    }
+
+    dl {
+        margin: 0;
+    }
+
+    dt {
+        font-weight: bold;
+    }
+
+    dd {
+        margin: 0;
+    }
+
+    .attributes {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        text-align: center;
+        margin: 0;
+    }
+
+    .attributes dd {
+        font-size: larger;
+    }
+
+    .experience dd, dt {
+        display: inline; 
+    }
+
+    .motives dd, dt {
+        display: inline; 
+    }
+
+    .features {
+        margin-right: 2rem;
+    }
+
+    .features .feature-list {
+        list-style-type: none;
+    }
+
+    .features .feature-list li {
+        padding: 0;
+        padding-bottom: 1rem;
+    }
+}

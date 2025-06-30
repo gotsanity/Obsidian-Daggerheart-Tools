@@ -1,8 +1,63 @@
-/*
+/* src/styles.scss */
+.dht-adversary {
+  margin: 1rem;
+}
+.dht-adversary .narrow {
+  max-width: 400px;
+}
+.dht-adversary .two-cols {
+  display: flex;
+  flex-flow: wrap;
+  flex-direction: column;
+}
+.dht-adversary h1,
+.dht-adversary .description {
+  margin: 0;
+}
+.dht-adversary h3 {
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+.dht-adversary .description {
+  font-style: italic;
+}
+.dht-adversary dl {
+  margin: 0;
+}
+.dht-adversary dt {
+  font-weight: bold;
+}
+.dht-adversary dd {
+  margin: 0;
+}
+.dht-adversary .attributes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  text-align: center;
+  margin: 0;
+}
+.dht-adversary .attributes dd {
+  font-size: larger;
+}
+.dht-adversary .experience dd,
+.dht-adversary dt {
+  display: inline;
+}
+.dht-adversary .motives dd,
+.dht-adversary dt {
+  display: inline;
+}
+.dht-adversary .features {
+  margin-right: 2rem;
+}
+.dht-adversary .features .feature-list {
+  list-style-type: none;
+}
+.dht-adversary .features .feature-list li {
+  padding: 0;
+  padding-bottom: 1rem;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+/* src/styles.css */
+/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3JjL3N0eWxlcy5zY3NzIl0sCiAgInNvdXJjZXNDb250ZW50IjogWyIuZGh0LWFkdmVyc2FyeSB7XHJcbiAgICBtYXJnaW46IDFyZW07ICAgIFxyXG5cclxuICAgIC5uYXJyb3cge1xyXG4gICAgICAgIG1heC13aWR0aDogNDAwcHg7XHJcbiAgICB9XHJcblxyXG4gICAgLnR3by1jb2xzIHtcclxuICAgICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICAgIGZsZXgtZmxvdzogd3JhcDtcclxuICAgICAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xyXG4gICAgfVxyXG5cclxuICAgIGgxLCAuZGVzY3JpcHRpb24ge1xyXG4gICAgICAgIG1hcmdpbjogMDtcclxuICAgIH1cclxuXHJcbiAgICBoMyB7XHJcbiAgICAgICAgbWFyZ2luOiAwO1xyXG4gICAgICAgIG1hcmdpbi1ib3R0b206IDAuNXJlbTtcclxuICAgIH1cclxuXHJcbiAgICAuZGVzY3JpcHRpb24ge1xyXG4gICAgICAgIGZvbnQtc3R5bGU6IGl0YWxpYztcclxuICAgIH1cclxuXHJcbiAgICBkbCB7XHJcbiAgICAgICAgbWFyZ2luOiAwO1xyXG4gICAgfVxyXG5cclxuICAgIGR0IHtcclxuICAgICAgICBmb250LXdlaWdodDogYm9sZDtcclxuICAgIH1cclxuXHJcbiAgICBkZCB7XHJcbiAgICAgICAgbWFyZ2luOiAwO1xyXG4gICAgfVxyXG5cclxuICAgIC5hdHRyaWJ1dGVzIHtcclxuICAgICAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgICAgIGZsZXgtd3JhcDogd3JhcDtcclxuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWV2ZW5seTtcclxuICAgICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbiAgICAgICAgbWFyZ2luOiAwO1xyXG4gICAgfVxyXG5cclxuICAgIC5hdHRyaWJ1dGVzIGRkIHtcclxuICAgICAgICBmb250LXNpemU6IGxhcmdlcjtcclxuICAgIH1cclxuXHJcbiAgICAuZXhwZXJpZW5jZSBkZCwgZHQge1xyXG4gICAgICAgIGRpc3BsYXk6IGlubGluZTsgXHJcbiAgICB9XHJcblxyXG4gICAgLm1vdGl2ZXMgZGQsIGR0IHtcclxuICAgICAgICBkaXNwbGF5OiBpbmxpbmU7IFxyXG4gICAgfVxyXG5cclxuICAgIC5mZWF0dXJlcyB7XHJcbiAgICAgICAgbWFyZ2luLXJpZ2h0OiAycmVtO1xyXG4gICAgfVxyXG5cclxuICAgIC5mZWF0dXJlcyAuZmVhdHVyZS1saXN0IHtcclxuICAgICAgICBsaXN0LXN0eWxlLXR5cGU6IG5vbmU7XHJcbiAgICB9XHJcblxyXG4gICAgLmZlYXR1cmVzIC5mZWF0dXJlLWxpc3QgbGkge1xyXG4gICAgICAgIHBhZGRpbmc6IDA7XHJcbiAgICAgICAgcGFkZGluZy1ib3R0b206IDFyZW07XHJcbiAgICB9XHJcbn0iXSwKICAibWFwcGluZ3MiOiAiO0FBQUEsQ0FBQTtBQUNJLFVBQUE7O0FBRUEsQ0FISixjQUdJLENBQUE7QUFDSSxhQUFBOztBQUdKLENBUEosY0FPSSxDQUFBO0FBQ0ksV0FBQTtBQUNBLGFBQUE7QUFDQSxrQkFBQTs7QUFHSixDQWJKLGNBYUk7QUFBQSxDQWJKLGNBYUksQ0FBQTtBQUNJLFVBQUE7O0FBR0osQ0FqQkosY0FpQkk7QUFDSSxVQUFBO0FBQ0EsaUJBQUE7O0FBR0osQ0F0QkosY0FzQkksQ0FUQTtBQVVJLGNBQUE7O0FBR0osQ0ExQkosY0EwQkk7QUFDSSxVQUFBOztBQUdKLENBOUJKLGNBOEJJO0FBQ0ksZUFBQTs7QUFHSixDQWxDSixjQWtDSTtBQUNJLFVBQUE7O0FBR0osQ0F0Q0osY0FzQ0ksQ0FBQTtBQUNJLFdBQUE7QUFDQSxhQUFBO0FBQ0EsbUJBQUE7QUFDQSxjQUFBO0FBQ0EsVUFBQTs7QUFHSixDQTlDSixjQThDSSxDQVJBLFdBUUE7QUFDSSxhQUFBOztBQUdKLENBbERKLGNBa0RJLENBQUEsV0FBQTtBQUFBLENBbERKLGNBa0RJO0FBQ0ksV0FBQTs7QUFHSixDQXRESixjQXNESSxDQUFBLFFBQUE7QUFBQSxDQXRESixjQXNESTtBQUNJLFdBQUE7O0FBR0osQ0ExREosY0EwREksQ0FBQTtBQUNJLGdCQUFBOztBQUdKLENBOURKLGNBOERJLENBSkEsU0FJQSxDQUFBO0FBQ0ksbUJBQUE7O0FBR0osQ0FsRUosY0FrRUksQ0FSQSxTQVFBLENBSkEsYUFJQTtBQUNJLFdBQUE7QUFDQSxrQkFBQTs7IiwKICAibmFtZXMiOiBbXQp9Cg== */
