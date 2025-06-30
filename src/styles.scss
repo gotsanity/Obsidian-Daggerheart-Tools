@@ -1,5 +1,14 @@
+.dht-plugin-container {
+    background-color: var(--background-secondary);
+}
 .dht-adversary {
-    margin: 1rem;    
+    margin: 1rem;
+    padding: 1.0rem 0;
+
+    .divider {
+        margin: 0.5rem 0;
+        padding: 0;
+    }
 
     .narrow {
         max-width: 400px;

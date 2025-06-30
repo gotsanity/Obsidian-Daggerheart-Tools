@@ -132,11 +132,12 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
         // attributes
         block.createEl("hr", "divider");
         let attributes = block.createEl("div", "attributes"); 
-        this.createLabeledBlock(attributes, "difficulty", "Difficulty: ", this.adversary.difficulty);
-        this.createLabeledBlock(attributes, "thresholds", "Thresholds: ", this.adversary.thresholds)
-        this.createLabeledBlock(attributes, "atk", "ATK: ", this.adversary.atk)
-        this.createLabeledBlock(attributes, "hp", "HP: ", this.adversary.hp)
-        this.createLabeledBlock(attributes, "stress", "Stress: ", this.adversary.stress)
+        this.createLabeledBlock(attributes, "difficulty", "Difficulty:", this.adversary.difficulty);
+        this.createLabeledBlock(attributes, "thresholds", "Thresholds:", this.adversary.thresholds)
+        this.createLabeledBlock(attributes, "hp", "HP:", this.adversary.hp)
+        this.createLabeledBlock(attributes, "stress", "Stress:", this.adversary.stress)
+        this.createLabeledBlock(attributes, "atk", "ATK:", this.adversary.atk)
+        this.createLabeledBlock(attributes, "attack", `${this.adversary.attack!}:`, `${this.adversary.range} - ${this.adversary.damage}`);
         block.createEl("hr", "divider");
         // Experiences
         this.createLabeledBlock(block, "experience", "Experience: ", this.adversary.experience)
