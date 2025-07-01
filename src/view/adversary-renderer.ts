@@ -191,10 +191,27 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
         });
     }
 
+    removeCombatant(combatant: Combatant) {
+        this.plugin.app.fileManager.processFrontMatter(this.fileRef, (frontmatter: any) => {
+            if (!frontmatter['dhscene']) {
+                return;
+            } else {
+                delete frontmatter['dhscene'].adversaries[`${combatant.unitId}`]; 
+            }
+        });
+    }
+
     createTracker(block: HTMLElement, combatant: Combatant) {
         let tracker = block.createEl("div", "tracker");
         let unit = tracker.createEl("div", `unit-${combatant.unitId}`)
         unit.createEl("h3", { text: `${combatant.name}`, cls: [`adversary-slug`]});
+        let unitControls = unit.createEl('div', 'unit-controls');
+        let removeButton = unitControls.createEl('input', { type: 'button', value: "Delete" });
+        removeButton.addEventListener('click', async (evt) => {
+            console.log("Removing", combatant.unitId);
+            this.removeCombatant(combatant);
+            this.plugin.setYamlProperty("qty", this.adversary.qty - 1, this.adversary.qty, this.adversary);
+        });
         this.createToggleList(unit, combatant, "hp");
         this.createToggleList(unit, combatant, "stress");
     }
@@ -266,8 +283,8 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
                 await this.plugin.addYamlProperty<String, Boolean>("qty", 1, this.adversary);
             });
         } else {
-            let trackingButton = tracking.createEl('input', { type: 'button', value: "Add Combatant" });
-            trackingButton.addEventListener('click', async (evt) => {
+            let addButton = tracking.createEl('input', { type: 'button', value: "Add Combatant" });
+            addButton.addEventListener('click', async (evt) => {
                 await this.plugin.setYamlProperty<String, Boolean>("qty", this.adversary.qty + 1, this.adversary.qty, this.adversary);
             });
         }
