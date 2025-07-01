@@ -1,7 +1,8 @@
 import { Adversary, BESTIARY_BY_NAME } from "src/bestiary/daggerheart-srd-bestiary";
 import { error } from "console";
 import DaggerheartToolsPlugin, { AdversaryParameters } from "main";
-import { getFrontMatterInfo, MarkdownRenderChild, TFile } from "obsidian";
+import { getFrontMatterInfo, MarkdownRenderChild, parseYaml, stringifyYaml, TFile } from "obsidian";
+import { Linkifier } from "src/parser/linkify";
 
 type RendererParameters = {
     container: HTMLElement;
@@ -26,7 +27,6 @@ export interface Combatant {
 }
 
 export default class AdversaryBlockRenderer extends MarkdownRenderChild {
-    // Reference: https://github.com/javalent/fantasy-statblocks/blob/main/src/view/statblock.ts
     topBar!: HTMLDivElement;
     bottomBar!: HTMLDivElement;
     loaded: boolean = false;
@@ -81,24 +81,30 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
             }
         }
 
-        // const extensions = new Set() // TODO: figure this out Bestiary.getExtensions(built, new Set());
-        // /**
-        //  * At this point, the built creature has been fully resolved from all
-        //  * extensions and in-memory creature definitions.
-        //  */
-        // for (const extension of extensions.reverse()) {
-        //     built = Object.assign(built, extension);
-        // }
-        // built = Object.assign(built, this.adversary ?? {}, this.params ?? {});
+        if ("tracked" in built) {
+            if (built.tracked) {
+                built.qty = this.params.qty ?? 1;
+            }
+        }
 
-        // TODO: might want to transform links
-        //built = this.transformLinks(built);
+        built = Object.assign(built, this.adversary ?? {}, this.params ?? {});
+
+        built = this.transformLinks(built);
 
         if ("image" in built && Array.isArray(built.image)) {
             built.image = built.image.flat(2).join("");
         }
 
         return built as Adversary;
+    }
+
+    transformLinks(monster: Partial<Adversary>): Partial<Adversary> {
+        const built = parseYaml(
+            Linkifier.transformYamlSource(
+                stringifyYaml(monster).replace(/\\#/g, "#")
+            )
+        );
+        return built;
     }
 
     createLabeledBlock(container: HTMLElement, classTag: string, label: string, value: any) {
@@ -117,12 +123,10 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
                 li.createEl("span", { text: `${prop}:`, cls: [`${prop}-label`]})
             } else {
                 let input = li.createEl("input", { type: "checkbox", cls: [`${prop}-input-i`] });
-                console.log(combatant, (combatant as any)[prop], i);
                 input.checked = i <= (combatant as any)[prop];
                 input.addEventListener('change', (event: Event) => {
                     const target = event.target as HTMLInputElement;
                     const isChecked = target.checked;
-                    console.log(isChecked);
                     this.updateCombatant(combatant.unitId, prop, isChecked);
                 });
             }
@@ -136,13 +140,11 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
             } else {
                 frontmatter['dhscene'].adversaries[unitId][prop] -= 1;
             }
-            console.log('updateCombatant result', frontmatter);
         });
     }
 
     updateFrontmatter(block: HTMLElement) {
         this.plugin.app.fileManager.processFrontMatter(this.fileRef, (frontmatter: any) => {
-            console.log('frontmatter-before', frontmatter);
             if (!frontmatter['dhscene']) {
                 let scene = {
                     adversaries: new Map<string, Combatant>(),
@@ -156,13 +158,10 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
                     scene.adversaries.set(combatant.unitId, combatant);
                 }
                 frontmatter['dhscene'] = scene;
-                console.log(scene);
             } else {
                 let adversaries = Object.entries(frontmatter['dhscene'].adversaries)
                     .map(c => { return c[1] })
                     .filter((c: Combatant) => c.unitId.split('.')[0] == this.adversary.id);
-
-                console.log(adversaries);
 
                 if (adversaries.length != this.adversary.qty) {
                     if (adversaries.length < this.adversary.qty) {
@@ -189,7 +188,6 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
                     }
                 });
             }
-            console.log('frontmatter-after', frontmatter);
         });
     }
 
@@ -204,7 +202,6 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     async init() {
         this.containerEl.empty();
         this.adversary = (await this.build()) as Adversary;
-        //console.log("after build", this.adversary);
         
         // create adversary block
         let blockContainer = this.container.createEl("div");
@@ -255,9 +252,24 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
             this.createLabeledBlock(li, `feature-block-${i}`, this.adversary.feats[i].name, this.adversary.feats[i].text)
         }
 
+        
         if (this.adversary.tracked) {
-            console.log("called");
             this.updateFrontmatter(block)
+        }
+
+        let controls = block.createEl('div', 'controls');
+        let tracking = controls.createEl('div', 'tracking-control');
+        if (!this.adversary.tracked) {
+            let trackingButton = tracking.createEl('input', { type: 'button', value: "Start Tracking" });
+            trackingButton.addEventListener('click', async (evt) => {
+                await this.plugin.addYamlProperty<String, Boolean>("tracked", true, this.adversary);
+                await this.plugin.addYamlProperty<String, Boolean>("qty", 1, this.adversary);
+            });
+        } else {
+            let trackingButton = tracking.createEl('input', { type: 'button', value: "Add Combatant" });
+            trackingButton.addEventListener('click', async (evt) => {
+                await this.plugin.setYamlProperty<String, Boolean>("qty", this.adversary.qty + 1, this.adversary.qty, this.adversary);
+            });
         }
         
 
