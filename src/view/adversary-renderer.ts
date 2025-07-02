@@ -5,6 +5,8 @@ import { RendererParameters } from "src/types/renderer";
 import DaggerheartToolsPlugin from "src/main";
 import { Adversary, AdversaryParameters } from "src/types/adversary";
 import { Bestiary } from "src/bestiary/bestiary";
+import AdversaryBlock from "./AdversaryBlock.svelte";
+import { mount } from "svelte";
 
 
 
@@ -20,6 +22,8 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     params!: Partial<AdversaryParameters>;
     context: string;
     fileRef: TFile;
+    $adversaryBlock!: ReturnType<typeof AdversaryBlock> | undefined;
+
     constructor(
         public rendererParameters: RendererParameters,
         public icons = true
@@ -201,75 +205,85 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     async init() {
         this.containerEl.empty();
         this.adversary = (await this.build()) as Adversary;
+        this.$adversaryBlock = mount(AdversaryBlock, {
+            target: this.containerEl,
+            props: {
+                context: this.context,
+                adversary: this.adversary,
+                plugin: this.plugin,
+                renderer: this
+            }
+        });
         
-        // create adversary block
-        let blockContainer = this.container.createEl("div");
-        blockContainer.classList.add("dht-adversary");
 
-        let block = blockContainer.createEl("div");
-        if (this.adversary.narrow) {
-            block.classList.add("narrow");
-        }
+        // // create adversary block
+        // let blockContainer = this.container.createEl("div");
+        // blockContainer.classList.add("dht-adversary");
 
-        if (this.adversary.forceColumns) {
-            block.classList.add("two-cols");
-        }
+        // let block = blockContainer.createEl("div");
+        // if (this.adversary.narrow) {
+        //     block.classList.add("narrow");
+        // }
+
+        // if (this.adversary.forceColumns) {
+        //     block.classList.add("two-cols");
+        // }
         
-        block.createEl("h1", { text: this.adversary.name })
+        // block.createEl("h1", { text: this.adversary.name })
 
-        if (this.adversary.image) {
-            //console.log("image", this.adversary.image);
-        }
+        // if (this.adversary.image) {
+        //     //console.log("image", this.adversary.image);
+        // }
 
-        if (this.adversary.tier != undefined) {
-            block.createEl("h3", { text: `Tier ${this.adversary.tier ?? 'none'} ${this.adversary.type ?? '' }`})
-        }
+        // if (this.adversary.tier != undefined) {
+        //     block.createEl("h3", { text: `Tier ${this.adversary.tier ?? 'none'} ${this.adversary.type ?? '' }`})
+        // }
         
-        block.createEl("div", { text: this.adversary.description ?? '' }).classList.add("description");
-        this.createLabeledBlock(block, "motives", "Motives and Tactics: ", this.adversary.motives_and_tactics ?? '');
+        // block.createEl("div", { text: this.adversary.description ?? '' }).classList.add("description");
+        // this.createLabeledBlock(block, "motives", "Motives and Tactics: ", this.adversary.motives_and_tactics ?? '');
 
-        // attributes
-        block.createEl("hr", "divider");
-        let attributes = block.createEl("div", "attributes"); 
-        this.createLabeledBlock(attributes, "difficulty", "Difficulty:", this.adversary.difficulty ?? '');
-        this.createLabeledBlock(attributes, "thresholds", "Thresholds:", this.adversary.thresholds ?? '-')
-        this.createLabeledBlock(attributes, "hp", "HP:", this.adversary.hp ?? 1)
-        this.createLabeledBlock(attributes, "stress", "Stress:", this.adversary.stress ?? 1)
-        this.createLabeledBlock(attributes, "atk", "ATK:", this.adversary.atk ?? '+0')
-        this.createLabeledBlock(attributes, "attack", `${this.adversary.attack ?? 'Attack'}:`, `${this.adversary.range ?? 'Melee'} - ${this.adversary.damage ?? '1 phys'}`);
-        block.createEl("hr", "divider");
-        // Experiences
-        this.createLabeledBlock(block, "experience", "Experience: ", this.adversary.experience ?? 'None')
+        // // attributes
+        // block.createEl("hr", "divider");
+        // let attributes = block.createEl("div", "attributes"); 
+        // this.createLabeledBlock(attributes, "difficulty", "Difficulty:", this.adversary.difficulty ?? '');
+        // this.createLabeledBlock(attributes, "thresholds", "Thresholds:", this.adversary.thresholds ?? '-')
+        // this.createLabeledBlock(attributes, "hp", "HP:", this.adversary.hp ?? 1)
+        // this.createLabeledBlock(attributes, "stress", "Stress:", this.adversary.stress ?? 1)
+        // this.createLabeledBlock(attributes, "atk", "ATK:", this.adversary.atk ?? '+0')
+        // this.createLabeledBlock(attributes, "attack", `${this.adversary.attack ?? 'Attack'}:`, `${this.adversary.range ?? 'Melee'} - ${this.adversary.damage ?? '1 phys'}`);
+        // block.createEl("hr", "divider");
+        // // Experiences
+        // this.createLabeledBlock(block, "experience", "Experience: ", this.adversary.experience ?? 'None')
 
-        // Features
-        let features = block.createEl("div", "features");
-        features.createEl("h4", { text: "Features"})
-        let featureList = features.createEl("ul", "feature-list")
+        // // Features
+        // let features = block.createEl("div", "features");
+        // features.createEl("h4", { text: "Features"})
+        // let featureList = features.createEl("ul", "feature-list")
 
-        for (let i = 0; i < this.adversary.feats!.length; i++) {
-            let li = featureList.createEl("li", `feature-${i}`)
-            this.createLabeledBlock(li, `feature-block-${i}`, this.adversary.feats[i].name, this.adversary.feats[i].text)
-        }
+        // for (let i = 0; i < this.adversary.feats!.length; i++) {
+        //     let li = featureList.createEl("li", `feature-${i}`)
+        //     this.createLabeledBlock(li, `feature-block-${i}`, this.adversary.feats[i].name, this.adversary.feats[i].text)
+        // }
 
         
-        if (this.adversary.tracked) {
-            this.updateFrontmatter(block)
-        }
+        // if (this.adversary.tracked) {
+        //     this.updateFrontmatter(block)
+        // }
 
-        let controls = block.createEl('div', 'controls');
-        let tracking = controls.createEl('div', 'tracking-control');
-        if (!this.adversary.tracked) {
-            let trackingButton = tracking.createEl('input', { type: 'button', value: "Start Tracking" });
-            trackingButton.addEventListener('click', async (evt) => {
-                await this.plugin.addYamlProperty<String, Boolean>("tracked", true, this.adversary);
-                await this.plugin.addYamlProperty<String, Boolean>("qty", 1, this.adversary);
-            });
-        } else {
-            let addButton = tracking.createEl('input', { type: 'button', value: "Add Combatant" });
-            addButton.addEventListener('click', async (evt) => {
-                await this.plugin.setYamlProperty<String, Boolean>("qty", this.adversary.qty + 1, this.adversary.qty, this.adversary);
-            });
-        }
+        // let controls = block.createEl('div', 'controls');
+        // let tracking = controls.createEl('div', 'tracking-control');
+        // if (!this.adversary.tracked) {
+        //     let trackingButton = tracking.createEl('input', { type: 'button', value: "Start Tracking" });
+        //     trackingButton.addEventListener('click', async (evt) => {
+        //         await this.plugin.addYamlProperty<String, Boolean>("tracked", true, this.adversary);
+        //         await this.plugin.addYamlProperty<String, Boolean>("qty", 1, this.adversary);
+        //     });
+        // } else {
+        //     let addButton = tracking.createEl('input', { type: 'button', value: "Add Combatant" });
+        //     addButton.addEventListener('click', async (evt) => {
+        //         await this.plugin.setYamlProperty<String, Boolean>("qty", this.adversary.qty + 1, this.adversary.qty, this.adversary);
+        //     });
+        // }
         
 
 

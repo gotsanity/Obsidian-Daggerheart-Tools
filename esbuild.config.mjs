@@ -2,6 +2,8 @@ import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
 import {sassPlugin} from 'esbuild-sass-plugin';
+import esbuildSvelte from 'esbuild-svelte';
+import { sveltePreprocess } from 'svelte-preprocess';
 
 const banner =
 `/*
@@ -42,7 +44,14 @@ const context = await esbuild.context({
 	treeShaking: true,
 	outdir: './',
 	minify: prod,
-	plugins: [sassPlugin()]
+	conditions: ["svelte"],
+	plugins: [
+		sassPlugin(),
+		esbuildSvelte({
+			compilerOptions: { css: 'injected' },
+			preprocess: sveltePreprocess(),
+		}),
+	]
 });
 
 if (prod) {
