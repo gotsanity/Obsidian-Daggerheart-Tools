@@ -1,15 +1,5 @@
 <script lang="ts">
-	import DaggerheartToolsPlugin from "src/main";
-	import type AdversaryBlockRenderer from "../adversary-renderer";
-
-  export interface TermDef {
-    context: string;
-    plugin: DaggerheartToolsPlugin;
-    renderer: AdversaryBlockRenderer;
-    className?: string;
-    name: string;
-    definition: string | number;
-  }
+	import type { LabeledItem } from "../AdversaryBlock.svelte";
 
   let {
     context,
@@ -17,8 +7,9 @@
     renderer,
     className,
     name,
-    definition
-  }: TermDef = $props();
+    definition,
+    ...rest
+  }: LabeledItem = $props();
 
 </script>
 
