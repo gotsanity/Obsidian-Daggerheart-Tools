@@ -1,30 +1,12 @@
-import { Adversary, BESTIARY_BY_NAME } from "src/bestiary/daggerheart-srd-bestiary";
-import { error } from "console";
-import DaggerheartToolsPlugin, { AdversaryParameters } from "main";
-import { getFrontMatterInfo, MarkdownRenderChild, parseYaml, stringifyYaml, TFile } from "obsidian";
+import { MarkdownRenderChild, parseYaml, stringifyYaml, TFile } from "obsidian";
 import { Linkifier } from "src/parser/linkify";
+import { Combatant } from "src/types/encounter";
+import { RendererParameters } from "src/types/renderer";
+import DaggerheartToolsPlugin from "src/main";
+import { Adversary, AdversaryParameters } from "src/types/adversary";
+import { Bestiary } from "src/bestiary/bestiary";
 
-type RendererParameters = {
-    container: HTMLElement;
-    plugin: DaggerheartToolsPlugin;
-    context?: string;
-    // layout?: Layout;
-} & (
-    | {
-          adversary: Adversary;
-      }
-    | {
-          params: Partial<AdversaryParameters>;
-      }
-);
 
-export interface Combatant {
-    name: string;
-    unitId: string;
-    hp: number;
-    stress: number;
-    hope?: number;
-}
 
 export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     topBar!: HTMLDivElement;
@@ -55,7 +37,7 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     getAdversary(params: | { adversary: Adversary } | { params: Partial<AdversaryParameters> }) {
         if ("params" in params) {
             this.params = params.params
-            this.adversary = Object.assign({}, BESTIARY_BY_NAME.get(this.params.name));
+            this.adversary = Object.assign({}, Bestiary.get(this.params.name));
         } else {
             this.params = {};
             this.adversary = params.adversary;
