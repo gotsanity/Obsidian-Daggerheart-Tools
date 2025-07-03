@@ -2,7 +2,7 @@ import { MarkdownRenderer } from "obsidian";
 import { Bestiary } from "src/bestiary/bestiary";
 import DaggerheartToolsPlugin from "src/main";
 import { LinkStringifier } from "src/parser/stringifier";
-import { Adversary } from "src/types/adversary";
+import type { Adversary } from "src/types/adversary";
 
 declare global {
     interface Window {

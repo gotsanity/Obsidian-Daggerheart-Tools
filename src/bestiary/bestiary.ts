@@ -3,7 +3,7 @@ import type DaggerheartToolsPlugin from "src/main";
 import { BESTIARY_BY_NAME } from "./daggerheart-srd-bestiary";
 import { stringify } from "src/util/util";
 import type { EventRef, Events, Workspace } from "obsidian";
-import { Adversary } from "src/types/adversary";
+import type { Adversary } from "src/types/adversary";
 
 declare module "obsidian" {
     interface Workspace {

@@ -1,21 +1,24 @@
 import {
 	addIcon,
 	Editor,
-	MarkdownPostProcessorContext,
+	type MarkdownPostProcessorContext,
 	MarkdownView,
 	Notice,
 	parseYaml,
 	Plugin,
+	TFile,
 } from 'obsidian';
 import AdversaryBlockRenderer from 'src/view/adversary-renderer';
 import { Linkifier } from './parser/linkify';
-import { DaggerheartToolsSettings, DaggerheartToolsSettingsTab, DEFAULT_SETTINGS } from './settings/settings';
-import { Adversary, AdversaryParameters } from './types/adversary';
+import { type DaggerheartToolsSettings, DaggerheartToolsSettingsTab, DEFAULT_SETTINGS } from './settings/settings';
+import type { Adversary, AdversaryParameters } from './types/adversary';
 import { AdversarySuggester } from './util/suggester';
 import { IconStore } from './view/icon-store';
 import { AdversaryModal } from './view/adversary-modal';
 import { Api } from './api/api';
 import { Bestiary } from './bestiary/bestiary';
+import type { Combatant, Encounter } from './types/encounter';
+import { nanoid } from './util/util';
 
 
 
@@ -235,6 +238,60 @@ export default class DaggerheartToolsPlugin extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+
+	getFrontmatter(file: TFile | null = null): Record<string, any> | undefined {
+		if (!file) {
+			file = this.app.workspace.getActiveFile();
+		}
+
+		const cache = this.app.metadataCache.getFileCache(file!);
+		return cache?.frontmatter;
+	}
+
+	async writeFrontmatter(file: TFile, key: string, value: any) {
+		this.app.fileManager.processFrontMatter(file, (frontmatter: any) => {
+			frontmatter[key] = value;
+        });
+	}
+
+	// Adds an adversary to the combat and sets the file to an encounter.
+	async addCombatant(encounterId: string, adversary: Adversary) {
+		let combatant: Combatant = {
+			name: adversary.name,
+			id: nanoid(),
+			hp: adversary.hp,
+			stress: adversary.stress
+		}
+		
+		let file = this.app.workspace.getActiveFile();
+
+		if (!file) {
+			new Notice("No active file opened.");
+			return;
+		}
+
+		let frontmatter = this.getFrontmatter(file);
+
+		if (!frontmatter || !frontmatter["encounterId"]) {
+			await this.writeFrontmatter(file, "encounterId", encounterId);
+		}
+
+		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+
+		if (index > -1) {
+			this.settings.encounters[index].adversaries.push(combatant)
+		} else {
+			this.settings.encounters.push({
+				id: encounterId,
+				adversaries: [combatant],
+				allies: [],
+				environments: [],
+			})
+		}
+		
+		await this.saveSettings();
+	}
+
 
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		try {

@@ -1,14 +1,14 @@
 import { PluginSettingTab, App, Setting } from "obsidian";
 import DaggerheartToolsPlugin from "src/main";
-import { Adversary } from "src/types/adversary";
-import { Encounter } from "src/types/encounter";
-import { Environment } from "src/types/environment";
+import type { Adversary } from "src/types/adversary";
+import type { Encounter } from "src/types/encounter";
+import type { Environment } from "src/types/environment";
 
 export interface DaggerheartToolsSettings {
 	parseFrontmatter: boolean;
-	adversaries: Array<[string, Adversary]>;
-	encounters: Array<[string, Encounter]>;
-	biomes: Array<[string, Environment]>;
+	adversaries: Adversary[];
+	encounters: Encounter[];
+	biomes: Environment[];
     version: {
         major: number;
         minor: number;

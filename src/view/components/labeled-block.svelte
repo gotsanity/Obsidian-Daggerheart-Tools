@@ -2,9 +2,6 @@
 	import type { LabeledItem } from "../AdversaryBlock.svelte";
 
   let {
-    context,
-    plugin,
-    renderer,
     className,
     name,
     definition,

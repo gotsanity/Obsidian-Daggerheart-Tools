@@ -1,22 +1,6 @@
-import { EditorSuggest, EditorSuggestContext, EditorPosition, Editor, TFile, EditorSuggestTriggerInfo, parseYaml } from "obsidian";
+import { EditorSuggest, type EditorSuggestContext, type EditorPosition, Editor, TFile, type EditorSuggestTriggerInfo, parseYaml } from "obsidian";
 import DaggerheartToolsPlugin from "src/main";
-import { Adversary } from "src/types/adversary";
-
-export type RequiredProps = {
-    id: string;
-};
-
-export type CommonProps = RequiredProps & {
-    properties: string[];
-    fallback?: string;
-    hasRule?: boolean;
-    dice?: boolean;
-    diceProperty?: keyof Adversary;
-    diceText?: string;
-    diceCallback?: string;
-    doNotAddClass?: boolean;
-};
-
+import type { CommonProps } from "src/types/daggerheart-types";
 
 export enum SuggestContext {
     Adversary,

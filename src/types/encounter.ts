@@ -1,16 +1,13 @@
-import { Environment } from "./environment";
+import type { CommonProps, HealthProps, FeaturesProps } from "./daggerheart-types";
+import type { Environment } from "./environment";
 
-export interface Combatant {
-    name: string;
-    unitId: string;
-    hp: number;
-    stress: number;
-    hope?: number;
-}
+export type Combatant = CommonProps & HealthProps;
 
-export interface Encounter {
-    encounterId: string;
-    adversaries: Array<[string, Combatant]>;
-    allies: Array<[string, Combatant]>;
-    environments: Array<[string, Environment]>;
+export type EnemyCombatant = Combatant;
+export type AllyCombatant = Combatant & FeaturesProps;
+
+export type Encounter = CommonProps & {
+    adversaries: Array<EnemyCombatant>;
+    allies: Array<AllyCombatant>;
+    environments: Array<Environment>;
 }

@@ -3,18 +3,18 @@
 	import type { Adversary } from "src/types/adversary";
 	import AdversaryBlockRenderer from "./adversary-renderer";
 	import LabeledBlock from "./components/labeled-block.svelte";
+	import TrackingBlock from "./components/tracking-block.svelte";
+	import { _context, _plugin, _renderer } from "./daggerstore";
 
-  export interface AdversaryProps {
+  export interface AdversaryBlockProps {
     context: string;
-    adversary: Partial<Adversary>;
+    adversary: Adversary;
     plugin: DaggerheartToolsPlugin;
     renderer: AdversaryBlockRenderer;
+    blockConfiguration?: Map<string, boolean>;
   }
 
   export interface LabeledItem {
-    context: string;
-    plugin: DaggerheartToolsPlugin;
-    renderer: AdversaryBlockRenderer;
     className: string;
     name: string;
     definition: string | number;
@@ -24,85 +24,63 @@
     context,
     adversary,
     plugin,
-    renderer
-  }: AdversaryProps = $props();
+    renderer,
+    blockConfiguration = new Map<string, boolean>([["tracked", true]]),
+  }: AdversaryBlockProps = $props();
+
+  _plugin.set(plugin);
+  _renderer.set(renderer);
+  _context.set(context);
 
   let description: LabeledItem = $derived({
-    context: context,
-    plugin: plugin,
-    renderer: renderer,
     className: "motives",
     name: "Motives and Tactics:",
     definition: adversary.motives_and_tactics! ?? 'An adversary.'
   });
   
   let difficulty: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "difficulty",
       name: "Difficulty:",
       definition: adversary.difficulty! ?? 0
   });
 
   let thresholds: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "thresholds",
       name: "Thresholds:",
       definition: adversary.thresholds! ?? '-/-'
   });
 
   let hp: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "hp",
       name: "HP:",
       definition: adversary.hp!
   });
 
   let stress: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "stress",
       name: "Stress:",
       definition: adversary.stress! ?? 1
   });
 
   let atk: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "atk",
       name: "ATK:",
       definition: adversary.atk! ?? 0
   });
 
   let attack: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "attack",
       name: `${adversary.attack! ?? 'Basic Attack'}`,
       definition: `${adversary.range! ?? 'Melee'} - ${adversary.damage! ?? '1 phys'}`
   });
 
   let experience: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "experience",
       name: "Experience:",
       definition: adversary.experience! ?? 'None'
   });
 
   let difficult: LabeledItem = $derived({
-      context: context,
-      plugin: plugin,
-      renderer: renderer,
       className: "difficulty",
       name: "Difficulty:",
       definition: adversary.difficulty!
@@ -140,9 +118,6 @@
       {#each adversary.feats! as feature, i}
         <li class={ `feature-${i}` }>
           <LabeledBlock
-            {context}
-            {plugin}
-            {renderer}
             className={ `feature-block-${i}` }
             name={feature.name}
             definition={ feature.text }
@@ -151,4 +126,8 @@
       {/each}
     </ul>
   </div>
+
+  {#if blockConfiguration.get("tracked") == true}
+    <TrackingBlock {adversary}></TrackingBlock>
+  {/if}
 </div>
