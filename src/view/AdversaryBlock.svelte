@@ -4,13 +4,16 @@
 	import AdversaryBlockRenderer from "./adversary-renderer";
 	import LabeledBlock from "./components/labeled-block.svelte";
 	import TrackingBlock from "./components/tracking-block.svelte";
-	import { _context, _plugin, _renderer } from "./daggerstore";
+	import { _context, _encounter, _plugin, _renderer } from "./daggerstore";
+	import type { Encounter } from "src/types/encounter";
+	import { onMount } from "svelte";
 
   export interface AdversaryBlockProps {
     context: string;
     adversary: Adversary;
     plugin: DaggerheartToolsPlugin;
     renderer: AdversaryBlockRenderer;
+    encounter: Encounter;
     blockConfiguration?: Map<string, boolean>;
   }
 
@@ -25,12 +28,26 @@
     adversary,
     plugin,
     renderer,
+    encounter,
     blockConfiguration = new Map<string, boolean>([["tracked", true]]),
   }: AdversaryBlockProps = $props();
 
   _plugin.set(plugin);
   _renderer.set(renderer);
   _context.set(context);
+  _encounter.set(encounter);
+
+  let encounterState: Encounter = $state(encounter);
+
+  const onEncounterUpdate = (enc: Encounter) => {
+    console.log("update recieved", enc);
+    encounterState = enc;
+    _encounter.set(enc);
+  }
+
+  
+  plugin.onEncounterChange(onEncounterUpdate);
+  
 
   let description: LabeledItem = $derived({
     className: "motives",
@@ -99,7 +116,7 @@
   <div class="dht-tier">
     <h3>Tier {adversary.tier} {adversary.type}</h3>
   </div>
-  <div class="description">{adversary.description}</div>
+  <div class="description">{adversary.text}</div>
   <LabeledBlock {...description}></LabeledBlock>
   <hr class="divider" />
   <div class="attributes">
@@ -119,8 +136,8 @@
         <li class={ `feature-${i}` }>
           <LabeledBlock
             className={ `feature-block-${i}` }
-            name={feature.name}
-            definition={ feature.text }
+            name={feature.name!}
+            definition={ feature.text! }
           ></LabeledBlock>
         </li>
       {/each}
@@ -128,6 +145,6 @@
   </div>
 
   {#if blockConfiguration.get("tracked") == true}
-    <TrackingBlock {adversary}></TrackingBlock>
+    <TrackingBlock {adversary} encounter={encounterState}></TrackingBlock>
   {/if}
 </div>

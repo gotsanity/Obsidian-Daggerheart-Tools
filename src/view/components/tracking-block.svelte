@@ -8,47 +8,33 @@
 
     let {
         adversary,
-        encounterId = null,
+        encounter,
     } : {
         adversary: Adversary,
-        encounterId?: string | null,
+        encounter: Encounter,
     } = $props();
 
     let plugin: DaggerheartToolsPlugin;
-    console.log("loaded")
     let plugSub = _plugin.subscribe(plug => plugin = plug);
 
-    let encounter: Encounter | undefined = $state();
-    let combatants: Combatant[] = $state([]); 
-    let encSub = _encounter.subscribe(e => {
-        encounter = e
-        console.log(e);
-        // combatants = e.adversaries
+    let combatants = $derived.by(() => {
+        return encounter.adversaries.filter(c => c.name === adversary.name);
     });
 
-    export async function startTracking() {
-        if (!encounterId) {
-            let fm = await plugin.getFrontmatter();
-            if (!fm || !fm["encounterId"]) {
-                encounterId = nanoid();
-            } else {
-                encounterId = fm['encounterId'];
-            }
-        }
-        
-        await plugin.addCombatant(encounterId!, adversary as Adversary);
-        encounter = plugin.settings.encounters.find(e => e.id === encounterId);
-        console.log(await encounter);
+    export async function addCombatant() {        
+        await plugin.addCombatant(encounter.id, adversary as Adversary);
     }
 
 </script>
 
 <div class="controls">
-    {#if !encounter}
-    <div class="tracking-control"><input type="button" value="Start Tracking" onclick={startTracking}></div>
+    {#if encounter}
+    <h4>Combatants {encounter.id}</h4>
+    <input type="button" value="Add" onclick={addCombatant}>
     {/if}
-    
+
     {#each combatants as combatant }
         <CombatantBlock {...combatant}></CombatantBlock>
     {/each}
+
 </div>

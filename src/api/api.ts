@@ -63,7 +63,6 @@ export class Api {
      * @returns {string[]}
      */
     getBestiaryNames(): string[] {
-        console.log(Bestiary.getBestiaryNames())
         return Bestiary.getBestiaryNames();
     }
 

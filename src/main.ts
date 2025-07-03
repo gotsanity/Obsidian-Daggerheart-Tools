@@ -88,149 +88,6 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 	}
 
-	async addYamlProperty<K, T>(prop: K, val: T, adversary: Adversary) {
-		await app.workspace.getActiveFileView().setState({ mode: 'source', source: false }, {}); // live preview mode
-
-		let editor = await this.app.workspace.activeEditor?.editor;
-
-		if (!editor) {
-			new Notice("No editor available. Please switch to preview mode.");
-		}
-		let eol = editor?.lineCount()!;
-		let end = { line: eol + 1, ch: 0 };
-		const range = await editor?.getRange({ line: 0, ch: 0 }, end);
-
-        if (range.indexOf("```adversary\n") === -1) return null;
-		
-		const split = range.split("\n");
-
-		// check to see if we found a block
-        let inBlock = false;
-		let starts: number[] = [];
-		let ends: number[] = [];
-
-		let lastEnd: number = -1;
-
-        for (let i = split.length - 1; i >= 0; i--) {
-            let line = split[i];
-			
-			// find ends
-            if (/\`\`\`$/.test(line)) {
-				lastEnd = i;
-			}
-
-			// find starts
-            if (/\`\`\`adversary/.test(line)) {
-                inBlock = true;
-                starts.push(i);
-				if (lastEnd >= 0) {
-					ends.push(lastEnd);
-					lastEnd = -1;
-				} else {
-					new Notice("Daggerheart Tools encountered a syntax error.");
-					return;
-				}
-            }
-        }
-
-        if (!inBlock) return;
-
-		if (starts.length != ends.length) {
-			new Notice("Daggerheart Tools encountered a syntax error.");
-			return;
-		}
-
-		for (let i = 0; i < starts.length; i++) {
-			let start = { line: starts[i], ch: 0 };
-			let end = { line: ends[i], ch: 0 };
-			let subRange = await editor?.getRange(start, end);
-			if (subRange?.indexOf(`name: ${ adversary.name }`)! > -1) {
-				// TODO: add check for prefixed text like callouts
-				editor?.replaceRange(
-					`${prop}: ${val}\n`,
-					end
-				);
-			}
-		}
-	}
-
-	async setYamlProperty<K, T>(prop: K, val: T, oldVal: T, adversary: Adversary) {
-		await app.workspace.getActiveFileView().setState({ mode: 'source', source: false }, {}); // live preview mode
-
-		let editor = await this.app.workspace.activeEditor?.editor;
-
-		if (!editor) {
-			new Notice("No editor available. Please switch to preview mode.");
-		}
-		let eol = editor?.lineCount()!;
-		let end = { line: eol + 1, ch: 0 };
-		const range = await editor?.getRange({ line: 0, ch: 0 }, end);
-
-        if (range.indexOf("```adversary\n") === -1) return null;
-		
-		const split = range.split("\n");
-
-		// check to see if we found a block
-        let inBlock = false;
-		let starts: number[] = [];
-		let ends: number[] = [];
-
-		let lastEnd: number = -1;
-
-        for (let i = split.length - 1; i >= 0; i--) {
-            let line = split[i];
-			
-			// find ends
-            if (/\`\`\`$/.test(line)) {
-				lastEnd = i;
-			}
-
-			// find starts
-            if (/\`\`\`adversary/.test(line)) {
-                inBlock = true;
-                starts.push(i);
-				if (lastEnd >= 0) {
-					ends.push(lastEnd);
-					lastEnd = -1;
-				} else {
-					new Notice("Daggerheart Tools encountered a syntax error.");
-					return;
-				}
-            }
-        }
-
-        if (!inBlock) return;
-
-		if (starts.length != ends.length) {
-			new Notice("Daggerheart Tools encountered a syntax error.");
-			return;
-		}
-
-		for (let i = 0; i < starts.length; i++) {
-			let start = { line: starts[i], ch: 0 };
-			let end = { line: ends[i], ch: 0 };
-			let subRange = await editor?.getRange(start, end);
-			if (subRange?.indexOf(`name: ${ adversary.name }`)! > -1) {
-				let subline = subRange?.split('\n').indexOf(`${prop}: ${oldVal}`)!;
-				if (subline === -1) {
-					editor?.replaceRange(
-						`${prop}: ${val}\n`,
-						end
-					);
-					return;
-				}
-				let innerStart = { line: start.line + subline, ch: 0 }
-				let innerEnd = { line: start.line + subline, ch: subRange?.split('\n')[subline].length! }
-				editor?.replaceRange(
-					`${prop}: ${val}`,
-					innerStart,
-					innerEnd,
-					`${adversary.name}`
-				);
-			}
-		}
-	}
-
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
@@ -248,8 +105,12 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		return cache?.frontmatter;
 	}
 
-	async writeFrontmatter(file: TFile, key: string, value: any) {
-		this.app.fileManager.processFrontMatter(file, (frontmatter: any) => {
+	async writeFrontmatter(file: TFile | null = null, key: string, value: any) {
+		if (!file) {
+			file = this.app.workspace.getActiveFile();
+		}
+
+		this.app.fileManager.processFrontMatter(file!, (frontmatter: any) => {
 			frontmatter[key] = value;
         });
 	}
@@ -262,34 +123,61 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			hp: adversary.hp,
 			stress: adversary.stress
 		}
-		
-		let file = this.app.workspace.getActiveFile();
-
-		if (!file) {
-			new Notice("No active file opened.");
-			return;
-		}
-
-		let frontmatter = this.getFrontmatter(file);
-
-		if (!frontmatter || !frontmatter["encounterId"]) {
-			await this.writeFrontmatter(file, "encounterId", encounterId);
-		}
 
 		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
 
-		if (index > -1) {
-			this.settings.encounters[index].adversaries.push(combatant)
-		} else {
-			this.settings.encounters.push({
-				id: encounterId,
-				adversaries: [combatant],
-				allies: [],
-				environments: [],
-			})
+		if (index < 0) {
+			new Notice("No data found for encounter.");
+			return;
 		}
 		
+		this.settings.encounters[index].adversaries.push(combatant)
+		
 		await this.saveSettings();
+		this.notifyEncounterChange(this.settings.encounters[index]);
+	}
+
+	async removeCombatant(encounterId: string, combatantId: string) {
+		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+
+		if (index < 0) {
+			new Notice("No data found for encounter.");
+			return;
+		}
+		
+		this.settings.encounters[index].adversaries = this.settings.encounters[index].adversaries.filter(c => c.id != combatantId);
+		this.saveSettings();
+		this.notifyEncounterChange(this.settings.encounters[index]);
+	}
+
+	onEncounterChangeCallbacks: ((enc: Encounter) => void)[] = [];
+
+	onEncounterChange(cb: (enc: Encounter) => void) {
+		this.onEncounterChangeCallbacks.push(cb);
+	}
+
+	notifyEncounterChange(enc: Encounter) {
+		this.onEncounterChangeCallbacks.forEach(cb => cb(enc));
+	}
+
+	createEncounter(): string {
+		let encounterId = nanoid();
+		this.writeFrontmatter(null, 'encounterId', encounterId);
+		let encounter: Encounter = {
+			id: encounterId,
+			adversaries: [],
+			environments: [],
+			allies: []
+		};
+		
+		this.settings.encounters.push(encounter);
+		this.saveSettings();
+		this.notifyEncounterChange(encounter);
+		return encounterId;
+	}
+
+	getEncounter(id: string): Encounter | undefined {
+		return this.settings.encounters.find(e => e.id === id);
 	}
 
 

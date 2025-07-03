@@ -1,12 +1,13 @@
 import { MarkdownRenderChild, parseYaml, stringifyYaml, TFile } from "obsidian";
 import { Linkifier } from "src/parser/linkify";
-import type { Combatant } from "src/types/encounter";
+import type { Combatant, Encounter } from "src/types/encounter";
 import type { RendererParameters } from "src/types/renderer";
 import DaggerheartToolsPlugin from "src/main";
 import type { Adversary, AdversaryParameters } from "src/types/adversary";
 import { Bestiary } from "src/bestiary/bestiary";
 import AdversaryBlock from "./AdversaryBlock.svelte";
 import { mount } from "svelte";
+import { nanoid } from "src/util/util";
 
 
 
@@ -22,6 +23,7 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     params!: Partial<AdversaryParameters>;
     context: string;
     fileRef: TFile;
+    encounter?: Partial<Encounter>;
     $adversaryBlock!: ReturnType<typeof AdversaryBlock> | undefined;
 
     constructor(
@@ -199,12 +201,30 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     async init() {
         this.containerEl.empty();
         this.adversary = (await this.build()) as Adversary;
+
+        let fm = this.plugin.getFrontmatter(this.fileRef);
+
+        if (fm && fm['encounterId']) {
+            let encounterId = fm['encounterId'];
+            let encounter = this.plugin.getEncounter(encounterId);
+            if (encounter) {
+                this.encounter = encounter;
+            } else {
+                encounterId = this.plugin.createEncounter();
+                this.encounter = this.plugin.getEncounter(encounterId);
+            }
+        } else {
+            let encounterId = this.plugin.createEncounter();
+            this.encounter = this.plugin.getEncounter(encounterId);
+        }
+
         this.$adversaryBlock = mount(AdversaryBlock, {
             target: this.containerEl,
             props: {
                 context: this.context,
                 adversary: this.adversary,
                 plugin: this.plugin,
+                encounter: this.encounter,
                 renderer: this
             }
         });
