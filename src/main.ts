@@ -203,6 +203,31 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		return this.settings.encounters.find(e => e.id === id);
 	}
 
+	checkDirtyEncounter(encounterId: string, adversary: Adversary) {
+		console.log("checking", adversary);
+
+		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+
+		if (index < 0) {
+			return;
+		}
+
+		let combatants = this.settings.encounters[index].adversaries;
+
+		for (let i = 0; i < combatants.length; i++) {
+			if (combatants[i].parentId == adversary.id) {
+				combatants[i] = Object.assign(combatants[i], {
+					name: adversary.name,
+					maxHP: adversary.hp,
+					maxStress: adversary.stress
+				})
+			}
+		}
+
+		this.settings.encounters[index].adversaries = combatants;
+		this.saveSettings();
+		this.notifyEncounterChange(this.settings.encounters[index]);
+	}
 
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		try {
@@ -224,7 +249,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
             ctx.addChild(adversary);
         } catch (e) {
-            console.error(`Obsidian Statblock Error:\n${e}`);
+            console.error(`Daggerheart Adversary Error:\n${e}`);
             let pre = createEl("pre");
             pre.setText(`\`\`\`adversary
 				There was an error rendering the statblock:

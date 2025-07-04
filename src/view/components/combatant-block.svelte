@@ -2,6 +2,7 @@
 	import type DaggerheartToolsPlugin from "src/main";
 	import type { Combatant, Encounter } from "src/types/encounter";
 	import { _encounter, _plugin } from "../daggerstore";
+	import { onMount } from "svelte";
 
 
     let {
@@ -38,6 +39,34 @@
             maxStress: maxStress,
         });
     }
+
+    onMount(() => {
+        let update = false;
+
+        if (hp > maxHP) {
+            hp = maxHP
+            update = true;
+        }
+
+        if (hp < 0) {
+            hp = 0;
+            update = true;
+        }
+
+        if (stress > maxStress) {
+            stress = maxStress
+            update = true;
+        }
+
+        if (stress < 0) {
+            stress = 0;
+            update = true;
+        }
+
+        if (update) {
+            updateCombatant();
+        }
+    })
   
 </script>
 

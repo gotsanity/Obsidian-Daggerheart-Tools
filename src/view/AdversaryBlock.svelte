@@ -39,13 +39,17 @@
   let encounterState: Encounter = $state(encounter);
 
   const onEncounterUpdate = (enc: Encounter) => {
-    console.log("update recieved", enc);
     encounterState = enc;
     _encounter.set(enc);
   }
 
-  
   plugin.onEncounterChange(onEncounterUpdate);
+
+  const onAdversaryUpdate = (adv: Adversary) => {
+    adversary = adv;
+  }
+
+  renderer.onAdversaryChange(onAdversaryUpdate);
   
 
   let description: LabeledItem = $derived({

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type DaggerheartToolsPlugin from "src/main";
-	import { _encounter, _plugin } from "../daggerstore";
+	import { _encounter, _plugin, _renderer } from "../daggerstore";
 	import type { Adversary } from "src/types/adversary";
 	import { nanoid } from "src/util/util";
 	import type { Combatant, Encounter } from "src/types/encounter";
 	import CombatantBlock from "./combatant-block.svelte";
+	import type AdversaryBlockRenderer from "../adversary-renderer";
+	import { onMount } from "svelte";
 
     let {
         adversary,
@@ -24,6 +26,10 @@
     export async function addCombatant() {        
         await plugin.addCombatant(encounter.id, adversary as Adversary);
     }
+
+    onMount(() => {
+        plugin.checkDirtyEncounter(encounter.id, adversary);
+    });
 
 </script>
 
