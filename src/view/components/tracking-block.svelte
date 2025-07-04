@@ -27,14 +27,17 @@
 
 </script>
 
-<div class="controls">
+<div class="encounter-tracker">
     {#if encounter}
-    <h4>Combatants {encounter.id}</h4>
-    <input type="button" value="Add" onclick={addCombatant}>
+        <h4>Combatants</h4>
+        <div class="controls">
+            <input type="button" value="Add" onclick={addCombatant}>
+        </div>
     {/if}
 
-    {#each combatants as combatant }
-        <CombatantBlock {...combatant}></CombatantBlock>
+    {#each combatants as combatant, index }
+        <div class="tracker">
+            <CombatantBlock {...combatant} combatantNumber={index}></CombatantBlock>
+        </div>
     {/each}
-
 </div>

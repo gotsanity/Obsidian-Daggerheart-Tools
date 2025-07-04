@@ -119,9 +119,12 @@ export default class DaggerheartToolsPlugin extends Plugin {
 	async addCombatant(encounterId: string, adversary: Adversary) {
 		let combatant: Combatant = {
 			name: adversary.name,
+			parentId: adversary.id,
 			id: nanoid(),
-			hp: adversary.hp,
-			stress: adversary.stress
+			hp: 0,
+			stress: 0,
+			maxHP: adversary.hp,
+			maxStress: adversary.stress
 		}
 
 		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
@@ -146,6 +149,26 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		}
 		
 		this.settings.encounters[index].adversaries = this.settings.encounters[index].adversaries.filter(c => c.id != combatantId);
+		this.saveSettings();
+		this.notifyEncounterChange(this.settings.encounters[index]);
+	}
+
+	async updateCombatant(encounterId: string, combatant: Combatant) {
+		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+
+		if (index < 0) {
+			new Notice("No data found for encounter.");
+			return;
+		}
+
+		let cindex = this.settings.encounters[index].adversaries.findIndex(c => c.id == combatant.id);
+
+		if (cindex < 0) {
+			new Notice("Combatant not found.");
+			return;
+		}
+		
+		this.settings.encounters[index].adversaries[cindex] = combatant;
 		this.saveSettings();
 		this.notifyEncounterChange(this.settings.encounters[index]);
 	}
@@ -184,7 +207,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		try {
             // /** Replace Links */
-            //source = Linkifier.transformSource(source);
+            source = Linkifier.transformSource(source);
 
             /** Get Parameters */
             let params: AdversaryParameters = parseYaml(source);

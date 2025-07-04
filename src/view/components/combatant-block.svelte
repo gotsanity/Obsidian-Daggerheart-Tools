@@ -2,16 +2,20 @@
 	import type DaggerheartToolsPlugin from "src/main";
 	import type { Combatant, Encounter } from "src/types/encounter";
 	import { _encounter, _plugin } from "../daggerstore";
-	import type { Adversary } from "src/types/adversary";
 
 
     let {
         name,
+        parentId,
         id,
         hp,
         stress,
-        ...rest
-    }: Combatant = $props();
+        maxHP,
+        maxStress,
+        combatantNumber,
+    }: Combatant & {
+        combatantNumber: number
+    } = $props();
 
     let plugin: DaggerheartToolsPlugin;
     let plugSub = _plugin.subscribe(plug => plugin = plug);
@@ -20,14 +24,68 @@
     let encSub = _encounter.subscribe(enc => encounter = enc);
 
     export async function removeCombatant() {        
-        await plugin.removeCombatant(encounter.id, id);
+        await plugin.removeCombatant(encounter.id, id); 
     }
 
+    export async function updateCombatant() {
+        plugin.updateCombatant(encounter.id, {
+            name: name,
+            parentId: parentId,
+            id: id,
+            hp: hp,
+            stress: stress,
+            maxHP: maxHP,
+            maxStress: maxStress,
+        });
+    }
+  
 </script>
 
-<div>
-    { name }
-    <input type="button" value="x" onclick={removeCombatant}>
+<div class="unit unit-{id}">
+    <h3 class="adversary-slug">{ name } #{String(combatantNumber + 1).padStart(2, "0")}</h3>
+    <input type="button" class="unit-controls" value="Remove" onclick={removeCombatant}>
+    <div class="hp-toggles">
+        <ul class="toggle-list">
+            <li class="toggle-item hp-label-item">
+                <span class="hp-label">HP:</span>
+            </li>
+            {#each {length: maxHP} as i, index}
+                <li class="toggle-item hp-{index}">
+                    <input type="checkbox" class="hp-input-{index}" bind:checked={() => {
+                        return hp > index;
+                    }, (checked) => {
+                        if (!checked) {
+                            hp--;
+                        } else {
+                            hp++;
+                        }
+                        updateCombatant();
+                    }}>
+                </li>
+            {/each}
+        </ul>
+    </div>
+    <div class="stress-toggles">
+        <ul class="toggle-list">
+            <li class="toggle-item stress-label-item">
+                <span class="stress-label">Stress:</span>
+            </li>
+            {#each {length: maxStress} as i, index}
+                <li class="toggle-item stress-{index}">
+                    <input type="checkbox" class="stress-input-{index}" bind:checked={() => {
+                        return stress > index;
+                    }, (checked) => {
+                        if (!checked) {
+                            stress--;
+                        } else {
+                            stress++;
+                        }
+                        updateCombatant();
+                    }}>
+                </li>
+            {/each}
+        </ul>
+    </div>
 </div>
 
 

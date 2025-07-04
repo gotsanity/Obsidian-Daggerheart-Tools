@@ -6,7 +6,6 @@
 	import TrackingBlock from "./components/tracking-block.svelte";
 	import { _context, _encounter, _plugin, _renderer } from "./daggerstore";
 	import type { Encounter } from "src/types/encounter";
-	import { onMount } from "svelte";
 
   export interface AdversaryBlockProps {
     context: string;
