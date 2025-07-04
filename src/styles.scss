@@ -78,6 +78,32 @@
         padding-bottom: 1rem;
     }
 
+    .encounter-header,
+    .combatant-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .encounter-header h4 {
+        margin-left: 0.5rem;
+    }
+
+
+    .encounter-header .controls,
+    .combatant-header .controls {
+        display: flex;
+        align-content: center;
+    }
+
+    .encounter-header .controls {
+        margin-right: 1.0rem;
+    }
+
+    // .btn-danger {
+    //     background-color: ;
+    // }
+
     .tracker {
         padding: 0.5rem;
         margin: 0.5rem;

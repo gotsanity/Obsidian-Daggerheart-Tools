@@ -71,8 +71,12 @@
 </script>
 
 <div class="unit unit-{id}">
-    <h3 class="adversary-slug">{ name } #{String(combatantNumber + 1).padStart(2, "0")}</h3>
-    <input type="button" class="unit-controls" value="Remove" onclick={removeCombatant}>
+    <div class="combatant-header">
+        <h3 class="adversary-slug">{ name } #{String(combatantNumber + 1).padStart(2, "0")}</h3>
+        <div class="controls">
+            <input type="button" class="unit-controls btn-danger" value="Remove" onclick={removeCombatant}>
+        </div>
+    </div>
     <div class="hp-toggles">
         <ul class="toggle-list">
             <li class="toggle-item hp-label-item">

@@ -35,10 +35,13 @@
 
 <div class="encounter-tracker">
     {#if encounter}
+    <div class="encounter-header">
         <h4>Combatants</h4>
         <div class="controls">
             <input type="button" value="Add" onclick={addCombatant}>
         </div>
+    </div>
+        
     {/if}
 
     {#each combatants as combatant, index }
