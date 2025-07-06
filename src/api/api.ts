@@ -6,7 +6,7 @@ import type { Adversary } from "src/types/adversary";
 
 declare global {
     interface Window {
-        DaggerheartTools: Api;
+        DaggerheartTools?: Api;
     }
 }
 

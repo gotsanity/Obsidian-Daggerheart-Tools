@@ -1,6 +1,6 @@
 
 import DaggerheartToolsPlugin from "src/main";
-import { Adversary, AdversaryParameters } from "./adversary";
+import type { Adversary, AdversaryParameters } from "./adversary";
 
 export type RendererParameters = {
     container: HTMLElement;

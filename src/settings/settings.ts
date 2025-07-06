@@ -1,6 +1,7 @@
 import { PluginSettingTab, App, Setting } from "obsidian";
 import DaggerheartToolsPlugin from "src/main";
 import type { Adversary } from "src/types/adversary";
+import type { AbilityCard } from "src/types/card";
 import type { Encounter } from "src/types/encounter";
 import type { Environment } from "src/types/environment";
 
@@ -8,26 +9,30 @@ export interface DaggerheartToolsSettings {
 	parseFrontmatter: boolean;
 	adversaries: Adversary[];
 	encounters: Encounter[];
-	biomes: Environment[];
+	environments: Environment[];
+	abilityCards: AbilityCard[];
     version: {
         major: number;
         minor: number;
         patch: number;
     };
 	disableSRD: boolean;
+	saved: boolean;
 }
 
 export const DEFAULT_SETTINGS: DaggerheartToolsSettings = {
 	parseFrontmatter: false,
 	adversaries: [],
 	encounters: [],
-	biomes: [],
+	environments: [],
+	abilityCards: [],
 	version: {
         major: 1,
         minor: 0,
         patch: 0,
     },
-	disableSRD: false
+	disableSRD: false,
+	saved: false
 }
 
 export class DaggerheartToolsSettingsTab extends PluginSettingTab {

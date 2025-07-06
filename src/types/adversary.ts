@@ -11,7 +11,7 @@ export interface AdversaryParameters
 export type Adversary = AdversaryProps & TieredProps & HealthProps & DifficultyProps & FeaturesProps & CommonProps;
 
 export interface AdversaryProps {
-    type: string;
+    adversaryType: string;
     subtype?: string;
     motives_and_tactics?: string;
     thresholds?: string;

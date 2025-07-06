@@ -22,8 +22,8 @@ export const STANDARD_FIELDS = [
 
 export class AdversarySuggester extends EditorSuggest<string> {
     private _context: SuggestContext = SuggestContext.None;
-    private _keys: string[];
-	private _props: Map<string, CommonProps>;
+    private _keys: string[] = [];
+	private _props: Map<string, CommonProps> = new Map<string, CommonProps>();
     constructor(public plugin: DaggerheartToolsPlugin) {
         super(plugin.app);
     }
@@ -77,7 +77,7 @@ export class AdversarySuggester extends EditorSuggest<string> {
         if (this._context === SuggestContext.Property) {
             if (this._props.has(value)) {
                 const prop = this._props.get(value);
-                switch (prop.type) {
+                switch (prop!.type) {
                     /** Text only */
                     case "heading":
                     case "subheading":
@@ -87,32 +87,6 @@ export class AdversarySuggester extends EditorSuggest<string> {
                         value = `${value}: `;
                         break;
                     }
-                    // /** Traits */
-                    // case "traits": {
-                    //     value = `${value}:\n  - name: \n    desc:`;
-                    //     cursorAddition = value.length - `\n    desc:`.length;
-                    //     break;
-                    // }
-                    // /** Array of strings */
-                    // case "table": {
-                    //     value = `${value}: []`;
-                    //     cursorAddition = value.length - 1;
-                    //     break;
-                    // }
-                    // /** Array */
-                    // case "saves":
-                    // case "spells": {
-                    //     value = `${value}:\n  - `;
-                    //     cursorAddition = value.length;
-                    //     break;
-                    // }
-                    // /** Nothing */
-                    // case "inline":
-                    // case "group":
-                    // case "ifelse":
-                    // case "collapse":
-                    // case "javascript":
-                    // case "layout":
                     default: {
                         break;
                     }
@@ -138,7 +112,7 @@ export class AdversarySuggester extends EditorSuggest<string> {
 
         this.context.editor.setCursor(
             this.context.start.line,
-            this.context.start.ch + cursorAddition
+            this.context.start.ch + cursorAddition!
         );
 
         this.close();
@@ -151,23 +125,23 @@ export class AdversarySuggester extends EditorSuggest<string> {
     ): EditorSuggestTriggerInfo {
         const range = editor.getRange({ line: 0, ch: 0 }, cursor);
 
-        if (range.indexOf("```adversary\n") === -1) return null;
+        if (range.indexOf("```adversary\n") === -1) return null!;
 
         const split = range.split("\n");
 
 		// check to see if we found a block
-        let inBlock = false,
-            start: number;
+        let inBlock = false;
+        let start: number = -1;
         for (let i = split.length - 1; i >= 0; i--) {
             let line = split[i];
-            if (/^\`\`\`$/.test(line)) return null;
+            if (/^\`\`\`$/.test(line)) return null!;
             if (/^\`\`\`adversary/.test(line)) {
                 inBlock = true;
                 start = i;
                 break;
             }
         }
-        if (!inBlock) return;
+        if (!inBlock) return null!;
 
 
         const line = editor.getLine(cursor.line);
@@ -177,11 +151,11 @@ export class AdversarySuggester extends EditorSuggest<string> {
         if (/^(dice|render)/.test(line)) {
             this._context = SuggestContext.Bool;
             const match = line.match(/^(dice|render):\s?(.*)\n?/);
-            if (!match) return null;
+            if (!match) return null!;
             const [_, param, query] = match;
 
             if (query === "true" || query === "false") {
-                return null;
+                return null!;
             }
             return {
                 end: cursor,
@@ -195,7 +169,7 @@ export class AdversarySuggester extends EditorSuggest<string> {
         if (/^(name|monster|creature|extends):/.test(line)) {
             this._context = SuggestContext.Adversary;
             const match = line.match(/^(name|monster|creature|extends):\s?(.*)\n?/);
-            if (!match) return null;
+            if (!match) return null!;
             const [_, param, query] = match;
 			
             if (
@@ -203,7 +177,7 @@ export class AdversarySuggester extends EditorSuggest<string> {
                     (p) => p.toLowerCase() == query.toLowerCase()
                 )
             ) {
-                return null;
+                return null!;
             }
             return {
                 end: cursor,

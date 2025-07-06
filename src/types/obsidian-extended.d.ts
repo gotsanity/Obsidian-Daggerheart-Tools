@@ -1,11 +1,11 @@
 import "obsidian";
 
-// interface StatblockEvents {
-//     "fantasy-statblocks:settings-change": StatblockData;
-//     "fantasy-statblocks:frontmatter-change": boolean;
-//     "fantasy-statblocks:srd-change": boolean;
-//     "fantasy-statblocks:loaded": null;
-// }
+interface DaggerheartEvents {
+    "daggerheart-tools:settings-change": DaggerheartToolsSettings;
+    "daggerheart-tools:frontmatter-change": boolean;
+    "daggerheart-tools:srd-change": boolean;
+    "daggerheart-tools:loaded": null;
+}
 
 declare module "obsidian" {
     interface App {
@@ -36,14 +36,14 @@ declare module "obsidian" {
         };
     }
     interface Workspace {
-        // on<T extends keyof StatblockEvents>(
-        //     name: T,
-        //     callback: (data: StatblockEvents[T]) => void
-        // ): EventRef;
-        // trigger<T extends keyof StatblockEvents>(
-        //     name: T,
-        //     data: StatblockEvents[T]
-        // ): void;
+        on<T extends keyof DaggerheartEvents>(
+            name: T,
+            callback: (data: DaggerheartEvents[T]) => void
+        ): EventRef;
+        trigger<T extends keyof DaggerheartEvents>(
+            name: T,
+            data: DaggerheartEvents[T]
+        ): void;
         trigger(name: "hover-link", data: HoverLinkEvent): EventRef;
     }
     interface WorkspaceLeaf {

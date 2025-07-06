@@ -19,20 +19,29 @@ import { Api } from './api/api';
 import { Bestiary } from './bestiary/bestiary';
 import type { Combatant, Encounter } from './types/encounter';
 import { nanoid } from './util/util';
+import { AbilityCardRepository, AdversaryRepository, EncounterRepository, EnvironmentRepository } from './bestiary/repository';
 
 
 
 export default class DaggerheartToolsPlugin extends Plugin {
-	settings: DaggerheartToolsSettings;
-	api: Api = new Api(this);
+	settings: DaggerheartToolsSettings = Object.assign(DEFAULT_SETTINGS);
+	// TODO: disabled until it is updated for future versions
+	//api: Api = new Api(this);
+	adversaries = new AdversaryRepository(this);
+	encounters = new EncounterRepository(this);
+	environments = new EnvironmentRepository(this);
+	abilityCards = new AbilityCardRepository(this);
 
 	async onload() {
 		console.log("Loaded Daggerheart-Tools")
 		await this.loadSettings();
 		addIcon(IconStore.iconId, IconStore.iconSvgContent);
 
-		(window["DaggerheartTools"] = this.api) &&
-            this.register(() => delete window["DaggerheartTools"]);
+		this.adversaries.load();
+		this.encounters.load();
+
+		// (window["DaggerheartTools"] = this.api) &&
+        //     this.register(() => delete window["DaggerheartTools"]);
 
 		
 		Bestiary.initialize(this);
@@ -46,13 +55,13 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
 
 		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'add-adversary-to-note',
-			name: 'Add adversary to current document',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				new Notice("This feature does not work correctly yet.");
-			}
-		});
+		// this.addCommand({
+		// 	id: 'add-adversary-to-note',
+		// 	name: 'Add adversary to current document',
+		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
+		// 		new Notice("This feature does not work correctly yet.");
+		// 	}
+		// });
 
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
@@ -127,60 +136,47 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			maxStress: adversary.stress
 		}
 
-		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+		let encounter = this.encounters.find(e => e.id == encounterId);
 
-		if (index < 0) {
-			new Notice("No data found for encounter.");
+		if (encounter == undefined) {
+			new Notice("Error: Unable to add combatant, no encounter found.");
 			return;
 		}
 		
-		this.settings.encounters[index].adversaries.push(combatant)
+		encounter.adversaries.push(combatant)
 		
-		await this.saveSettings();
-		this.notifyEncounterChange(this.settings.encounters[index]);
+		this.encounters.update("id", encounter);
 	}
 
 	async removeCombatant(encounterId: string, combatantId: string) {
-		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+		let encounter = this.encounters.find(e => e.id == encounterId);
 
-		if (index < 0) {
-			new Notice("No data found for encounter.");
+		if (encounter == undefined) {
+			new Notice("No encounter found while trying to remove combatant.");
 			return;
 		}
 		
-		this.settings.encounters[index].adversaries = this.settings.encounters[index].adversaries.filter(c => c.id != combatantId);
-		this.saveSettings();
-		this.notifyEncounterChange(this.settings.encounters[index]);
+		encounter.adversaries = encounter.adversaries.filter(c => c.id != combatantId);
+		this.encounters.update("id", encounter);
 	}
 
 	async updateCombatant(encounterId: string, combatant: Combatant) {
-		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
+		let encounter = this.encounters.find(e => e.id == encounterId);
 
-		if (index < 0) {
-			new Notice("No data found for encounter.");
+		if (encounter == undefined) {
+			new Notice("No encounter found on Update Combatant");
 			return;
 		}
 
-		let cindex = this.settings.encounters[index].adversaries.findIndex(c => c.id == combatant.id);
+		let cindex = encounter.adversaries.findIndex(c => c.id == combatant.id);
 
 		if (cindex < 0) {
 			new Notice("Combatant not found.");
 			return;
 		}
 		
-		this.settings.encounters[index].adversaries[cindex] = combatant;
-		this.saveSettings();
-		this.notifyEncounterChange(this.settings.encounters[index]);
-	}
-
-	onEncounterChangeCallbacks: ((enc: Encounter) => void)[] = [];
-
-	onEncounterChange(cb: (enc: Encounter) => void) {
-		this.onEncounterChangeCallbacks.push(cb);
-	}
-
-	notifyEncounterChange(enc: Encounter) {
-		this.onEncounterChangeCallbacks.forEach(cb => cb(enc));
+		encounter.adversaries[cindex] = combatant;
+		this.encounters.update("id", encounter);
 	}
 
 	createEncounter(): string {
@@ -193,26 +189,23 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			allies: []
 		};
 		
-		this.settings.encounters.push(encounter);
-		this.saveSettings();
-		this.notifyEncounterChange(encounter);
+		this.encounters.add(encounter);
 		return encounterId;
 	}
 
 	getEncounter(id: string): Encounter | undefined {
-		return this.settings.encounters.find(e => e.id === id);
+		return this.encounters.find(e => e.id === id);
 	}
 
 	checkDirtyEncounter(encounterId: string, adversary: Adversary) {
-		console.log("checking", adversary);
+		let encounter = this.encounters.find(e => e.id == encounterId);
 
-		let index = this.settings.encounters.findIndex(e => e.id == encounterId);
-
-		if (index < 0) {
+		if (encounter == undefined) {
+			new Notice("Error: Encounter not found.");
 			return;
 		}
 
-		let combatants = this.settings.encounters[index].adversaries;
+		let combatants = encounter.adversaries;
 
 		for (let i = 0; i < combatants.length; i++) {
 			if (combatants[i].parentId == adversary.id) {
@@ -224,9 +217,8 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			}
 		}
 
-		this.settings.encounters[index].adversaries = combatants;
-		this.saveSettings();
-		this.notifyEncounterChange(this.settings.encounters[index]);
+		encounter.adversaries = combatants;
+		this.encounters.update("id", encounter);
 	}
 
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
@@ -248,7 +240,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
             });
 
             ctx.addChild(adversary);
-        } catch (e) {
+        } catch (e: any) {
             console.error(`Daggerheart Adversary Error:\n${e}`);
             let pre = createEl("pre");
             pre.setText(`\`\`\`adversary

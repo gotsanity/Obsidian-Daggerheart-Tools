@@ -38,18 +38,30 @@
 
   let encounterState: Encounter = $state(encounter);
 
-  const onEncounterUpdate = (enc: Encounter) => {
-    encounterState = enc;
-    _encounter.set(enc);
+  const onEncounterUpdate = (on: string, enc: Encounter) => {
+    if (encounter.id != enc.id) {
+      return;
+    }
+
+    if (on == "update") {
+      encounterState = enc;
+      _encounter.set(enc);
+    }     
   }
 
-  plugin.onEncounterChange(onEncounterUpdate);
+  plugin.encounters.subscribe(onEncounterUpdate);
 
-  const onAdversaryUpdate = (adv: Adversary) => {
-    adversary = adv;
+  const onAdversaryUpdate = (on: string, adv: Adversary) => {
+    if (adversary.id != adv.id) {
+      return;
+    }
+
+    if (on == "update") {
+      adversary = adv;
+    }
   }
 
-  renderer.onAdversaryChange(onAdversaryUpdate);
+  plugin.adversaries.subscribe(onAdversaryUpdate);
   
 
   let description: LabeledItem = $derived({
@@ -117,7 +129,7 @@
     <h1>{adversary.name}</h1>
   </div>
   <div class="dht-tier">
-    <h3>Tier {adversary.tier} {adversary.type}</h3>
+    <h3>Tier {adversary.tier} {adversary.adversaryType}</h3>
   </div>
   <div class="description">{adversary.text}</div>
   <LabeledBlock {...description}></LabeledBlock>

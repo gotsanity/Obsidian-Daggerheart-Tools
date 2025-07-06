@@ -12,7 +12,8 @@ export type Combatant = CommonProps &
 export type EnemyCombatant = Combatant;
 export type AllyCombatant = Combatant & FeaturesProps;
 
-export type Encounter = CommonProps & {
+export type Encounter = {
+    id: string;
     adversaries: Array<EnemyCombatant>;
     allies: Array<AllyCombatant>;
     environments: Array<Environment>;

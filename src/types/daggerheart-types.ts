@@ -12,8 +12,9 @@ export interface DifficultyProps {
 }
 
 export interface CommonProps {
-    name?: string;
+    name: string;
     id: string;
+    type?: string;
     saved?: boolean;
     note?: string;
     path?: string;

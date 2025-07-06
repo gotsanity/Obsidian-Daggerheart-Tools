@@ -22,7 +22,7 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
     params!: Partial<AdversaryParameters>;
     context: string;
     fileRef: TFile;
-    encounter?: Partial<Encounter>;
+    encounter?: Encounter;
     $adversaryBlock!: ReturnType<typeof AdversaryBlock> | undefined;
 
     constructor(
@@ -34,25 +34,25 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
         this.container = rendererParameters.container;
         this.plugin = rendererParameters.plugin;
         this.context = rendererParameters.context ?? "";
-        this.fileRef = this.plugin.app.workspace.getActiveFile();
+        this.fileRef = this.plugin.app.workspace.getActiveFile()!;
         this.getAdversary(rendererParameters);
         this.init();
     }
 
-    onAdversaryChangeCallbacks: ((adv: Adversary) => void)[] = [];
+    // onAdversaryChangeCallbacks: ((adv: Adversary) => void)[] = [];
 
-    onAdversaryChange(cb: (adv: Adversary) => void) {
-        this.onAdversaryChangeCallbacks.push(cb);
-    }
+    // onAdversaryChange(cb: (adv: Adversary) => void) {
+    //     this.onAdversaryChangeCallbacks.push(cb);
+    // }
 
-    notifyAdversaryChange(adv: Adversary) {
-        this.onAdversaryChangeCallbacks.forEach(cb => cb(enc));
-    }
+    // notifyAdversaryChange(adv: Adversary) {
+    //     this.onAdversaryChangeCallbacks.forEach(cb => cb(adv));
+    // }
 
     getAdversary(params: | { adversary: Adversary } | { params: Partial<AdversaryParameters> }) {
         if ("params" in params) {
             this.params = params.params
-            this.adversary = Object.assign({}, Bestiary.get(this.params.name!));
+            this.adversary = Object.assign({}, this.plugin.adversaries.find(a => a.name == this.params.name!));
         } else {
             this.params = {};
             this.adversary = params.adversary;
@@ -104,16 +104,19 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
 
         let fm = this.plugin.getFrontmatter(this.fileRef);
 
-        if (fm && fm['encounterId']) {
+        // TODO: regenerating encounters for some reason
+        if (fm != undefined && fm['encounterId'] != undefined) {
             let encounterId = fm['encounterId'];
-            let encounter = this.plugin.getEncounter(encounterId);
-            if (encounter) {
+            let encounter = this.plugin.encounters.find(e => e.id == encounterId);
+            if (encounter != undefined) {
                 this.encounter = encounter;
             } else {
+                console.log("fm found, no encounter found, creating")
                 encounterId = this.plugin.createEncounter();
                 this.encounter = this.plugin.getEncounter(encounterId);
             }
         } else {
+            console.log("no fm found, creating");
             let encounterId = this.plugin.createEncounter();
             this.encounter = this.plugin.getEncounter(encounterId);
         }
@@ -124,61 +127,9 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
                 context: this.context,
                 adversary: this.adversary,
                 plugin: this.plugin,
-                encounter: this.encounter,
+                encounter: this.encounter!,
                 renderer: this
             }
         });
-
-
-        // add elements here to handle saving/management
-
-        // this.$ui = new AdversaryBlock({
-        //     target: this.containerEl,
-        //     props: {
-        //         context: this.context,
-        //         monster: this.monster,
-        //         statblock: this.layout.blocks,
-        //         layout: this.layout,
-        //         plugin: this.plugin,
-        //         renderer: this,
-        //         canSave: this.canSave,
-        //         icons: this.icons ?? true
-        //     }
-        // });
-        // this.$ui.$on("save", async () => {
-        //     if (
-        //         Bestiary.hasCreature(this.monster.name) &&
-        //         !(await confirmWithModal(
-        //             this.plugin.app,
-        //             "This will overwrite an existing monster in settings. Are you sure?"
-        //         ))
-        //     )
-        //         return;
-        //     this.plugin.saveMonster({
-        //         ...fastCopy(this.monster),
-        //         source: this.monster.source ?? "Homebrew",
-        //         layout: this.layout.name
-        //     } as Monster);
-        // });
-
-        // this.$ui.$on("export", () => {
-        //     this.plugin.exportAsPng(
-        //         this.monster.name,
-        //         this.containerEl.firstElementChild!
-        //     );
-        // });
-
-        // this.plugin.registerEvent(
-        //     this.plugin.app.workspace.on(
-        //         "fantasy-statblocks:bestiary:creature-added",
-        //         async (creature) => {
-        //             if (extensionNames.includes(creature.name)) {
-        //                 this.monster = copy(creature);
-        //                 this.monster = await this.build();
-        //                 this.$ui.$set({ monster: this.monster });
-        //             }
-        //         }
-        //     )
-        // );
     }
 }
