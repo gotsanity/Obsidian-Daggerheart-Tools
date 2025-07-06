@@ -45,7 +45,10 @@ export class Api {
      * @returns {Map<string, Adversary>}
      */
     getBestiary() {
-        return Bestiary.getBestiary();
+        let keys: string[] = this.#plugin.adversaries.filter(() => true).map(adv => adv.name);
+        let adversaries: Adversary[] = this.#plugin.adversaries.filter(() => true);
+
+        return new Map(keys.map((keys, i) => [keys, adversaries[i]]));
     }
 
     /**
@@ -54,7 +57,7 @@ export class Api {
      * @returns {Adversary[]}
      */
     getBestiaryCreatures(): Adversary[] {
-        return Bestiary.getBestiaryCreatures();
+        return this.#plugin.adversaries.filter(() => true);
     }
 
     /**
@@ -63,7 +66,7 @@ export class Api {
      * @returns {string[]}
      */
     getBestiaryNames(): string[] {
-        return Bestiary.getBestiaryNames();
+        return this.#plugin.adversaries.filter(() => true).map(adv => adv.name);
     }
 
     /**
@@ -73,27 +76,28 @@ export class Api {
      * @returns {boolean}
      */
     hasCreature(name: string): boolean {
-        return Bestiary.hasCreature(name);
+        return this.#plugin.adversaries.find(adv => adv.name == name) != undefined;
     }
 
-    /**
-     * Retrieve a fully defined creature out of the bestiary, resolving all extensions.
-     *
-     * @param {string} name Name of the creautre to retrieve.
-     * @returns {Partial<Adversary> | null} The creature from the bestiary, or null if not present.
-     */
-    getCreatureFromBestiary(name: string): Partial<Adversary> | null {
-        return Bestiary.getCreatureFromBestiarySync(name);
-    }
-    /**
-     * Retrieve a fully defined creature out of the bestiary, resolving all extensions.
-     *
-     * @param {string} name Name of the creautre to retrieve.
-     * @returns {Partial<Adversary> | null} The creature from the bestiary, or null if not present.
-     */
-    async getCreature(name: string): Promise<Partial<Adversary> | null> {
-        return await Bestiary.getCreatureFromBestiary(name);
-    }
+    // /**
+    //  * Retrieve a fully defined creature out of the bestiary, resolving all extensions.
+    //  *
+    //  * @param {string} name Name of the creautre to retrieve.
+    //  * @returns {Partial<Adversary> | null} The creature from the bestiary, or null if not present.
+    //  */
+    // getAdversaryFromBestiary(name: string): Partial<Adversary> | null {
+    //     return Bestiary.getCreatureFromBestiarySync(name);
+    // }
+
+    // /**
+    //  * Retrieve a fully defined creature out of the bestiary, resolving all extensions.
+    //  *
+    //  * @param {string} name Name of the creautre to retrieve.
+    //  * @returns {Partial<Adversary> | null} The creature from the bestiary, or null if not present.
+    //  */
+    // async getCreature(name: string): Promise<Partial<Adversary> | null> {
+    //     return await Bestiary.getCreatureFromBestiary(name);
+    // }
 
     /**
      * Gets an array of monsters sorted by the specified field.
@@ -102,79 +106,90 @@ export class Api {
      * @returns {Array<Adversary>} - An array of monsters sorted by the specified field.
      */
     getSortedBy(field: string): Array<Adversary> {
-        return Bestiary.getSortedBy(field);
+        return this.#plugin.adversaries.filter(() => true).sort((a, b) => (a as any)[field] - (b as any)[field]);
     }
-    /**
-     * Registers a callback to be invoked when monsters are sorted by the specified field.
-     *
-     * @param {string} field - The field by which monsters are sorted.
-     * @param {(values: Array<Adversary>) => void} cb - The callback function to be invoked when sorting occurs.
-     * @returns {() => void} - A function that can be used to unregister the callback.
-     */
-    onSortedBy(
-        field: string,
-        cb: (values: Array<Adversary>) => void
-    ): () => void {
-        return Bestiary.onSortedBy(field, cb);
-    }
-    /**
-     * Registers a custom sorter function for sorting monsters by the specified field.
-     *
-     * @param {string} field - The field by which monsters should be sorted.
-     * @param {(a: Adversary, b: Adversary) => number} compareFn - The comparison function used for sorting.
-     */
-    registerSorter(
-        field: string,
-        compareFn: (a: Adversary, b: Adversary) => number
-    ) {
-        return Bestiary.registerSorter(field, compareFn);
-    }
+
+    // /**
+    //  * Registers a callback to be invoked when monsters are sorted by the specified field.
+    //  *
+    //  * @param {string} field - The field by which monsters are sorted.
+    //  * @param {(values: Array<Adversary>) => void} cb - The callback function to be invoked when sorting occurs.
+    //  * @returns {() => void} - A function that can be used to unregister the callback.
+    //  */
+    // onSortedBy(
+    //     field: string,
+    //     cb: (values: Array<Adversary>) => void
+    // ): () => void {
+    //     return Bestiary.onSortedBy(field, cb);
+    // }
+
+
+    // /**
+    //  * Registers a custom sorter function for sorting monsters by the specified field.
+    //  *
+    //  * @param {string} field - The field by which monsters should be sorted.
+    //  * @param {(a: Adversary, b: Adversary) => number} compareFn - The comparison function used for sorting.
+    //  */
+    // registerSorter(
+    //     field: string,
+    //     compareFn: (a: Adversary, b: Adversary) => number
+    // ) {
+    //     return Bestiary.registerSorter(field, compareFn);
+    // }
+
 
     /**
      * Gets an array of indices.
      *
      * @returns {Array<string>} - An array of indices.
      */
-    getIndices() {
-        return Bestiary.getIndices();
-    }
-    /**
-     * Gets the index map for the specified field.
-     *
-     * @param {string} field - The field for which the index map is retrieved.
-     * @returns {Map<string, Set<string>>} - The index map for the specified field.
-     */
-    getIndex(field: string): Map<string, Set<string>> {
-        return Bestiary.getIndex(field);
-    }
-    /**
-     * Registers an index for the specified field.
-     *
-     * @param {string} field - The field for which the index is registered.
-     */
-    registerIndex(field: string) {
-        return Bestiary.registerIndex(field);
-    }
-    /**
-     * Registers a callback to be invoked when the specified index is updated.
-     *
-     * @param {string} index - The index for which the callback is registered.
-     * @param {() => void} callback - The callback function to be invoked when the index is updated.
-     * @returns {() => void} - A function that can be used to unregister the callback.
-     */
-    onIndexUpdated(index: string, callback: () => void): () => void {
-        return Bestiary.onIndexUpdated(index, callback);
+    getIndices(): Array<string> {
+        return this.#plugin.adversaries.filter(() => true).map(adv => adv.id);
     }
 
+
+    // /**
+    //  * Gets the index map for the specified field.
+    //  *
+    //  * @param {string} field - The field for which the index map is retrieved.
+    //  * @returns {Map<string, Set<string>>} - The index map for the specified field.
+    //  */
+    // getIndex(field: string): Map<string, Set<string>> {
+    //     return Bestiary.getIndex(field);
+    // }
+
+
+    // /**
+    //  * Registers an index for the specified field.
+    //  *
+    //  * @param {string} field - The field for which the index is registered.
+    //  */
+    // registerIndex(field: string) {
+    //     return Bestiary.registerIndex(field);
+    // }
+
+
+    // /**
+    //  * Registers a callback to be invoked when the specified index is updated.
+    //  *
+    //  * @param {string} index - The index for which the callback is registered.
+    //  * @param {() => void} callback - The callback function to be invoked when the index is updated.
+    //  * @returns {() => void} - A function that can be used to unregister the callback.
+    //  */
+    // onIndexUpdated(index: string, callback: () => void): () => void {
+    //     return Bestiary.onIndexUpdated(index, callback);
+    // }
+
     isResolved(): boolean {
-        return Bestiary.isResolved();
+        return this.#plugin.adversaries.state == "current";
     }
-    onResolved(callback: () => void) {
-        return Bestiary.onResolved(callback);
-    }
-    onUpdated(callback: () => void) {
-        return Bestiary.onUpdated(callback);
-    }
+
+    // onResolved(callback: () => void) {
+    //     return Bestiary.onResolved(callback);
+    // }
+    // onUpdated(callback: () => void) {
+    //     return Bestiary.onUpdated(callback);
+    // }
 
     // render(
     //     creature: HomebrewCreature,

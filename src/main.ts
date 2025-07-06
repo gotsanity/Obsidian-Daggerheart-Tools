@@ -26,7 +26,7 @@ import { AbilityCardRepository, AdversaryRepository, EncounterRepository, Enviro
 export default class DaggerheartToolsPlugin extends Plugin {
 	settings: DaggerheartToolsSettings = Object.assign(DEFAULT_SETTINGS);
 	// TODO: disabled until it is updated for future versions
-	//api: Api = new Api(this);
+	api: Api = new Api(this);
 	adversaries = new AdversaryRepository(this);
 	encounters = new EncounterRepository(this);
 	environments = new EnvironmentRepository(this);

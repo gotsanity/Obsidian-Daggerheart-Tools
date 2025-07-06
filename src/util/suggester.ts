@@ -36,7 +36,7 @@ export class AdversarySuggester extends EditorSuggest<string> {
                 break;
             }
             case SuggestContext.Adversary: {
-                suggestions = this.plugin.api.getBestiaryNames();
+                suggestions = this.plugin.adversaries.filter(() => true).map(adv => adv.name);
                 break;
             }
 			case SuggestContext.Property: {
@@ -73,7 +73,7 @@ export class AdversarySuggester extends EditorSuggest<string> {
             .slice(this.context.end.ch);
         const [_, exists] = line.match(/^(\] ?)/) ?? [];
 
-        let cursorAddition;
+        let cursorAddition: number;
         if (this._context === SuggestContext.Property) {
             if (this._props.has(value)) {
                 const prop = this._props.get(value);
