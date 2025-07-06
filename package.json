@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "@gotsanity/obsidian-daggerheart-tools",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "This Obsidian.md plugin aims to be a comprehensive set of tools for Daggerheart game masters.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -10,7 +10,7 @@
 		"svelte-check": "svelte-check --tsconfig tsconfig.json"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Gotsanity",
 	"license": "MIT",
 	"devDependencies": {
 		"@tsconfig/svelte": "^5.0.4",
