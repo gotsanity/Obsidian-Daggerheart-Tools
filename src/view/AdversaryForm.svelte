@@ -3,7 +3,24 @@
 	import { nanoid } from "src/util/util";
 
     let {
-        adversary
+        adversary = {
+            name: "",
+            id: nanoid(),
+            tier: 1,
+            adversaryType: "Standard",
+            motives_and_tactics: "",
+            hp: 1,
+            stress: 1,
+            difficulty: 10,
+            atk: "+0",
+            attack: "Strike",
+            range: "Melee",
+            damage: "1 phys",
+            text: "Adversary description",
+            experience: "",
+            feats: [],
+            source: "",
+        }
     } : {
         adversary?: Adversary
     } = $props();
@@ -64,7 +81,7 @@
         return `${major_threshold ?? "-"}/${severe_threshold ?? "-"}`;
     }) 
 
-    let adversaryData: Partial<Adversary> = $derived({
+    let adversaryData: Adversary = ({
         name: adversary?.alias || adversary?.name || "",
         id: nanoid(),
         tier: adversary?.tier || 1,
@@ -84,7 +101,7 @@
     });
 
     const onSubmit = () => {
-        console.log("submitting", adversaryData);
+        console.log("submitting", adversary);
     }
 </script>
 
@@ -123,7 +140,7 @@
 <div class="dht-adversary-form">
     <div class="form-group">
       <label for="name" class={errors.name && "text-destructive"}>Name</label>
-      <input type="text" id="name" name="name" placeholder="Enter a name" bind:value={adversaryData.name} />
+      <input type="text" id="name" name="name" placeholder="Enter a name" bind:value={adversary.name} />
       {#if errors.name}
         <p class="text-sm text-destructive">{errors.name}</p>
       {/if}
@@ -139,7 +156,7 @@
         class="resize-none"
         id="description"
         name="description"
-        bind:value={adversaryData.text}
+        bind:value={adversary.text}
       ></textarea>
       <p class="text-xs text-muted-foreground">
         This is the adversary's description
@@ -151,7 +168,7 @@
     
     <div class="form-group">
       <label for="tier" class={errors.tier && "text-destructive"}>Tier</label>
-      <input type="number" id="tier" name="tier" placeholder="1" bind:value={adversaryData.tier} />
+      <input type="number" id="tier" name="tier" placeholder="1" bind:value={adversary.tier} />
       {#if errors.tier}
         <p class="text-sm text-destructive">{errors.tier}</p>
       {/if}
@@ -163,7 +180,7 @@
     
     <div class="form-group">
       <label for="type" class={errors.adversaryType && "text-destructive"}>Adversary Type</label>
-      <select bind:value={adversaryData.adversaryType} name="type">
+      <select bind:value={adversary.adversaryType} name="type">
         {#each adversaryTypes as advType}
             <option value={advType} label={advType}></option>    
         {/each}
@@ -179,7 +196,7 @@
 
     <div class="form-group">
       <label for="motives_and_tactics" class={errors.motives_and_tactics && "text-destructive"}>Motives and Tactics</label>
-      <input type="text" id="motives_and_tactics" name="motives_and_tactics" placeholder="" bind:value={adversaryData.motives_and_tactics} />
+      <input type="text" id="motives_and_tactics" name="motives_and_tactics" placeholder="" bind:value={adversary.motives_and_tactics} />
       {#if errors.motives_and_tactics}
         <p class="text-sm text-destructive">{errors.motives_and_tactics}</p>
       {/if}
@@ -191,7 +208,7 @@
     
     <div class="form-group">
       <label for="hp" class={errors.hp && "text-destructive"}>HP</label>
-      <input type="number" id="hp" name="hp" placeholder="1" bind:value={adversaryData.hp} />
+      <input type="number" id="hp" name="hp" placeholder="1" bind:value={adversary.hp} />
       {#if errors.hp}
         <p class="text-sm text-destructive">{errors.hp}</p>
       {/if}
@@ -203,7 +220,7 @@
 
     <div class="form-group">
       <label for="stress" class={errors.stress && "text-destructive"}>Stress</label>
-      <input type="number" id="stress" name="stress" placeholder="1" bind:value={adversaryData.stress} />
+      <input type="number" id="stress" name="stress" placeholder="1" bind:value={adversary.stress} />
       {#if errors.stress}
         <p class="text-sm text-destructive">{errors.stress}</p>
       {/if}
@@ -237,7 +254,7 @@
     
     <div class="form-group">
       <label for="difficulty" class={errors.difficulty && "text-destructive"}>Difficulty</label>
-      <input type="number" id="difficulty" name="difficulty" placeholder="10" bind:value={adversaryData.difficulty} />
+      <input type="number" id="difficulty" name="difficulty" placeholder="10" bind:value={adversary.difficulty} />
       {#if errors.difficulty}
         <p class="text-sm text-destructive">{errors.difficulty}</p>
       {/if}
@@ -248,7 +265,7 @@
     
     <div class="form-group">
       <label for="atk" class={errors.atk && "text-destructive"}>Attack Bonus</label>
-      <input type="text" id="atk" name="atk" placeholder="+1" bind:value={adversaryData.atk} />
+      <input type="text" id="atk" name="atk" placeholder="+1" bind:value={adversary.atk} />
       {#if errors.atk}
         <p class="text-sm text-destructive">{errors.atk}</p>
       {/if}
@@ -259,7 +276,7 @@
     
     <div class="form-group">
       <label for="attack" class={errors.attack && "text-destructive"}>Attack Name</label>
-      <input type="text" id="attack" name="attack" placeholder="Claw" bind:value={adversaryData.attack} />
+      <input type="text" id="attack" name="attack" placeholder="Claw" bind:value={adversary.attack} />
       {#if errors.attack}
         <p class="text-sm text-destructive">{errors.attack}</p>
       {/if}
@@ -270,7 +287,7 @@
     
     <div class="form-group">
       <label for="range" class={errors.range && "text-destructive"}>range</label>
-      <select bind:value={adversaryData.range} name="range">
+      <select bind:value={adversary.range} name="range">
         {#each adversaryRanges as advRange}
             <option value={advRange} label={advRange}></option>    
         {/each}
@@ -285,7 +302,7 @@
 
     <div class="form-group">
       <label for="damage" class={errors.damage && "text-destructive"}>Damage</label>
-      <input type="text" id="damage" name="damage" placeholder="1d6+1 phys" bind:value={adversaryData.damage} />
+      <input type="text" id="damage" name="damage" placeholder="1d6+1 phys" bind:value={adversary.damage} />
       {#if errors.damage}
         <p class="text-sm text-destructive">{errors.damage}</p>
       {/if}
@@ -297,7 +314,7 @@
     <!-- 
     <div class="form-group">
       <label for="experience" class={errors.experience && "text-destructive"}>Experience</label>
-      <input type="text" id="experience" name="experience" placeholder="Die to heroes +2" bind:value={adversaryData.experience} />
+      <input type="text" id="experience" name="experience" placeholder="Die to heroes +2" bind:value={adversary.experience} />
       {#if errors.experience}
         <p class="text-sm text-destructive">{errors.experience}</p>
       {/if}
@@ -309,7 +326,7 @@
 
     <div class="form-group">
       <label for="source" class={errors.source && "text-destructive"}>Source</label>
-      <input type="text" id="source" name="source" placeholder="homebrew" bind:value={adversaryData.source} />
+      <input type="text" id="source" name="source" placeholder="homebrew" bind:value={adversary.source} />
       {#if errors.source}
         <p class="text-sm text-destructive">{errors.source}</p>
       {/if}
