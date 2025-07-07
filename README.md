@@ -48,7 +48,7 @@ alias: Jimmy the Bandit
 To create a custom adversary:
 ````yaml
 ````yaml
-```statblock
+```adversary
 source: "daggerheart-adversary"
 name: "Acid Burrower"
 alias: "Scar, Terror of Shay's Crossing"
