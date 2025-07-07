@@ -25,7 +25,6 @@ import { AbilityCardRepository, AdversaryRepository, EncounterRepository, Enviro
 
 export default class DaggerheartToolsPlugin extends Plugin {
 	settings: DaggerheartToolsSettings = Object.assign(DEFAULT_SETTINGS);
-	// TODO: disabled until it is updated for future versions
 	api: Api = new Api(this);
 	adversaries = new AdversaryRepository(this);
 	encounters = new EncounterRepository(this);
@@ -40,8 +39,8 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.adversaries.load();
 		this.encounters.load();
 
-		// (window["DaggerheartTools"] = this.api) &&
-        //     this.register(() => delete window["DaggerheartTools"]);
+		(window["DaggerheartTools"] = this.api) &&
+            this.register(() => delete window["DaggerheartTools"]);
 
 		
 		Bestiary.initialize(this);
@@ -91,6 +90,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.registerEditorSuggest(new AdversarySuggester(this));
 
 		this.addSettingTab(new DaggerheartToolsSettingsTab(this.app, this));
+	}
+
+	openSaveAdversaryModal(adversary: Adversary) {
+		new AdversaryModal(this.app, adversary).open();
 	}
 
 	onunload() {
