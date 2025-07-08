@@ -1,6 +1,6 @@
 {
 	"name": "@gotsanity/obsidian-daggerheart-tools",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "This Obsidian.md plugin aims to be a comprehensive set of tools for Daggerheart game masters.",
 	"main": "main.js",
 	"scripts": {
