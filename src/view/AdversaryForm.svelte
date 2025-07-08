@@ -112,7 +112,7 @@
     }
 
     const required = (val?: any) => {
-      return val == undefined;
+      return val == undefined || val == "";
     }
 
     $effect(() => {
@@ -230,7 +230,7 @@
         }
 
         if (required(feat.text)) {
-          feat.errors.text = "Feature text must be between 1 and 10.";
+          feat.errors.text = "Feature text cannot be empty.";
         } else {
           feat.errors.text = undefined;
         }
@@ -499,11 +499,11 @@
       {#each experiences as experience, i}
         <label for="experience-text" class={experience.errors.text && "text-destructive"}>Experience Text</label>
         <input type="text" name="experience-text" placeholder="Die to heroes" bind:value={experience.text} />
-        <label for="experience-value" class={experience.errors.value && "text-destructive"}>Experience Value</label>
-        <input type="number" name="experience-value" placeholder="2" bind:value={experience.value} />
         {#if experience.errors.text}
           <p class="text-sm text-destructive">{experience.errors.text}</p>
         {/if}
+        <label for="experience-value" class={experience.errors.value && "text-destructive"}>Experience Value</label>
+        <input type="number" name="experience-value" placeholder="2" bind:value={experience.value} />
         {#if experience.errors.value}
           <p class="text-sm text-destructive">{experience.errors.value}</p>
         {/if}
@@ -518,13 +518,13 @@
         These are the adversary's features.
       </p>
       {#each features as feature}
-        <label for="feature-name" class={feature.errors.text && "text-destructive"}>Feature Text</label>
+        <label for="feature-name" class={feature.errors.name && "text-destructive"}>Feature Name</label>
         <input type="text" name="feature-name" placeholder="Feature name here" bind:value={feature.name} />
-        <label for="feature-text" class={feature.errors.text && "text-destructive"}>Feature Value</label>
-        <input type="text" name="feature-text" placeholder="Feature text here" bind:value={feature.text} />
-        {#if feature.errors.text}
-          <p class="text-sm text-destructive">{feature.errors.text}</p>
+        {#if feature.errors.name}
+          <p class="text-sm text-destructive">{feature.errors.name}</p>
         {/if}
+        <label for="feature-text" class={feature.errors.text && "text-destructive"}>Feature Text</label>
+        <input type="text" name="feature-text" placeholder="Feature text here" bind:value={feature.text} />
         {#if feature.errors.text}
           <p class="text-sm text-destructive">{feature.errors.text}</p>
         {/if}
