@@ -141,4 +141,16 @@
     .tracker .toggle-list li:nth-child(3n+1):not(:first-child) {
         padding-right: 0.75rem;
     }
+
+    .toggle-list .toggle-item::before {
+        content: none;
+    }
+
+    .divider::after {
+        content: none;
+    }
+
+    h2::after, h3::after, h4::after, h5::after, h6::after {
+        content: none;
+    }
 }
