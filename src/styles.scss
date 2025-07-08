@@ -142,7 +142,10 @@
         padding-right: 0.75rem;
     }
 
-    .toggle-list .toggle-item::before {
+    // ITS Theme Overrides
+
+    .toggle-list .toggle-item::before,
+    .menu-list .menu-item::before {
         content: none;
     }
 

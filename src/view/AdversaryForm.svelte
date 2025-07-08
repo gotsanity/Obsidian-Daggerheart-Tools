@@ -1,6 +1,9 @@
 <script lang="ts">
+	import DaggerheartToolsPlugin from "src/main";
 	import type { Adversary } from "src/types/adversary";
 	import { nanoid } from "src/util/util";
+	import { _plugin } from "./daggerstore";
+	import type { FeaturesProps } from "src/types/daggerheart-types";
 
     let {
         adversary = {
@@ -20,32 +23,33 @@
             experience: "",
             feats: [],
             source: "",
+            thresholds: "-/-"
         }
     } : {
         adversary?: Adversary
     } = $props();
 
-    let errors = $derived.by(() => {
-        return {
-            name: undefined,
-            tier: undefined,
-            adversaryType: undefined,
-            motives_and_tactics: undefined,
-            hp: undefined,
-            stress: undefined,
-            major_threshold: undefined,
-            severe_threshold: undefined,
-            difficulty: undefined,
-            atk: undefined,
-            attack: undefined,
-            range: undefined,
-            damage: undefined,
-            text: undefined,
-            experiences: undefined,
-            feats: undefined,
-            source: undefined
-        };
-    })
+    let adversaryState: Adversary = $state(adversary);
+
+    let errors: {
+      name?: string,
+      tier?: string,
+      adversaryType?: string,
+      motives_and_tactics?: string,
+      hp?: string,
+      stress?: string,
+      major_threshold?: string,
+      severe_threshold?: string,
+      difficulty?: string,
+      atk?: string,
+      attack?: string,
+      range?: string,
+      damage?: string,
+      text?: string,
+      experiences?: string,
+      feats?: string,
+      source?: string
+    } = $state({})
 
     let adversaryTypes: string[] = [
         "Bruiser",
@@ -81,27 +85,139 @@
         return `${major_threshold ?? "-"}/${severe_threshold ?? "-"}`;
     }) 
 
-    let adversaryData: Adversary = ({
-        name: adversary?.alias || adversary?.name || "",
-        id: nanoid(),
-        tier: adversary?.tier || 1,
-        adversaryType: adversary?.adversaryType || "Standard",
-        motives_and_tactics: adversary?.motives_and_tactics || "",
-        hp: adversary?.hp || 1,
-        stress: adversary?.stress || 1,
-        difficulty: adversary?.difficulty || 10,
-        atk: adversary?.atk || "+0",
-        attack: adversary?.attack || "Strike",
-        range: adversary?.range || "Melee",
-        damage: adversary?.damage || "1 phys",
-        text: adversary?.text || "Adversary description",
-        experience: adversary?.experience || "",
-        feats: adversary?.feats || [],
-        source: adversary?.source || "",
+    let plugin: DaggerheartToolsPlugin;
+
+    _plugin.subscribe(plug => {
+      plugin = plug
+    })
+
+    const valid = $derived.by(() => {
+      return Object.values(errors).some(val => typeof val === 'string');
+    })
+
+    const isNumber = (val: any) => {
+      return typeof val === 'number' && !isNaN(val)
+    }
+
+    const inRange = (val: number, min: number, max: number) => {
+      return val >= min && val <= max;
+    }
+
+    const minLength = (val: string, minLength: number) => {
+      return val.length >= minLength;
+    }
+
+    const maxLength = (val: string, maxLength: number) => {
+      return val.length <= maxLength;
+    }
+
+    const required = (val?: any) => {
+      return val == undefined;
+    }
+
+    $effect(() => {
+      if (required(adversaryState.name) || plugin.adversaries.exists(adv => adv.name == adversaryState.name)) {
+        errors.name = "Name already exists, please choose another.";
+      } else {
+        errors.name = undefined;
+      }
     });
 
+    $effect(() => {
+      if (required(adversaryState.text)) {
+        errors.text = "Please enter a description";
+      } else {
+        errors.text = undefined;
+      }
+    })
+
+    $effect(() => {
+      if (required(adversaryState.tier) || !isNumber(adversaryState.tier) || !inRange(adversaryState.tier!, 1, 4)) {
+        errors.tier = "Tier must be between 1 and 4.";
+      } else {
+        errors.tier = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.hp) || !isNumber(adversaryState.hp) || !inRange(adversaryState.hp!, 1, 100)) {
+        errors.hp = "HP must be between 1 and 100.";
+      } else {
+        errors.hp = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.stress) || !isNumber(adversaryState.stress) || !inRange(adversaryState.stress!, 1, 100)) {
+        errors.stress = "Stress must be between 1 and 100.";
+      } else {
+        errors.stress = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.motives_and_tactics)) {
+        errors.motives_and_tactics = "Motives and Tactics must have a value.";
+      } else {
+        errors.motives_and_tactics = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.difficulty) || !isNumber(adversaryState.difficulty) || !inRange(adversaryState.difficulty!, 1, 100)) {
+        errors.difficulty = "Difficulty must be between 1 and 100.";
+      } else {
+        errors.difficulty = undefined;
+      }
+    });
+
+    $effect(() => {
+      console.log("atk updated")
+      if (required(adversaryState.atk)) {
+        errors.atk = "Attack Bonus must contain a value.";
+      } else {
+        errors.atk = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.attack)) {
+        errors.attack = "Attack Name must contain a value.";
+      } else {
+        errors.attack = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.damage)) {
+        errors.damage = "Damage must contain a value.";
+      } else {
+        errors.damage = undefined;
+      }
+    });
+
+    $effect(() => {
+      if (required(adversaryState.source)) {
+        errors.source = "Source must contain a value.";
+      } else {
+        errors.source = undefined;
+      }
+    });
+
+    let features: FeaturesProps = $state({ feats: [] })
+
+    const addFeature = () => {
+      features.feats.push({
+        name: "",
+        text: "",
+      })
+    }
+
     const onSubmit = () => {
-        console.log("submitting", adversary);
+        let adv = Object.assign($state.snapshot(adversaryState), { thresholds: thresholds }, features);
+        console.log("submitting", adv);
+        // adversary.thresholds = thresholds;
+        // plugin.adversaries.add(adversary);
     }
 </script>
 
@@ -140,8 +256,8 @@
 <div class="dht-adversary-form">
     <div class="form-group">
       <label for="name" class={errors.name && "text-destructive"}>Name</label>
-      <input type="text" id="name" name="name" placeholder="Enter a name" bind:value={adversary.name} />
-      {#if errors.name}
+      <input type="text" id="name" name="name" placeholder="Enter a name" bind:value={adversaryState.name} />
+      {#if errors.text}
         <p class="text-sm text-destructive">{errors.name}</p>
       {/if}
       <p class="text-xs text-muted-foreground">
@@ -156,7 +272,7 @@
         class="resize-none"
         id="description"
         name="description"
-        bind:value={adversary.text}
+        bind:value={adversaryState.text}
       ></textarea>
       <p class="text-xs text-muted-foreground">
         This is the adversary's description
@@ -168,7 +284,7 @@
     
     <div class="form-group">
       <label for="tier" class={errors.tier && "text-destructive"}>Tier</label>
-      <input type="number" id="tier" name="tier" placeholder="1" bind:value={adversary.tier} />
+      <input type="number" id="tier" name="tier" placeholder="1" bind:value={adversaryState.tier} />
       {#if errors.tier}
         <p class="text-sm text-destructive">{errors.tier}</p>
       {/if}
@@ -180,13 +296,13 @@
     
     <div class="form-group">
       <label for="type" class={errors.adversaryType && "text-destructive"}>Adversary Type</label>
-      <select bind:value={adversary.adversaryType} name="type">
+      <select bind:value={adversaryState.adversaryType} name="type">
         {#each adversaryTypes as advType}
             <option value={advType} label={advType}></option>    
         {/each}
       </select>
       <p class="text-xs text-muted-foreground">
-        Select the type of adversary.
+        Select the type of adversaryState.
       </p>
       {#if errors.adversaryType}
           <p class="text-sm text-destructive">{errors.adversaryType}</p>
@@ -196,7 +312,7 @@
 
     <div class="form-group">
       <label for="motives_and_tactics" class={errors.motives_and_tactics && "text-destructive"}>Motives and Tactics</label>
-      <input type="text" id="motives_and_tactics" name="motives_and_tactics" placeholder="" bind:value={adversary.motives_and_tactics} />
+      <input type="text" id="motives_and_tactics" name="motives_and_tactics" placeholder="" bind:value={adversaryState.motives_and_tactics} />
       {#if errors.motives_and_tactics}
         <p class="text-sm text-destructive">{errors.motives_and_tactics}</p>
       {/if}
@@ -208,7 +324,7 @@
     
     <div class="form-group">
       <label for="hp" class={errors.hp && "text-destructive"}>HP</label>
-      <input type="number" id="hp" name="hp" placeholder="1" bind:value={adversary.hp} />
+      <input type="number" id="hp" name="hp" placeholder="1" bind:value={adversaryState.hp} />
       {#if errors.hp}
         <p class="text-sm text-destructive">{errors.hp}</p>
       {/if}
@@ -220,7 +336,7 @@
 
     <div class="form-group">
       <label for="stress" class={errors.stress && "text-destructive"}>Stress</label>
-      <input type="number" id="stress" name="stress" placeholder="1" bind:value={adversary.stress} />
+      <input type="number" id="stress" name="stress" placeholder="1" bind:value={adversaryState.stress} />
       {#if errors.stress}
         <p class="text-sm text-destructive">{errors.stress}</p>
       {/if}
@@ -254,7 +370,7 @@
     
     <div class="form-group">
       <label for="difficulty" class={errors.difficulty && "text-destructive"}>Difficulty</label>
-      <input type="number" id="difficulty" name="difficulty" placeholder="10" bind:value={adversary.difficulty} />
+      <input type="number" id="difficulty" name="difficulty" placeholder="10" bind:value={adversaryState.difficulty} />
       {#if errors.difficulty}
         <p class="text-sm text-destructive">{errors.difficulty}</p>
       {/if}
@@ -265,7 +381,7 @@
     
     <div class="form-group">
       <label for="atk" class={errors.atk && "text-destructive"}>Attack Bonus</label>
-      <input type="text" id="atk" name="atk" placeholder="+1" bind:value={adversary.atk} />
+      <input type="text" id="atk" name="atk" placeholder="+1" bind:value={adversaryState.atk} />
       {#if errors.atk}
         <p class="text-sm text-destructive">{errors.atk}</p>
       {/if}
@@ -276,7 +392,7 @@
     
     <div class="form-group">
       <label for="attack" class={errors.attack && "text-destructive"}>Attack Name</label>
-      <input type="text" id="attack" name="attack" placeholder="Claw" bind:value={adversary.attack} />
+      <input type="text" id="attack" name="attack" placeholder="Claw" bind:value={adversaryState.attack} />
       {#if errors.attack}
         <p class="text-sm text-destructive">{errors.attack}</p>
       {/if}
@@ -287,7 +403,7 @@
     
     <div class="form-group">
       <label for="range" class={errors.range && "text-destructive"}>range</label>
-      <select bind:value={adversary.range} name="range">
+      <select bind:value={adversaryState.range} name="range">
         {#each adversaryRanges as advRange}
             <option value={advRange} label={advRange}></option>    
         {/each}
@@ -302,7 +418,7 @@
 
     <div class="form-group">
       <label for="damage" class={errors.damage && "text-destructive"}>Damage</label>
-      <input type="text" id="damage" name="damage" placeholder="1d6+1 phys" bind:value={adversary.damage} />
+      <input type="text" id="damage" name="damage" placeholder="1d6+1 phys" bind:value={adversaryState.damage} />
       {#if errors.damage}
         <p class="text-sm text-destructive">{errors.damage}</p>
       {/if}
@@ -314,7 +430,7 @@
     <!-- 
     <div class="form-group">
       <label for="experience" class={errors.experience && "text-destructive"}>Experience</label>
-      <input type="text" id="experience" name="experience" placeholder="Die to heroes +2" bind:value={adversary.experience} />
+      <input type="text" id="experience" name="experience" placeholder="Die to heroes +2" bind:value={adversaryState.experience} />
       {#if errors.experience}
         <p class="text-sm text-destructive">{errors.experience}</p>
       {/if}
@@ -326,7 +442,7 @@
 
     <div class="form-group">
       <label for="source" class={errors.source && "text-destructive"}>Source</label>
-      <input type="text" id="source" name="source" placeholder="homebrew" bind:value={adversary.source} />
+      <input type="text" id="source" name="source" placeholder="homebrew" bind:value={adversaryState.source} />
       {#if errors.source}
         <p class="text-sm text-destructive">{errors.source}</p>
       {/if}
@@ -335,5 +451,5 @@
       </p>
     </div>
 
-    <button type="submit" onclick={onSubmit}>Submit</button>
+    <button type="submit" onclick={onSubmit} disabled={valid}>Submit</button>
 </div>

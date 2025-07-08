@@ -1,5 +1,5 @@
 export interface TieredProps {
-    tier?: string | number;
+    tier?: number;
 }
 
 export interface HealthProps {
@@ -27,8 +27,12 @@ export interface CommonProps {
 }
 
 export interface FeaturesProps {
-    feats: CommonProps[]
+    feats: Feature[]
 }
 
+export interface Feature {
+    name: string;
+    text: string;
+}
 
 

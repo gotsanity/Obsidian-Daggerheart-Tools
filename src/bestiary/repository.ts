@@ -22,6 +22,7 @@ export interface IRepository<T> {
     unsubscribe: (callback: (on: string, item: T) => void) => void;
     notify: (on: string, item: T) => void;
     notifyRange: (on: string, items: T[]) => void;
+    exists: (predicate: (item: T) => boolean) => boolean;
 }
 
 export abstract class Repository<T> implements IRepository<T> {
@@ -63,6 +64,10 @@ export abstract class Repository<T> implements IRepository<T> {
 
     filter = (predicate: (item: T) => boolean) => {
         return this.data.filter(predicate);
+    };
+
+    exists = (predicate: (item: T) => boolean) => {
+        return this.data.filter(predicate).length > 0;
     };
 
     add = (item: T) => {
