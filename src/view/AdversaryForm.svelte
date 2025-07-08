@@ -46,7 +46,7 @@
       range?: string,
       damage?: string,
       text?: string,
-      experiences?: string,
+      experiences: string[],
       feats?: string,
       source?: string
     } = $state({})
@@ -204,17 +204,80 @@
       }
     });
 
-    let features: FeaturesProps = $state({ feats: [] })
+    let features: { 
+      name?: string,
+      text?: string,
+      errors: {
+        name?: string
+        text?: string,
+      }
+    }[] = $state([]);
 
     const addFeature = () => {
-      features.feats.push({
+      features.push({
         name: "",
         text: "",
+        errors: {}
       })
     }
 
+    $effect(() => {
+      features.forEach(feat => {
+        if (required(feat.name)) {
+          feat.errors.name = "Feature name cannot be empty."
+        } else {
+          feat.errors.name = undefined;
+        }
+
+        if (required(feat.text)) {
+          feat.errors.text = "Feature text must be between 1 and 10.";
+        } else {
+          feat.errors.text = undefined;
+        }
+      })
+    })
+
+    let experiences: { 
+      text?: string,
+      value: number,
+      errors: {
+        text?: string,
+        value?: string
+      }
+    }[] = $state([]);
+
+    const addExperience = () => {
+      experiences.push({ value: 2, errors: {}});
+    }
+
+    $effect(() => {
+      experiences.forEach(exp => {
+        if (required(exp.text)) {
+          exp.errors.text = "Experience text cannot be empty."
+        } else {
+          exp.errors.text = undefined;
+        }
+
+        if (!isNumber(exp.value) || !inRange(exp.value, 1, 10)) {
+          exp.errors.value = "Experience value must be between 1 and 10.";
+        } else {
+          exp.errors.value = undefined;
+        }
+      })
+    })
+
     const onSubmit = () => {
-        let adv = Object.assign($state.snapshot(adversaryState), { thresholds: thresholds }, features);
+        let adv = Object.assign(
+          $state.snapshot(adversaryState),
+          { thresholds: thresholds },
+          { feats: features.map(feat => {
+            return { name: feat.name, text: feat.text };
+          })},
+          { experience: experiences.map(exp => {
+              return `${exp.text} +${exp.value}`
+            }).join(', ')
+          }
+        );
         console.log("submitting", adv);
         // adversary.thresholds = thresholds;
         // plugin.adversaries.add(adversary);
@@ -427,18 +490,48 @@
       </p>
     </div>
     
-    <!-- 
+    
     <div class="form-group">
-      <label for="experience" class={errors.experience && "text-destructive"}>Experience</label>
-      <input type="text" id="experience" name="experience" placeholder="Die to heroes +2" bind:value={adversaryState.experience} />
-      {#if errors.experience}
-        <p class="text-sm text-destructive">{errors.experience}</p>
-      {/if}
+      <label for="experiences">Experiences</label>
       <p class="text-xs text-muted-foreground">
-        This is one of the adversary's experiences.
+        These are the adversary's experiences.
       </p>
+      {#each experiences as experience, i}
+        <label for="experience-text" class={experience.errors.text && "text-destructive"}>Experience Text</label>
+        <input type="text" name="experience-text" placeholder="Die to heroes" bind:value={experience.text} />
+        <label for="experience-value" class={experience.errors.value && "text-destructive"}>Experience Value</label>
+        <input type="number" name="experience-value" placeholder="2" bind:value={experience.value} />
+        {#if experience.errors.text}
+          <p class="text-sm text-destructive">{experience.errors.text}</p>
+        {/if}
+        {#if experience.errors.value}
+          <p class="text-sm text-destructive">{experience.errors.value}</p>
+        {/if}
+      {/each}
+      <button onclick={addExperience}>Add Experience</button>
     </div>
--->
+
+
+    <div class="form-group">
+      <label for="features">Features</label>
+      <p class="text-xs text-muted-foreground">
+        These are the adversary's features.
+      </p>
+      {#each features as feature}
+        <label for="feature-name" class={feature.errors.text && "text-destructive"}>Feature Text</label>
+        <input type="text" name="feature-name" placeholder="Feature name here" bind:value={feature.name} />
+        <label for="feature-text" class={feature.errors.text && "text-destructive"}>Feature Value</label>
+        <input type="text" name="feature-text" placeholder="Feature text here" bind:value={feature.text} />
+        {#if feature.errors.text}
+          <p class="text-sm text-destructive">{feature.errors.text}</p>
+        {/if}
+        {#if feature.errors.text}
+          <p class="text-sm text-destructive">{feature.errors.text}</p>
+        {/if}
+      {/each}
+      <button onclick={addFeature}>Add Feature</button>
+    </div>
+
 
     <div class="form-group">
       <label for="source" class={errors.source && "text-destructive"}>Source</label>
