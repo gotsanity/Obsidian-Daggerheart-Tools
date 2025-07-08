@@ -3,7 +3,6 @@
 	import type { Adversary } from "src/types/adversary";
 	import { nanoid } from "src/util/util";
 	import { _plugin } from "./daggerstore";
-	import type { FeaturesProps } from "src/types/daggerheart-types";
 
     let {
         adversary = {
@@ -20,7 +19,6 @@
             range: "Melee",
             damage: "1 phys",
             text: "Adversary description",
-            experience: "",
             feats: [],
             source: "",
             thresholds: "-/-"
@@ -28,6 +26,10 @@
     } : {
         adversary?: Adversary
     } = $props();
+
+    if (adversary.alias) {
+      adversary.name = adversary.alias;
+    }
 
     let adversaryState: Adversary = $state(adversary);
 
@@ -46,8 +48,6 @@
       range?: string,
       damage?: string,
       text?: string,
-      experiences: string[],
-      feats?: string,
       source?: string
     } = $state({})
 
@@ -213,6 +213,16 @@
       }
     }[] = $state([]);
 
+    if (adversary.feats) {
+      adversary.feats.forEach(feat => {
+        features.push({
+          name: feat.name,
+          text: feat.text,
+          errors: {}
+        });
+      })
+    }
+
     const addFeature = () => {
       features.push({
         name: "",
@@ -245,6 +255,12 @@
         value?: string
       }
     }[] = $state([]);
+
+    if (adversary.experience) {
+      adversary.experience.split(', ').forEach(exp => {
+        experiences.push({ text: exp.split(' +')[0], value: Number(exp.split(' +')[1]), errors: {}});
+      })
+    }
 
     const addExperience = () => {
       experiences.push({ value: 2, errors: {}});

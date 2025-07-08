@@ -31,9 +31,7 @@
     <div class="dht-menu-items">
         {#if (isOpen)}
         <ul class="menu-list">
-            {#if (adversary.alias)}
             <li class="menu-item"><button class="menu-action" onclick={saveAdversary}>Save</button></li>
-            {/if}
             <li class="menu-item"><button class="menu-action">Extend</button></li>
             <li class="menu-item"><button class="menu-action">Export</button></li>
             <li class="menu-item"><button class="menu-action">Remove</button></li>
