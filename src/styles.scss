@@ -25,6 +25,48 @@
     .text-muted-foreground {
         color: var(--text-muted)
     }
+
+    .form-group {
+        margin: 1.5rem 0;
+    }
+
+    .sub-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 80%;
+        margin: 1.5rem 0;
+    }
+
+    .sub-group .added-button {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+    }
+
+    .sub-group .added-button button {
+        margin: 1.0rem 0;
+    }
+
+    .add-button {
+        margin: 1.0rem 0;
+    }
+
+    label {
+        font-weight: var(--font-semibold);
+    }
+
+    .label-heading {
+        font-size: 1.25rem;
+    }
+
+    .sub-group label {
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    p {
+        margin: 0.25rem 0;
+    }
 }
 
 .dht-adversary {
