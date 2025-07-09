@@ -24,10 +24,12 @@
             source: "",
             thresholds: "-/-"
         },
-        update = false
+        update = false,
+        plugin
     } : {
         adversary?: Adversary,
         update: boolean,
+        plugin: DaggerheartToolsPlugin,
     } = $props();
 
     if (!update) {
@@ -35,8 +37,6 @@
       console.log("setting id", id);
       adversary.id = id;
     }
-
-    console.log(update);
     
     let adversaryState = $state(adversary);
 
@@ -95,12 +95,8 @@
         return `${major_threshold ?? "-"}/${severe_threshold ?? "-"}`;
     }) 
 
-    let plugin: DaggerheartToolsPlugin;
-
-    _plugin.subscribe(plug => {
-      plugin = plug
-    })
-
+    _plugin.set(plugin);
+    
     $effect(() => {
       if (update) {
         if (required(adversaryState.name)) {
@@ -109,6 +105,7 @@
           errors.name = undefined;
         }
       } else {
+        console.log(plugin, adversaryState);
         if (required(adversaryState.name)) {
           errors.name = "Name cannot be empty.";
         } else if (plugin.adversaries.exists(adv => adv.name == adversaryState.name)) {
@@ -305,11 +302,11 @@
         );
         console.log("submitting", adv);
 
-        // if (update) {
-        //   plugin.updateAdversary(adv.id, adv);
-        // } else {
-        //   plugin.addNewAdversary(adv);
-        // }
+        if (update) {
+          plugin.updateAdversary(adv.id, adv);
+        } else {
+          plugin.addNewAdversary(adv);
+        }
     }
 
     const valid = $derived.by(() => {

@@ -1,5 +1,6 @@
 import {
 	addIcon,
+	App,
 	Editor,
 	type MarkdownPostProcessorContext,
 	MarkdownView,
@@ -7,6 +8,7 @@ import {
 	Notice,
 	parseYaml,
 	Plugin,
+	type PluginManifest,
 	TFile,
 } from 'obsidian';
 import AdversaryBlockRenderer from 'src/view/adversary-renderer';
@@ -31,6 +33,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 	encounters = new EncounterRepository(this);
 	environments = new EnvironmentRepository(this);
 	abilityCards = new AbilityCardRepository(this);
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest)
+	}
 
 	async onload() {
 		console.log("Loaded Daggerheart-Tools")
