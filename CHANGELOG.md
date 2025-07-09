@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.2...1.3.0) (2025-07-09)
+
+
+### Features
+
+* added ability to delete features and experiences from adversary forms and adjusted styles of adversary form to be more readable ([ab4bd6a](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/ab4bd6abec89c65d61e756e90402dcc40354e956))
+
 ## [1.2.2](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.1...1.2.2) (2025-07-09)
 
 
