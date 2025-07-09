@@ -4,6 +4,7 @@ import type { Encounter } from "src/types/encounter";
 import { BESTIARY } from "./daggerheart-srd-bestiary";
 import type { Environment } from "src/types/environment";
 import type { AbilityCard } from "src/types/card";
+import { nanoid } from "src/util/util";
 
 
 export interface IRepository<T> {
@@ -18,10 +19,11 @@ export interface IRepository<T> {
     markCurrent: () => void;
     markDirty: () => void;
     save: () => void;
-    subscribe: (callback: (on: string, item: T) => void) => void;
-    unsubscribe: (callback: (on: string, item: T) => void) => void;
+    subscribe: (callback: (on: string, item: T) => void) => string;
+    unsubscribe: (id: string) => void;
     notify: (on: string, item: T) => void;
     notifyRange: (on: string, items: T[]) => void;
+    exists: (predicate: (item: T) => boolean) => boolean;
 }
 
 export abstract class Repository<T> implements IRepository<T> {
@@ -30,22 +32,29 @@ export abstract class Repository<T> implements IRepository<T> {
     protected _state: string = 'unset';
     protected data: T[] = [];
     protected _plugin: DaggerheartToolsPlugin;
-    protected _callbacks: ((on: string, item: T) => void)[] = [];
+    protected _callbacks: {id: string, callback: (on: string, item: T) => void }[] = [];
 
     constructor(plugin: DaggerheartToolsPlugin) {
         this._plugin = plugin;
     }
 
-    subscribe = (callback: (on: string, item: T) => void) => this._callbacks.push(callback);
-    unsubscribe = (callback: (on: string, item: T) => void) => this._callbacks.remove(callback);
+    subscribe = (callback: (on: string, item: T) => void) => {
+        let id = nanoid();
+        this._callbacks.push({id: id, callback: callback});
+        return id;
+    };
+
+    unsubscribe = (id: string) => {
+        this._callbacks = this._callbacks.filter(sub => sub.id != id);
+    };
 
     notify = (on: string, item: T) => {
-        this._callbacks.forEach(callback => callback(on, item));
+        this._callbacks.forEach(sub => sub.callback(on, item));
     };
 
     notifyRange = (on: string, items: T[]) => {
         items.forEach(item => {
-            this._callbacks.forEach(callback => callback(on, item));
+            this._callbacks.forEach(sub => sub.callback(on, item));
         })
     };
 
@@ -63,6 +72,10 @@ export abstract class Repository<T> implements IRepository<T> {
 
     filter = (predicate: (item: T) => boolean) => {
         return this.data.filter(predicate);
+    };
+
+    exists = (predicate: (item: T) => boolean) => {
+        return this.data.filter(predicate).length > 0;
     };
 
     add = (item: T) => {

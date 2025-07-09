@@ -6,6 +6,7 @@
 	import TrackingBlock from "./components/tracking-block.svelte";
 	import { _context, _encounter, _plugin, _renderer } from "./daggerstore";
 	import type { Encounter } from "src/types/encounter";
+	import Menu from "./components/menu.svelte";
 
   export interface AdversaryBlockProps {
     context: string;
@@ -63,6 +64,9 @@
 
   plugin.adversaries.subscribe(onAdversaryUpdate);
   
+  let displayName = $derived.by(() => {
+    return adversary.alias || adversary.name;
+  })
 
   let description: LabeledItem = $derived({
     className: "motives",
@@ -122,11 +126,12 @@
 </script>
 
 <div class="dht-adversary">
+  <Menu {adversary}></Menu>
   {#if adversary.image}
     <img src="#" alt={adversary.name}/>
   {/if}
   <div class="dht-name">
-    <h1>{adversary.name}</h1>
+    <h1>{displayName}</h1>
   </div>
   <div class="dht-tier">
     <h3>Tier {adversary.tier} {adversary.adversaryType}</h3>
@@ -163,3 +168,11 @@
     <TrackingBlock {adversary} encounter={encounterState}></TrackingBlock>
   {/if}
 </div>
+
+<style>
+  .dht-adversary {
+    position: relative;
+    min-width: 10px;
+    min-height: 10px;
+  }
+</style>

@@ -1,11 +1,14 @@
 import {
 	addIcon,
+	App,
 	Editor,
 	type MarkdownPostProcessorContext,
 	MarkdownView,
+	Modal,
 	Notice,
 	parseYaml,
 	Plugin,
+	type PluginManifest,
 	TFile,
 } from 'obsidian';
 import AdversaryBlockRenderer from 'src/view/adversary-renderer';
@@ -25,12 +28,15 @@ import { AbilityCardRepository, AdversaryRepository, EncounterRepository, Enviro
 
 export default class DaggerheartToolsPlugin extends Plugin {
 	settings: DaggerheartToolsSettings = Object.assign(DEFAULT_SETTINGS);
-	// TODO: disabled until it is updated for future versions
 	api: Api = new Api(this);
 	adversaries = new AdversaryRepository(this);
 	encounters = new EncounterRepository(this);
 	environments = new EnvironmentRepository(this);
 	abilityCards = new AbilityCardRepository(this);
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest)
+	}
 
 	async onload() {
 		console.log("Loaded Daggerheart-Tools")
@@ -40,8 +46,8 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.adversaries.load();
 		this.encounters.load();
 
-		// (window["DaggerheartTools"] = this.api) &&
-        //     this.register(() => delete window["DaggerheartTools"]);
+		(window["DaggerheartTools"] = this.api) &&
+            this.register(() => delete window["DaggerheartTools"]);
 
 		
 		Bestiary.initialize(this);
@@ -63,6 +69,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		// 	}
 		// });
 
+
+		// TODO: make add at cursor pallette command, trigger it from here.
+
+		
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'open-new-adversary-modal',
@@ -74,7 +84,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 					// If checking is true, we're simply "checking" if the command can be run.
 					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
-						new AdversaryModal(this.app).open();
+						new AdversaryModal(this.app, this).open();
 					}
 
 					// This command will only show up in Command Palette when the check function returns true
@@ -91,6 +101,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.registerEditorSuggest(new AdversarySuggester(this));
 
 		this.addSettingTab(new DaggerheartToolsSettingsTab(this.app, this));
+	}
+
+	openAdversaryModal(adversary: Adversary, update: boolean = false) {
+		new AdversaryModal(this.app, this, adversary, update).open();
 	}
 
 	onunload() {
@@ -122,6 +136,36 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.app.fileManager.processFrontMatter(file!, (frontmatter: any) => {
 			frontmatter[key] = value;
         });
+	}
+
+	addNewAdversary(adversary: Adversary) {
+		this.adversaries.add(adversary);
+		new Notice(adversary.name + " was added to the database.");
+	}
+
+	updateAdversary(id: string, adversary: Adversary) {
+		let exists = this.adversaries.exists(adv => adv.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find adversary to update. ID not recognized.");
+			return;
+		}
+
+		this.adversaries.update(id, adversary);
+
+		new Notice(adversary.name + " has been updated.");
+	}
+
+	deleteAdversary(id: string) {
+		let exists = this.adversaries.exists(adv => adv.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find adversary to delete. ID not recognized.");
+			return;
+		}
+
+		this.adversaries.delete(adv => adv.id == id);
+		new Notice("Delete succesfull");
 	}
 
 	// Adds an adversary to the combat and sets the file to an encounter.
