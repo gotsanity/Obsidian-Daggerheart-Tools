@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.1...1.2.2) (2025-07-09)
+
+
+### Bug Fixes
+
+* fixed error in .gitignore ([e220d41](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/e220d41b8a19205896a19693f67f9f4caba4b59b))
+
 ## [1.2.1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.0...1.2.1) (2025-07-09)
 
 
