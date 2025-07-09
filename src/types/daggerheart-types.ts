@@ -31,6 +31,7 @@ export interface FeaturesProps {
 }
 
 export interface Feature {
+    id: string;
     name: string;
     text: string;
 }
