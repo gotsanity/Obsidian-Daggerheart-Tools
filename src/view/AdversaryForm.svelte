@@ -457,7 +457,7 @@
     
     {@render formInput({
       errorKey: "difficulty",
-      label: "difficulty",
+      label: "Difficulty",
       type: "number",
       value: "difficulty",
       description: "The adversary's difficulty.",
@@ -483,7 +483,7 @@
     })}
     
     <div class="form-group">
-      <label for="range" class={errors.range && "text-destructive"}>range</label>
+      <label for="range" class={errors.range && "text-destructive"}>Range</label>
       <select bind:value={adversaryState.range} name="range">
         {#each adversaryRanges as advRange}
             <option value={advRange} label={advRange}></option>    
@@ -507,43 +507,57 @@
     })}    
     
     <div class="form-group">
-      <label for="experiences">Experiences</label>
+      <label class="label-heading" for="experiences">Experiences</label>
       <p class="text-xs text-muted-foreground">
         These are the adversary's experiences.
       </p>
       {#each experiences as experience, i}
-        <label for="experience-text" class={experience.errors.text && "text-destructive"}>Experience Text</label>
-        <input type="text" name="experience-text" placeholder="Die to heroes" bind:value={experience.text} />
-        {#if experience.errors.text}
-          <p class="text-sm text-destructive">{experience.errors.text}</p>
-        {/if}
-        <label for="experience-value" class={experience.errors.value && "text-destructive"}>Experience Value</label>
-        <input type="number" name="experience-value" placeholder="2" bind:value={experience.value} />
-        {#if experience.errors.value}
-          <p class="text-sm text-destructive">{experience.errors.value}</p>
-        {/if}
+        <div class="sub-group">
+          <div class="added-button">
+            <label for="experience-name" class={experience.errors.text && "text-destructive"}>Experience Text</label>
+            <button onclick={() => {
+              experiences.remove(experience);
+            }}>X</button>
+          </div>
+          <input type="text" name="experience-text" placeholder="Die to heroes" bind:value={experience.text} />
+          {#if experience.errors.text}
+            <p class="text-sm text-destructive">{experience.errors.text}</p>
+          {/if}
+          <label for="experience-value" class={experience.errors.value && "text-destructive"}>Experience Value</label>
+          <input type="number" name="experience-value" placeholder="2" bind:value={experience.value} />
+          {#if experience.errors.value}
+            <p class="text-sm text-destructive">{experience.errors.value}</p>
+          {/if}
+        </div>
       {/each}
-      <button onclick={addExperience}>Add Experience</button>
+      <button class="add-button" onclick={addExperience}>Add Experience</button>
     </div>
 
     <div class="form-group">
-      <label for="features">Features</label>
+      <label class="label-heading" for="features">Features</label>
       <p class="text-xs text-muted-foreground">
         These are the adversary's features.
       </p>
       {#each features as feature}
-        <label for="feature-name" class={feature.errors.name && "text-destructive"}>Feature Name</label>
-        <input type="text" name="feature-name" placeholder="Feature name here" bind:value={feature.name} />
-        {#if feature.errors.name}
-          <p class="text-sm text-destructive">{feature.errors.name}</p>
-        {/if}
-        <label for="feature-text" class={feature.errors.text && "text-destructive"}>Feature Text</label>
-        <input type="text" name="feature-text" placeholder="Feature text here" bind:value={feature.text} />
-        {#if feature.errors.text}
-          <p class="text-sm text-destructive">{feature.errors.text}</p>
-        {/if}
+        <div class="sub-group">
+          <div class="added-button">
+            <label for="feature-name" class={feature.errors.name && "text-destructive"}>Feature Name</label>
+            <button onclick={() => {
+              features.remove(feature);
+            }}>X</button>
+          </div>
+          <input type="text" name="feature-name" placeholder="Feature name here" bind:value={feature.name} />
+          <label for="feature-text" class={feature.errors.text && "text-destructive"}>Feature Text</label>
+          <input type="text" name="feature-text" placeholder="Feature text here" bind:value={feature.text} />
+          {#if feature.errors.name}
+            <p class="text-sm text-destructive">{feature.errors.name}</p>
+          {/if}
+          {#if feature.errors.text}
+            <p class="text-sm text-destructive">{feature.errors.text}</p>
+          {/if}
+        </div>
       {/each}
-      <button onclick={addFeature}>Add Feature</button>
+      <button class="add-button" onclick={addFeature}>Add Feature</button>
     </div>
 
     {@render formInput({
