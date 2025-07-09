@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.1.1...1.2.0) (2025-07-09)
+
+
+### Features
+
+* added ability to dynamically add features and experiences to adversary modal form ([9ccfa37](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/9ccfa37b658d5fbde22bdd2d1050d725fae7d6e0))
+* added ability to insert new adversaries directly into active editor sessions at the cursor ([02ee940](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/02ee940c5f6cfbec7175da9fe66c217bb0089343))
+* added save as, edit, and new adversary modals with validation ([89fea67](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/89fea67e998d1b8b010cbfc4469a80b9e1c89a5e))
+* added validation to adversary modal form ([400efee](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/400efee0672011e2115cbd5a93886b1553ee99aa))
+* introduced method to insert updated name on edit into markdown ([80c1163](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80c1163c5d278300cd54d3853a310165a2c53b8e))
+
+
+### Bug Fixes
+
+* added styles.css, main.js to .gitignore ([971c514](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/971c5145a3d5a299dfadfbd5bf67cba973c6e785))
+* fixed [#8](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/issues/8) issue with frontmatter being overwritten on insert. ([80c1163](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80c1163c5d278300cd54d3853a310165a2c53b8e))
+* fixed issue with repository callbacks being unable to unsubscribe ([80c1163](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80c1163c5d278300cd54d3853a310165a2c53b8e))
+* fixed validation for saving adversaries with existing features and experiences ([1aa3beb](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/1aa3beb68415b8b659b7dfc79ec651e95d1310d5))
+* fixed validation to include features and experiences ([80b5faf](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80b5fafb0d63f4d73de8ca2aeaedf20e62984b3d))
+
 ## [1.1.1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.1.0...1.1.1) (2025-07-08)
 
 
