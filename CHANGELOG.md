@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.0...1.2.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* fixed issue with id property on features and fixed error in tier datatype in daggerheart-srd-bestiary.ts ([87bdd24](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/87bdd24e510547d32b7d6aa7cd430fecf52b8004))
+
 ## [1.2.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.1.1...1.2.0) (2025-07-09)
 
 
