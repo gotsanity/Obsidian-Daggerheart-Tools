@@ -9,6 +9,7 @@ export class AdversaryModal extends Modal {
     $adversaryBlock!: ReturnType<typeof AdversaryForm> | undefined;
     plugin: DaggerheartToolsPlugin;
     update: boolean;
+    subscription?: string;
 
     constructor(app: App, plugin: DaggerheartToolsPlugin, adversary?: Adversary, update: boolean = false) {
         super(app);
@@ -22,9 +23,10 @@ export class AdversaryModal extends Modal {
         if (this.update) {
             this.setTitle("Edit Adversary");
             
-            this.plugin.adversaries.subscribe((event, item) => {
+            this.subscription = this.plugin.adversaries.subscribe((event, item) => {
                 if (item.id == this.adversary!.id) {
                     if (event == "update") {
+                        this.updateAdversaryToDocument(this.adversary!, item);
                         this.close();
                     } else if (event == "delete") {
                         this.close();
@@ -33,7 +35,7 @@ export class AdversaryModal extends Modal {
             })
         } else {
             this.setTitle("New Adversary");
-            this.plugin.adversaries.subscribe((event, item) => {
+            this.subscription = this.plugin.adversaries.subscribe((event, item) => {
                 if (event == "add") {
                     this.addAdversaryToDocument(item);
                     this.close();
@@ -56,22 +58,8 @@ export class AdversaryModal extends Modal {
         const {contentEl} = this;
         contentEl.empty();
 
-        if (this.update) {
-            this.plugin.adversaries.unsubscribe((event, item) => {
-                if (item.id == this.adversary!.id) {
-                    if (event == "update") {
-                        this.close();
-                    } else if (event == "delete") {
-                        this.close();
-                    }
-                }
-            });
-        } else {
-            this.plugin.adversaries.unsubscribe((event, item) => {
-                if (event == "add") {
-                    this.close();
-                }
-            });
+        if (this.subscription) {
+          this.plugin.adversaries.unsubscribe(this.subscription);
         }
     }
 
@@ -79,11 +67,25 @@ export class AdversaryModal extends Modal {
         console.log("inserting adversary if possible")
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
-        // TODO: make add at cursor pallette command, trigger it from here.
         if (view) {
             console.log("found a view, inserting")
             const cursor = view.editor.getCursor();
-            view.editor.replaceRange(`\n\`\`\`adversary\nname: ${item.name}\n\`\`\`\n`, cursor);
+            view.editor.replaceRange(`\`\`\`adversary\nname: ${item.name}\n\`\`\`\n`, cursor, cursor);
+        } else {
+            new Notice("Unable to insert adversary into document, no active editor found. Please open document and add manually.");
+        }
+    }
+
+    updateAdversaryToDocument(old: Adversary, item: Adversary) {
+        const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+        if (view) {
+            
+            new Notice("Feature not fully implemented yet: Please update existing adversary to the new name manually.");
+            // find the existing adversary name line
+            // delete that line, insert new line
+            // let cursor = { line: -1, ch: 0 };
+            // view.editor.replaceRange(`name: ${item.name}\n`, cursor, cursor);
         } else {
             new Notice("Unable to insert adversary into document, no active editor found. Please open document and add manually.");
         }

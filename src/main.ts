@@ -69,6 +69,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		// 	}
 		// });
 
+
+		// TODO: make add at cursor pallette command, trigger it from here.
+
+		
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'open-new-adversary-modal',
