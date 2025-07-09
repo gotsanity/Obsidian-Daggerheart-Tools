@@ -2,6 +2,31 @@
     background-color: var(--background-secondary);
 }
 
+.dht-adversary-form {
+    // form elements
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 80%;
+    }
+
+    .text-destructive {
+        color: var(--text-error);
+    }
+
+    .text-sm {
+        font-size: var(--font-small)
+    }
+
+    .text-xs {
+        font-size: var(--font-smallest);
+    }
+
+    .text-muted-foreground {
+        color: var(--text-muted)
+    }
+}
+
 .dht-adversary {
     margin: 1.0rem;
     padding: 1.0rem 0;

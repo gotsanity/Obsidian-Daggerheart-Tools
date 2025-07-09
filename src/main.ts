@@ -3,6 +3,7 @@ import {
 	Editor,
 	type MarkdownPostProcessorContext,
 	MarkdownView,
+	Modal,
 	Notice,
 	parseYaml,
 	Plugin,
@@ -73,7 +74,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 					// If checking is true, we're simply "checking" if the command can be run.
 					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
-						new AdversaryModal(this.app).open();
+						new AdversaryModal(this.app, this).open();
 					}
 
 					// This command will only show up in Command Palette when the check function returns true
@@ -92,8 +93,8 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.addSettingTab(new DaggerheartToolsSettingsTab(this.app, this));
 	}
 
-	openSaveAdversaryModal(adversary: Adversary) {
-		new AdversaryModal(this.app, adversary).open();
+	openAdversaryModal(adversary: Adversary, update: boolean = false) {
+		new AdversaryModal(this.app, this, adversary, update).open();
 	}
 
 	onunload() {
@@ -125,6 +126,36 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.app.fileManager.processFrontMatter(file!, (frontmatter: any) => {
 			frontmatter[key] = value;
         });
+	}
+
+	addNewAdversary(adversary: Adversary) {
+		this.adversaries.add(adversary);
+		new Notice(adversary.name + " was added to the database.");
+	}
+
+	updateAdversary(id: string, adversary: Adversary) {
+		let exists = this.adversaries.exists(adv => adv.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find adversary to update. ID not recognized.");
+			return;
+		}
+
+		this.adversaries.update(id, adversary);
+
+		new Notice(adversary.name + " has been updated.");
+	}
+
+	deleteAdversary(id: string) {
+		let exists = this.adversaries.exists(adv => adv.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find adversary to delete. ID not recognized.");
+			return;
+		}
+
+		this.adversaries.delete(adv => adv.id == id);
+		new Notice("Delete succesfull");
 	}
 
 	// Adds an adversary to the combat and sets the file to an encounter.

@@ -15,10 +15,14 @@
     let plugin: DaggerheartToolsPlugin;
     let plugSub = _plugin.subscribe(plug => plugin = plug);
 
-    let saveAdversary = () => {
-        console.log("saving", adversary);
+    let editAdversaryModal = () => {
         isOpen = false;
-        plugin.openSaveAdversaryModal(adversary);
+        plugin.openAdversaryModal(adversary, true);
+    };
+    
+    let saveAdversaryModal = () => {
+        isOpen = false;
+        plugin.openAdversaryModal(adversary);
     };
 </script>
 
@@ -31,11 +35,11 @@
     <div class="dht-menu-items">
         {#if (isOpen)}
         <ul class="menu-list">
-            <li class="menu-item"><button class="menu-action" onclick={saveAdversary}>Save</button></li>
-            <li class="menu-item"><button class="menu-action">Extend</button></li>
-            <li class="menu-item"><button class="menu-action">Export</button></li>
+            <li class="menu-item"><button class="menu-action" onclick={editAdversaryModal}>Edit</button></li>
+            <li class="menu-item"><button class="menu-action" onclick={saveAdversaryModal}>Save As</button></li>
+            <!-- <li class="menu-item"><button class="menu-action">Export</button></li>
             <li class="menu-item"><button class="menu-action">Remove</button></li>
-            <li class="menu-item"><button class="menu-action">Item</button></li>
+            <li class="menu-item"><button class="menu-action">Item</button></li> -->
         </ul>
         {/if}
     </div>

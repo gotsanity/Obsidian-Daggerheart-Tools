@@ -3,6 +3,7 @@
 	import type { Adversary } from "src/types/adversary";
 	import { nanoid } from "src/util/util";
 	import { _plugin } from "./daggerstore";
+	import { inRange, isNumber, required } from "./components/validators";
 
     let {
         adversary = {
@@ -15,26 +16,33 @@
             stress: 1,
             difficulty: 10,
             atk: "+0",
-            attack: "Strike",
+            attack: "",
             range: "Melee",
-            damage: "1 phys",
-            text: "Adversary description",
+            damage: "",
+            text: "",
             feats: [],
             source: "",
             thresholds: "-/-"
-        }
+        },
+        update = false
     } : {
-        adversary?: Adversary
+        adversary?: Adversary,
+        update: boolean,
     } = $props();
 
-    if (adversary.alias) {
-      adversary.name = adversary.alias;
+    if (!update) {
+      let id = nanoid();
+      console.log("setting id", id);
+      adversary.id = id;
     }
 
-    let adversaryState: Adversary = $state(adversary);
+    console.log(update);
+    
+    let adversaryState = $state(adversary);
 
-    let errors: {
+    export interface AdversaryErrorProps {
       name?: string,
+      alias?: string,
       tier?: string,
       adversaryType?: string,
       motives_and_tactics?: string,
@@ -49,7 +57,9 @@
       damage?: string,
       text?: string,
       source?: string
-    } = $state({})
+    };
+
+    let errors: AdversaryErrorProps = $state({})
 
     let adversaryTypes: string[] = [
         "Bruiser",
@@ -91,37 +101,37 @@
       plugin = plug
     })
 
-    const valid = $derived.by(() => {
-      return Object.values(errors).some(val => typeof val === 'string');
-    })
-
-    const isNumber = (val: any) => {
-      return typeof val === 'number' && !isNaN(val)
-    }
-
-    const inRange = (val: number, min: number, max: number) => {
-      return val >= min && val <= max;
-    }
-
-    const minLength = (val: string, minLength: number) => {
-      return val.length >= minLength;
-    }
-
-    const maxLength = (val: string, maxLength: number) => {
-      return val.length <= maxLength;
-    }
-
-    const required = (val?: any) => {
-      return val == undefined || val == "";
-    }
-
     $effect(() => {
-      if (required(adversaryState.name) || plugin.adversaries.exists(adv => adv.name == adversaryState.name)) {
-        errors.name = "Name already exists, please choose another.";
+      if (update) {
+        if (required(adversaryState.name)) {
+          errors.name = "Name cannot be empty.";
+        } else {
+          errors.name = undefined;
+        }
       } else {
-        errors.name = undefined;
+        if (required(adversaryState.name)) {
+          errors.name = "Name cannot be empty.";
+        } else if (plugin.adversaries.exists(adv => adv.name == adversaryState.name)) {
+          errors.name = "Name already exists, please choose another.";
+        } else {
+          errors.name = undefined;
+        }
       }
     });
+
+
+    // $effect(() => {
+    //   if (!update) {
+    //     if (required(adversaryState.name)) {
+    //       errors.alias = "Name cannot be empty.";
+    //     } else if (plugin.adversaries.exists(adv => adv.name == adversaryState.alias)) {
+    //       errors.name = "Alias already exists, please choose another.";
+    //     } else {
+    //       errors.name = undefined;
+    //     }
+    //   }
+    // });
+
 
     $effect(() => {
       if (required(adversaryState.text)) {
@@ -172,7 +182,6 @@
     });
 
     $effect(() => {
-      console.log("atk updated")
       if (required(adversaryState.atk)) {
         errors.atk = "Attack Bonus must contain a value.";
       } else {
@@ -295,54 +304,68 @@
           }
         );
         console.log("submitting", adv);
-        // adversary.thresholds = thresholds;
-        // plugin.adversaries.add(adversary);
+
+        // if (update) {
+        //   plugin.updateAdversary(adv.id, adv);
+        // } else {
+        //   plugin.addNewAdversary(adv);
+        // }
     }
+
+    const valid = $derived.by(() => {
+      return Object.values(errors).some(val => typeof val === 'string');
+    })
+
 </script>
 
-<style>
-    .dht-adversary-form {
-        display: flex;
-        /* min-height: 80vh; */
-        flex-direction: column;
-        align-items: center; 
-        justify-content: center;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        min-width: 80%;
-    }
-
-    .text-destructive {
-        color: var(--text-error);
-    }
-
-    .text-sm {
-        font-size: var(--font-small)
-    }
-
-    .text-xs {
-        font-size: var(--font-smallest);
-    }
-
-    .text-muted-foreground {
-        color: var(--text-muted)
-    }
-</style>
-
-<div class="dht-adversary-form">
+{#snippet formInput({
+    errorKey,
+    label,
+    type,
+    value,
+    description,
+    placeholder
+  } : {
+    errorKey: keyof AdversaryErrorProps,
+    label: string,
+    type: string,
+    value: keyof Adversary,
+    description: string,
+    placeholder?: string
+  })}
     <div class="form-group">
-      <label for="name" class={errors.name && "text-destructive"}>Name</label>
-      <input type="text" id="name" name="name" placeholder="Enter a name" bind:value={adversaryState.name} />
-      {#if errors.text}
-        <p class="text-sm text-destructive">{errors.name}</p>
+      <label for={label} class={errors[errorKey] && "text-destructive"}>{label}</label>
+      <input {type} id={label} name={label} {placeholder} bind:value={adversaryState[value]} />
+      {#if errors[errorKey]}
+        <p class="text-sm text-destructive">{errors[errorKey]}</p>
       {/if}
       <p class="text-xs text-muted-foreground">
-        This is the adversary's name.
+        {description}
       </p>
     </div>
+{/snippet}
+
+<div class="dht-adversary-form">
+
+    {@render formInput({
+      errorKey: "name",
+      label: "Name",
+      type: "text",
+      value: "name",
+      description: "The adversary's name.",
+      placeholder: "Bandit"
+    })}
+
+    {#if adversaryState.alias}
+      {@render formInput({
+        errorKey: "alias",
+        label: "Alias",
+        type: "text",
+        value: "alias",
+        description: "The adversary's alias, used instead of name on save.",
+        placeholder: "Tim"
+      })}
+    {/if}
 
     <div class="form-group">
       <label for="description" class={errors.text && "text-destructive"}>Description</label>
@@ -361,17 +384,14 @@
       {/if}
     </div>
     
-    <div class="form-group">
-      <label for="tier" class={errors.tier && "text-destructive"}>Tier</label>
-      <input type="number" id="tier" name="tier" placeholder="1" bind:value={adversaryState.tier} />
-      {#if errors.tier}
-        <p class="text-sm text-destructive">{errors.tier}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        The adversary's tier
-      </p>
-    </div>
-    
+    {@render formInput({
+        errorKey: "tier",
+        label: "Tier",
+        type: "number",
+        value: "tier",
+        description: "The adversary's tier.",
+        placeholder: "1"
+      })}
     
     <div class="form-group">
       <label for="type" class={errors.adversaryType && "text-destructive"}>Adversary Type</label>
@@ -389,40 +409,32 @@
     </div>
 
 
-    <div class="form-group">
-      <label for="motives_and_tactics" class={errors.motives_and_tactics && "text-destructive"}>Motives and Tactics</label>
-      <input type="text" id="motives_and_tactics" name="motives_and_tactics" placeholder="" bind:value={adversaryState.motives_and_tactics} />
-      {#if errors.motives_and_tactics}
-        <p class="text-sm text-destructive">{errors.motives_and_tactics}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        What motives the adversary and what tactics does it use.
-      </p>
-    </div>
+    {@render formInput({
+      errorKey: "motives_and_tactics",
+      label: "Motives and Tactics",
+      type: "text",
+      value: "motives_and_tactics",
+      description: "The adversary's motives and tactics.",
+      placeholder: "Conquer the world, die horribly."
+    })}
 
-    
-    <div class="form-group">
-      <label for="hp" class={errors.hp && "text-destructive"}>HP</label>
-      <input type="number" id="hp" name="hp" placeholder="1" bind:value={adversaryState.hp} />
-      {#if errors.hp}
-        <p class="text-sm text-destructive">{errors.hp}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the adversary's HP
-      </p>
-    </div>
-    
+    {@render formInput({
+      errorKey: "hp",
+      label: "HP",
+      type: "number",
+      value: "hp",
+      description: "The adversary's HP.",
+      placeholder: "1"
+    })}
 
-    <div class="form-group">
-      <label for="stress" class={errors.stress && "text-destructive"}>Stress</label>
-      <input type="number" id="stress" name="stress" placeholder="1" bind:value={adversaryState.stress} />
-      {#if errors.stress}
-        <p class="text-sm text-destructive">{errors.stress}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the adversary's Stress
-      </p>
-    </div>
+    {@render formInput({
+      errorKey: "stress",
+      label: "Stress",
+      type: "number",
+      value: "stress",
+      description: "The adversary's Stress.",
+      placeholder: "1"
+    })}
     
     <div class="form-group">
       <label for="major_threshold" class={errors.major_threshold && "text-destructive"}>Major Threshold</label>
@@ -434,7 +446,7 @@
         This is the adversary's Major Armor Threshold
       </p>
     </div>
-    
+
     <div class="form-group">
       <label for="severe_threshold" class={errors.severe_threshold && "text-destructive"}>Sever Threshold</label>
       <input type="number" id="severe_threshold" name="severe_threshold" placeholder="-" bind:value={severe_threshold} />
@@ -446,39 +458,32 @@
       </p>
     </div>
     
+    {@render formInput({
+      errorKey: "difficulty",
+      label: "difficulty",
+      type: "number",
+      value: "difficulty",
+      description: "The adversary's difficulty.",
+      placeholder: "10"
+    })}
     
-    <div class="form-group">
-      <label for="difficulty" class={errors.difficulty && "text-destructive"}>Difficulty</label>
-      <input type="number" id="difficulty" name="difficulty" placeholder="10" bind:value={adversaryState.difficulty} />
-      {#if errors.difficulty}
-        <p class="text-sm text-destructive">{errors.difficulty}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the adversary's difficulty.
-      </p>
-    </div>
+    {@render formInput({
+      errorKey: "atk",
+      label: "Attack Bonus",
+      type: "text",
+      value: "atk",
+      description: "The adversary's Attack Bonus.",
+      placeholder: "+1"
+    })}
     
-    <div class="form-group">
-      <label for="atk" class={errors.atk && "text-destructive"}>Attack Bonus</label>
-      <input type="text" id="atk" name="atk" placeholder="+1" bind:value={adversaryState.atk} />
-      {#if errors.atk}
-        <p class="text-sm text-destructive">{errors.atk}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the adversary's Attack Bonus
-      </p>
-    </div>
-    
-    <div class="form-group">
-      <label for="attack" class={errors.attack && "text-destructive"}>Attack Name</label>
-      <input type="text" id="attack" name="attack" placeholder="Claw" bind:value={adversaryState.attack} />
-      {#if errors.attack}
-        <p class="text-sm text-destructive">{errors.attack}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the adversary's basic attack name.
-      </p>
-    </div>
+    {@render formInput({
+      errorKey: "attack",
+      label: "Attack Name",
+      type: "text",
+      value: "attack",
+      description: "The adversary's Attack Name.",
+      placeholder: "Claw"
+    })}
     
     <div class="form-group">
       <label for="range" class={errors.range && "text-destructive"}>range</label>
@@ -495,17 +500,14 @@
       {/if}
     </div>
 
-    <div class="form-group">
-      <label for="damage" class={errors.damage && "text-destructive"}>Damage</label>
-      <input type="text" id="damage" name="damage" placeholder="1d6+1 phys" bind:value={adversaryState.damage} />
-      {#if errors.damage}
-        <p class="text-sm text-destructive">{errors.damage}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the damage calculation of the adversary's basic attack.
-      </p>
-    </div>
-    
+    {@render formInput({
+      errorKey: "damage",
+      label: "Damage Value",
+      type: "text",
+      value: "damage",
+      description: "The adversary's attack damage value.",
+      placeholder: "1d4+1 phys"
+    })}    
     
     <div class="form-group">
       <label for="experiences">Experiences</label>
@@ -527,7 +529,6 @@
       <button onclick={addExperience}>Add Experience</button>
     </div>
 
-
     <div class="form-group">
       <label for="features">Features</label>
       <p class="text-xs text-muted-foreground">
@@ -548,17 +549,14 @@
       <button onclick={addFeature}>Add Feature</button>
     </div>
 
-
-    <div class="form-group">
-      <label for="source" class={errors.source && "text-destructive"}>Source</label>
-      <input type="text" id="source" name="source" placeholder="homebrew" bind:value={adversaryState.source} />
-      {#if errors.source}
-        <p class="text-sm text-destructive">{errors.source}</p>
-      {/if}
-      <p class="text-xs text-muted-foreground">
-        This is the adversary's source (book, homebrew, etc)
-      </p>
-    </div>
+    {@render formInput({
+      errorKey: "source",
+      label: "Source",
+      type: "text",
+      value: "source",
+      description: "The adversary's source.",
+      placeholder: "homebrew"
+    })}
 
     <button type="submit" onclick={onSubmit} disabled={valid}>Submit</button>
 </div>
