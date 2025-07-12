@@ -224,3 +224,25 @@
         content: none;
     }
 }
+
+.dht-select-modal {
+    text-align: center;
+
+    ul.select-item-list {
+        height: 400px;
+        overflow: scroll;
+        list-style: none;
+        margin: 1.0rem 0;
+        padding: 0;
+    }
+
+    .select-item {
+        width: 100%;
+        margin-top: 0.50rem;
+    }
+
+    .select-item-list .select-item::before
+    {
+        content: none;
+    }
+}

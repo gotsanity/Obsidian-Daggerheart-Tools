@@ -23,6 +23,7 @@ import { Bestiary } from './bestiary/bestiary';
 import type { Combatant, Encounter } from './types/encounter';
 import { nanoid } from './util/util';
 import { AbilityCardRepository, AdversaryRepository, EncounterRepository, EnvironmentRepository } from './bestiary/repository';
+import { SelectAdversaryModal } from './view/select-adversary-modal';
 
 
 
@@ -60,20 +61,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		});
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
 
-		// This adds an editor command that can perform some operation on the current editor instance
-		// this.addCommand({
-		// 	id: 'add-adversary-to-note',
-		// 	name: 'Add adversary to current document',
-		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
-		// 		new Notice("This feature does not work correctly yet.");
-		// 	}
-		// });
 
-
-		// TODO: make add at cursor pallette command, trigger it from here.
-
-		
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'open-new-adversary-modal',
 			name: 'Add a new Adversary to the database',
@@ -88,6 +76,21 @@ export default class DaggerheartToolsPlugin extends Plugin {
 					}
 
 					// This command will only show up in Command Palette when the check function returns true
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
+			id: 'select-adversary-modal',
+			name: 'Add an Adversary to the document',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new SelectAdversaryModal(this.app, this).open();
+					}
+
 					return true;
 				}
 			}
