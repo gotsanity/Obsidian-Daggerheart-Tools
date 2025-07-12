@@ -5,6 +5,7 @@ import { BESTIARY } from "./daggerheart-srd-bestiary";
 import type { Environment } from "src/types/environment";
 import type { AbilityCard } from "src/types/card";
 import { nanoid } from "src/util/util";
+import { ENVIRONMENTS } from "./daggerheart-srd-environments";
 
 
 export interface IRepository<T> {
@@ -173,6 +174,9 @@ export class EncounterRepository extends Repository<Encounter> {
 }
 
 export class EnvironmentRepository extends Repository<Environment> {
+    private disableSRD: boolean = false;
+    private saved: boolean = false;
+    
     save = async () => {
         this._plugin.settings.environments = this.data;
         await this._plugin.saveSettings().then(() => {
@@ -182,7 +186,20 @@ export class EnvironmentRepository extends Repository<Environment> {
     
     load = async () => {
         await this._plugin.loadData();
-        this.data = this._plugin.settings.environments;
+
+        this.disableSRD = this._plugin.settings.disableSRD;
+        this.saved = this._plugin.settings.saved;
+
+        if (!this.saved) {
+            this.data = Object.assign(this.data, this._plugin.settings.environments, ENVIRONMENTS);
+            this.saved = true;
+            this.save();
+        } else {
+            this.data = Object.assign([], this._plugin.settings.environments);
+        }
+
+        
+        console.log("Loaded", this.data);
         this.markCurrent();
     };
 }

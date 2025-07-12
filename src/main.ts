@@ -24,6 +24,8 @@ import type { Combatant, Encounter } from './types/encounter';
 import { nanoid } from './util/util';
 import { AbilityCardRepository, AdversaryRepository, EncounterRepository, EnvironmentRepository } from './bestiary/repository';
 import { SelectAdversaryModal } from './view/select-adversary-modal';
+import type { EnvironmentParameters } from './types/environment';
+import EnvironmentRenderer from './view/environment-renderer';
 
 
 
@@ -46,6 +48,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 		this.adversaries.load();
 		this.encounters.load();
+		this.environments.load();
 
 		(window["DaggerheartTools"] = this.api) &&
             this.register(() => delete window["DaggerheartTools"]);
@@ -100,6 +103,12 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			"adversary",
 			this.postprocessor.bind(this)
 		);
+
+		this.registerMarkdownCodeBlockProcessor(
+			"environment",
+			this.environmentPostprocessor.bind(this)
+		);
+
 
 		this.registerEditorSuggest(new AdversarySuggester(this));
 
@@ -270,14 +279,14 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		try {
-            // /** Replace Links */
+            el.addClass("dht-plugin-container");
+            el.parentElement?.addClass("dht-plugin-parent");
+
+			// /** Replace Links */
             source = Linkifier.transformSource(source);
 
             /** Get Parameters */
             let params: AdversaryParameters = parseYaml(source);
-
-            el.addClass("dht-plugin-container");
-            el.parentElement?.addClass("dht-plugin-parent");
 
             let adversary = new AdversaryBlockRenderer({
                 container: el,
@@ -291,6 +300,38 @@ export default class DaggerheartToolsPlugin extends Plugin {
             console.error(`Daggerheart Adversary Error:\n${e}`);
             let pre = createEl("pre");
             pre.setText(`\`\`\`adversary
+				There was an error rendering the statblock:
+				${e.stack
+					.split("\n")
+					.filter((line: string) => !/^at/.test(line?.trim()))
+					.join("\n")}
+				\`\`\``);
+        }
+    }
+
+	async environmentPostprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
+		try {
+            el.addClass("dht-plugin-container");
+            el.parentElement?.addClass("dht-plugin-parent");
+
+			// /** Replace Links */
+            source = Linkifier.transformSource(source);
+
+            /** Get Parameters */
+            let params: EnvironmentParameters = parseYaml(source);
+
+            let environment = new EnvironmentRenderer({
+                container: el,
+                plugin: this,
+                params,
+                context: ctx.sourcePath
+            });
+
+            ctx.addChild(environment);
+        } catch (e: any) {
+            console.error(`Daggerheart Environment Error:\n${e}`);
+            let pre = createEl("pre");
+            pre.setText(`\`\`\`environment
 				There was an error rendering the statblock:
 				${e.stack
 					.split("\n")

@@ -69,7 +69,8 @@
     }
 }
 
-.dht-adversary {
+.dht-adversary,
+.dht-environment {
     margin: 1.0rem;
     padding: 1.0rem 0;
 
@@ -125,7 +126,8 @@
         font-size: larger;
     }
 
-    .experience dd, dt {
+    .experience dd, dt,
+    .impulses dd, dt {
         display: inline; 
     }
 
