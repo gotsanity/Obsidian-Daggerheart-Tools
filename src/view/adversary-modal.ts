@@ -64,11 +64,9 @@ export class AdversaryModal extends Modal {
     }
 
     addAdversaryToDocument(item: Adversary) {
-        console.log("inserting adversary if possible")
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
         if (view) {
-            console.log("found a view, inserting")
             const cursor = view.editor.getCursor();
             view.editor.replaceRange(`\`\`\`adversary\nname: ${item.name}\n\`\`\`\n`, cursor, cursor);
         } else {
@@ -80,8 +78,8 @@ export class AdversaryModal extends Modal {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
         if (view) {
-            
             new Notice("Feature not fully implemented yet: Please update existing adversary to the new name manually.");
+            const editor = view.editor;
             // find the existing adversary name line
             // delete that line, insert new line
             // let cursor = { line: -1, ch: 0 };

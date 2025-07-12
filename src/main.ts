@@ -107,6 +107,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		new AdversaryModal(this.app, this, adversary, update).open();
 	}
 
+	removeAdversaryModal(adversary: Adversary) {
+		console.log("opening remove adversary confirmation modal");
+	}
+
 	onunload() {
 
 	}

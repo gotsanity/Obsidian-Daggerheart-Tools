@@ -24,6 +24,11 @@
         isOpen = false;
         plugin.openAdversaryModal(adversary);
     };
+
+    let removeAdversaryModal = () => {
+        isOpen = false;
+        plugin.removeAdversaryModal(adversary);
+    }
 </script>
 
 <div class="dht-menu">
@@ -37,9 +42,9 @@
         <ul class="menu-list">
             <li class="menu-item"><button class="menu-action" onclick={editAdversaryModal}>Edit</button></li>
             <li class="menu-item"><button class="menu-action" onclick={saveAdversaryModal}>Save As</button></li>
-            <!-- <li class="menu-item"><button class="menu-action">Export</button></li>
-            <li class="menu-item"><button class="menu-action">Remove</button></li>
-            <li class="menu-item"><button class="menu-action">Item</button></li> -->
+            <!-- <li class="menu-item"><button class="menu-action">Export</button></li> -->
+            <!-- <li class="menu-item"><button class="menu-action" onclick={removeAdversaryModal}>Remove</button></li> -->
+            <!-- <li class="menu-item"><button class="menu-action">Item</button></li> -->
         </ul>
         {/if}
     </div>
