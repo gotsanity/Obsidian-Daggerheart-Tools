@@ -23,6 +23,9 @@ import { Bestiary } from './bestiary/bestiary';
 import type { Combatant, Encounter } from './types/encounter';
 import { nanoid } from './util/util';
 import { AbilityCardRepository, AdversaryRepository, EncounterRepository, EnvironmentRepository } from './bestiary/repository';
+import { SelectAdversaryModal } from './view/select-adversary-modal';
+import type { EnvironmentParameters } from './types/environment';
+import EnvironmentRenderer from './view/environment-renderer';
 
 
 
@@ -45,6 +48,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 		this.adversaries.load();
 		this.encounters.load();
+		this.environments.load();
 
 		(window["DaggerheartTools"] = this.api) &&
             this.register(() => delete window["DaggerheartTools"]);
@@ -60,20 +64,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		});
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
 
-		// This adds an editor command that can perform some operation on the current editor instance
-		// this.addCommand({
-		// 	id: 'add-adversary-to-note',
-		// 	name: 'Add adversary to current document',
-		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
-		// 		new Notice("This feature does not work correctly yet.");
-		// 	}
-		// });
 
-
-		// TODO: make add at cursor pallette command, trigger it from here.
-
-		
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'open-new-adversary-modal',
 			name: 'Add a new Adversary to the database',
@@ -93,10 +84,31 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			}
 		});
 
+		this.addCommand({
+			id: 'select-adversary-modal',
+			name: 'Add an Adversary to the document',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new SelectAdversaryModal(this.app, this).open();
+					}
+
+					return true;
+				}
+			}
+		});
+
 		this.registerMarkdownCodeBlockProcessor(
 			"adversary",
 			this.postprocessor.bind(this)
 		);
+
+		this.registerMarkdownCodeBlockProcessor(
+			"environment",
+			this.environmentPostprocessor.bind(this)
+		);
+
 
 		this.registerEditorSuggest(new AdversarySuggester(this));
 
@@ -267,14 +279,14 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		try {
-            // /** Replace Links */
+            el.addClass("dht-plugin-container");
+            el.parentElement?.addClass("dht-plugin-parent");
+
+			// /** Replace Links */
             source = Linkifier.transformSource(source);
 
             /** Get Parameters */
             let params: AdversaryParameters = parseYaml(source);
-
-            el.addClass("dht-plugin-container");
-            el.parentElement?.addClass("dht-plugin-parent");
 
             let adversary = new AdversaryBlockRenderer({
                 container: el,
@@ -288,6 +300,38 @@ export default class DaggerheartToolsPlugin extends Plugin {
             console.error(`Daggerheart Adversary Error:\n${e}`);
             let pre = createEl("pre");
             pre.setText(`\`\`\`adversary
+				There was an error rendering the statblock:
+				${e.stack
+					.split("\n")
+					.filter((line: string) => !/^at/.test(line?.trim()))
+					.join("\n")}
+				\`\`\``);
+        }
+    }
+
+	async environmentPostprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
+		try {
+            el.addClass("dht-plugin-container");
+            el.parentElement?.addClass("dht-plugin-parent");
+
+			// /** Replace Links */
+            source = Linkifier.transformSource(source);
+
+            /** Get Parameters */
+            let params: EnvironmentParameters = parseYaml(source);
+
+            let environment = new EnvironmentRenderer({
+                container: el,
+                plugin: this,
+                params,
+                context: ctx.sourcePath
+            });
+
+            ctx.addChild(environment);
+        } catch (e: any) {
+            console.error(`Daggerheart Environment Error:\n${e}`);
+            let pre = createEl("pre");
+            pre.setText(`\`\`\`environment
 				There was an error rendering the statblock:
 				${e.stack
 					.split("\n")

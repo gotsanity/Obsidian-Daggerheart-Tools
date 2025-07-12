@@ -8,7 +8,7 @@ export interface HealthProps {
 }
 
 export interface DifficultyProps {
-    difficulty?: number;
+    difficulty?: number | string;
 }
 
 export interface CommonProps {
