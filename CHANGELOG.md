@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.3.0...1.4.0) (2025-07-12)
+
+
+### Features
+
+* added ability to add an existing adversary to a document's markdown using the command pallette 'Add adversary to the document' ([8bd8da7](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/8bd8da7cd240424727b077aa77cfd97918072238))
+* Added environment block rendering, added SRD environments to the database ([c9c785e](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c9c785e6aabd984b4246516d225d03c52fdc6005))
+
 ## [1.3.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.2...1.3.0) (2025-07-09)
 
 
