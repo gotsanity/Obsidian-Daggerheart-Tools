@@ -10,8 +10,8 @@ The plugin aims to include the following features:
 - [x] Encounter tracking (per MD document)
 - [x] Saving custom adversaries: Working, needs testing.
 - [x] Adversary Creator Modal (custom adversaries): Working, needs ui cleanup.
-- [ ] Environment stat blocks: In Progress
-- [ ] Environment Creator Modal (custom environments): In Progress
+- [x] Environment stat blocks: Working, needs testing
+- [x] Environment Creator Modal (custom environments): Working, needs testing and ui cleanup
 - [ ] Domain Card Display: Planned (will use placeholder art for SRD content)
 - [ ] Domain Card Creator Modal (custom domain cards): Planned
 - [ ] Campaign Frame Creator and Tracking: Planned
