@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.4.0...1.5.0) (2025-08-08)
+
+
+### Features
+
+* added dynamic select modal to add any saved content to the current document. ([41d8e2e](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/41d8e2e4e0a4dd81e7b86aaac813a999fa93cbef))
+
 ## [1.4.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.3.0...1.4.0) (2025-07-12)
 
 
