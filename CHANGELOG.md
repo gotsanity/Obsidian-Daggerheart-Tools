@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.5.0...1.6.0) (2025-08-08)
+
+
+### Features
+
+* created Add new environment modal ([c3a46b3](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c3a46b3e9fc074840b332419b9a3c8501ab7e683))
+* Enabled the edit/save menu for environment blocks ([c79b188](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c79b188b06f0e159d657999115cbcaf2667215d4))
+
 ## [1.5.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.4.0...1.5.0) (2025-08-08)
 
 
