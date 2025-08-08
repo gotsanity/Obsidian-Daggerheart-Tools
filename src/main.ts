@@ -26,6 +26,7 @@ import { AbilityCardRepository, AdversaryRepository, EncounterRepository, Enviro
 import { SelectAdversaryModal } from './view/select-adversary-modal';
 import type { EnvironmentParameters } from './types/environment';
 import EnvironmentRenderer from './view/environment-renderer';
+import { DaggerheartSelectModal } from './view/daggerheart-select-modal';
 
 
 
@@ -60,6 +61,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 		const ribbonIconEl = this.addRibbonIcon('daggerheart-compatible', 'Daggerheart Tools', (evt: MouseEvent) => {
 			new Notice('Opening an new adversary Modal!');
+			// TODO: add code to change into editor if not already in it.
 			this.app.commands.executeCommandById('daggerheart-tools:open-new-adversary-modal');
 		});
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
@@ -92,6 +94,21 @@ export default class DaggerheartToolsPlugin extends Plugin {
 				if (markdownView) {
 					if (!checking) {
 						new SelectAdversaryModal(this.app, this).open();
+					}
+
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
+			id: 'daggerheart-select-modal',
+			name: 'Add a Daggerheart Block to the document',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new DaggerheartSelectModal(this.app, this).open();
 					}
 
 					return true;
