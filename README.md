@@ -7,12 +7,12 @@ The plugin aims to include the following features:
 
 - [x] Data Persistence: Complete (should work with Obsidian Sync but needs confirmation)
 - [x] Adversary stat blocks: Currently working for SRD Content and inline content
-- [x] Encounter tracking (per MD document): Working, needs testing.
-- [ ] Saving custom adversaries: In Progress
-- [ ] Environment stat blocks: Planned
+- [x] Encounter tracking (per MD document)
+- [x] Saving custom adversaries: Working, needs testing.
+- [x] Adversary Creator Modal (custom adversaries): Working, needs ui cleanup.
+- [ ] Environment stat blocks: In Progress
+- [ ] Environment Creator Modal (custom environments): In Progress
 - [ ] Domain Card Display: Planned (will use placeholder art for SRD content)
-- [ ] Adversary Creator Modal (custom adversaries): Planned
-- [ ] Environment Creator Modal (custom environments): Planned
 - [ ] Domain Card Creator Modal (custom domain cards): Planned
 - [ ] Campaign Frame Creator and Tracking: Planned
 - [ ] Fantasy Dice Roller plugin Integration: Planned, low priority
@@ -28,7 +28,7 @@ The plugin aims to include the following features:
 
 ### Adversaries
 
-To create an adversary statblock:
+To create an adversary statblock from SRD materials either click the Daggerheart symbol in the ribbon or type the following into your note:
 
 ````yaml
 ```adversary
@@ -36,7 +36,7 @@ name: Jagged Knife Bandit
 ```
 ````
 
-To override the name of the adversary:
+To override the name of the adversary temporarily:
 
 ````yaml
 ```adversary
@@ -45,37 +45,14 @@ alias: Jimmy the Bandit
 ```
 ````
 
+To permenently edit the details of a saved adversary:
+From a rendered adversary block, click on the menu icon in the top right of the block and select edit.
+![Screenshot of adversary menu](/docs/images/adversary-menu.png)
+
 To create a custom adversary:
-````yaml
-````yaml
-```adversary
-source: "daggerheart-adversary"
-name: "Acid Burrower"
-alias: "Scar, Terror of Shay's Crossing"
-tier: 1
-type: "Solo"
-description: "A horse-sized insect with digging claws and acidic blood. Scar has a large gash across one mandible and eye."
-motives_and_tactics: "Burrow, drag away, feed, reposition"
-difficulty: 14
-thresholds: "8/15"
-hp: 8
-stress: 3
-atk: "+3"
-attack: "Claws"
-range: "Very Close"
-damage: "1d12+2 phy"
-experience: "Tremor Sense +2"
-feats:
-- name: "Relentless (3) - Passive"
-  text: "The Burrower can be spotlighted up to three times per GM turn. Spend Fear as usual to spotlight them."
-- name: "Earth Eruption - Action"
-  text: "Mark a Stress to have the Burrower burst out of the ground. All creatures within Very Close range must succeed on an Agility Reaction Roll or be knocked over, making them Vulnerable until they next act."
-- name: "Spit Acid - Action"
-  text: "Make an attack against all targets in front of the Burrower within Close range. Targets the Burrower succeeds against take 2d6 physical damage and must mark an Armor Slot without receiving its benefits (they can still use armor to reduce the damage). If they can’t mark an Armor Slot, they must mark an additional HP and you gain a Fear."
-- name: "Acid Bath - Reaction"
-  text: "When the Burrower takes Severe damage, all creatures within Close range are bathed in their acidic blood, taking 1d10 physical damage. This splash covers the ground within Very Close range with blood, and all creatures other than the Burrower who move through it take 1d6 physical damage."
-```
-````
+Create an adversary block using the directions above and (in reading mode) click on the menu at the top right of the block and select save as.
+
+![Screenshot of adversary menu](/docs/images/adversary-menu.png)
 
 
 > [!NOTE] Markdown in stat blocks

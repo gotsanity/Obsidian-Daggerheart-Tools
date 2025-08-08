@@ -62,6 +62,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		const ribbonIconEl = this.addRibbonIcon('daggerheart-compatible', 'Daggerheart Tools', (evt: MouseEvent) => {
 			new Notice('Opening an new adversary Modal!');
 			// TODO: add code to change into editor if not already in it.
+			const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+			console.log("view", markdownView);
+
 			this.app.commands.executeCommandById('daggerheart-tools:open-new-adversary-modal');
 		});
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
@@ -71,16 +75,12 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			id: 'open-new-adversary-modal',
 			name: 'Add a new Adversary to the database',
 			checkCallback: (checking: boolean) => {
-				// Conditions to check
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
 						new AdversaryModal(this.app, this).open();
 					}
 
-					// This command will only show up in Command Palette when the check function returns true
 					return true;
 				}
 			}
