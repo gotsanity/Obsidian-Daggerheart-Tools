@@ -24,9 +24,10 @@ import type { Combatant, Encounter } from './types/encounter';
 import { nanoid } from './util/util';
 import { AbilityCardRepository, AdversaryRepository, EncounterRepository, EnvironmentRepository } from './bestiary/repository';
 import { SelectAdversaryModal } from './view/select-adversary-modal';
-import type { EnvironmentParameters } from './types/environment';
+import type { Environment, EnvironmentParameters } from './types/environment';
 import EnvironmentRenderer from './view/environment-renderer';
 import { DaggerheartSelectModal } from './view/daggerheart-select-modal';
+import { EnvironmentModal } from './view/environment-modal';
 
 
 
@@ -87,6 +88,21 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		});
 
 		this.addCommand({
+			id: 'open-new-environment-modal',
+			name: 'Add a new Environment to the database',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new EnvironmentModal(this.app, this).open();
+					}
+
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
 			id: 'select-adversary-modal',
 			name: 'Add an Adversary to the document',
 			checkCallback: (checking: boolean) => {
@@ -132,7 +148,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.addSettingTab(new DaggerheartToolsSettingsTab(this.app, this));
 	}
 
-	openAdversaryModal(adversary: Adversary, update: boolean = false) {
+	openAdversaryModal(adversary: Adversary, update = false) {
 		new AdversaryModal(this.app, this, adversary, update).open();
 	}
 
@@ -173,7 +189,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 	}
 
 	updateAdversary(id: string, adversary: Adversary) {
-		let exists = this.adversaries.exists(adv => adv.id == id);
+		const exists = this.adversaries.exists(adv => adv.id == id);
 
 		if (!exists) {
 			new Notice("Unable to find adversary to update. ID not recognized.");
@@ -186,7 +202,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 	}
 
 	deleteAdversary(id: string) {
-		let exists = this.adversaries.exists(adv => adv.id == id);
+		const exists = this.adversaries.exists(adv => adv.id == id);
 
 		if (!exists) {
 			new Notice("Unable to find adversary to delete. ID not recognized.");
@@ -197,9 +213,39 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		new Notice("Delete succesfull");
 	}
 
+	addNewEnvironment(environment: Environment) {
+		this.environments.add(environment);
+		new Notice(environment.name + " was added to the database.");
+	}
+
+	updateEnvironment(id: string, environment: Environment) {
+		const exists = this.environments.exists(env => env.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find environment to update. ID not recognized.");
+			return;
+		}
+
+		this.environments.update(id, environment);
+
+		new Notice(environment.name + " has been updated.");
+	}
+
+	deleteEnvironment(id: string) {
+		const exists = this.environments.exists(env => env.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find environment to delete. ID not recognized.");
+			return;
+		}
+
+		this.environments.delete(adv => adv.id == id);
+		new Notice("Delete succesfull");
+	}
+
 	// Adds an adversary to the combat and sets the file to an encounter.
 	async addCombatant(encounterId: string, adversary: Adversary) {
-		let combatant: Combatant = {
+		const combatant: Combatant = {
 			name: adversary.name,
 			parentId: adversary.id,
 			id: nanoid(),
@@ -209,7 +255,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			maxStress: adversary.stress
 		}
 
-		let encounter = this.encounters.find(e => e.id == encounterId);
+		const encounter = this.encounters.find(e => e.id == encounterId);
 
 		if (encounter == undefined) {
 			new Notice("Error: Unable to add combatant, no encounter found.");

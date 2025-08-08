@@ -2,7 +2,8 @@
     background-color: var(--background-secondary);
 }
 
-.dht-adversary-form {
+.dht-adversary-form,
+.dht-environment-form {
     // form elements
     .form-group {
         display: flex;
@@ -67,7 +68,14 @@
     p {
         margin: 0.25rem 0;
     }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+    }
 }
+
 
 .dht-adversary,
 .dht-environment {
