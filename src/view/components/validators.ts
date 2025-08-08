@@ -3,7 +3,7 @@ export const isNumber = (val: any) => {
   return typeof val === 'number' && !isNaN(val)
 }
 
-export const inRange = (val: number, min: number, max: number) => {
+export const inRange = (val: string | number, min: string | number, max: string | number) => {
   return val >= min && val <= max;
 }
 

@@ -16,10 +16,12 @@
     context,
     environment,
     plugin,
+    blockType = "Environment",
   } : {
     context: string;
     environment: Environment;
     plugin: DaggerheartToolsPlugin;
+    blockType: string;
   } = $props();
 
   _plugin.set(plugin);
@@ -59,11 +61,10 @@
     definition: environment.impulses!
   });
 
-
 </script>
 
-<div class="dht-adversary">
-  <!-- <Menu data={environment}></Menu> -->
+<div class="dht-environment">
+  <Menu data={environment} {blockType}></Menu>
   {#if environment.image}
     <img src="#" alt={environment.name}/>
   {/if}
