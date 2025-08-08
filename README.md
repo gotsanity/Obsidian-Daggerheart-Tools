@@ -28,15 +28,22 @@ The plugin aims to include the following features:
 
 ### Adversaries
 
-To create an adversary statblock from SRD materials either click the Daggerheart symbol in the ribbon or type the following into your note:
-
+#### To add an existing adversary block you can type the following into your note:
 ````yaml
 ```adversary
 name: Jagged Knife Bandit
 ```
 ````
 
-To override the name of the adversary temporarily:
+#### To select a block from the database:
+Using the command pallete option *Daggerheart Tools: Add a Daggerheart Block to the document* will open a search modal. Clicking on any of the entries will place the block at the cursor position.
+
+![Search Function Example](/docs/images/search-function.png)
+
+#### To add a new adversary to the note:
+Click on the Daggerheart symbol on the ribbon or use the *Daggerheart Tools: Add a new Adversary to the database* command pallete option.
+
+#### To override the name of the adversary temporarily:
 
 ````yaml
 ```adversary
@@ -45,18 +52,22 @@ alias: Jimmy the Bandit
 ```
 ````
 
-To permenently edit the details of a saved adversary:
+> [!NOTE] Markdown in stat blocks
+> Some markdown is allowed inside of blocks but the field must be surrounded in quotes in order for it to render correctly.
+
+
+#### Editing/Saving
+**To permenently edit the details of a saved adversary**:
+
 From a rendered adversary block, click on the menu icon in the top right of the block and select edit.
 ![Screenshot of adversary menu](/docs/images/adversary-menu.png)
 
-To create a custom adversary:
+**To create a custom adversary from an existing saved block**:
+
 Create an adversary block using the directions above and (in reading mode) click on the menu at the top right of the block and select save as.
 
 ![Screenshot of adversary menu](/docs/images/adversary-menu.png)
 
-
-> [!NOTE] Markdown in stat blocks
-> Some markdown is allowed inside of blocks but the field must be surrounded in quotes in order for it to render correctly.
 
 ## How to install the plugin
 
