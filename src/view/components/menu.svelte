@@ -2,27 +2,30 @@
 	import type DaggerheartToolsPlugin from "src/main";
 	import type { Adversary } from "src/types/adversary";
 	import { _plugin } from "../daggerstore";
+	import type { Environment } from "src/types/environment";
 
 
     let {
-        adversary,
+        data,
+        blockType,
         isOpen = false,
     } : {
-        adversary: Adversary,
+        data: Adversary | Environment,
+        blockType: string,
         isOpen?: boolean
     } = $props();
 
     let plugin: DaggerheartToolsPlugin;
     let plugSub = _plugin.subscribe(plug => plugin = plug);
 
-    let editAdversaryModal = () => {
+    let editModal = () => {
         isOpen = false;
-        plugin.openAdversaryModal(adversary, true);
+        plugin.openModal(blockType, data, true);
     };
     
-    let saveAdversaryModal = () => {
+    let saveModal = () => {
         isOpen = false;
-        plugin.openAdversaryModal(adversary);
+        plugin.openModal(blockType, data);
     };
 </script>
 
@@ -35,8 +38,8 @@
     <div class="dht-menu-items">
         {#if (isOpen)}
         <ul class="menu-list">
-            <li class="menu-item"><button class="menu-action" onclick={editAdversaryModal}>Edit</button></li>
-            <li class="menu-item"><button class="menu-action" onclick={saveAdversaryModal}>Save As</button></li>
+            <li class="menu-item"><button class="menu-action" onclick={editModal}>Edit</button></li>
+            <li class="menu-item"><button class="menu-action" onclick={saveModal}>Save As</button></li>
             <!-- <li class="menu-item"><button class="menu-action">Export</button></li>
             <li class="menu-item"><button class="menu-action">Remove</button></li>
             <li class="menu-item"><button class="menu-action">Item</button></li> -->
@@ -45,50 +48,3 @@
     </div>
     
 </div>
-
-<style>
-    .dht-menu {
-        position: absolute;
-        float: left;
-        top: 15px;
-        right: -15px;
-    }
-
-    .dht-menu-controls {
-        display: flex;
-        flex-direction: row;
-        align-items: end;
-        justify-content: end;
-    }
-
-    .menu-list,
-    .menu-item {
-        margin: 0;
-        margin-top: 0.5rem;
-        padding: 0;
-    }
-
-    .menu-list {
-        margin-top: 2.0rem;
-        display: flex;
-        flex-direction: column;
-        align-items: end;
-        justify-content: end;
-    }
-
-    .menu-item {
-        margin: 0.25rem;
-    }
-
-    /* .menu-reveal {
-        background-color: rgba(0, 0, 0, 0);
-        border: 0;
-        box-shadow: none;
-    }
-
-    .menu-reveal:hover {
-        background-color: var(--background-secondary-alt);
-        box-shadow: inset;
-    } */
-
-</style>
