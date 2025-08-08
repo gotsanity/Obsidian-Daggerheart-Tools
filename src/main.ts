@@ -148,8 +148,22 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		this.addSettingTab(new DaggerheartToolsSettingsTab(this.app, this));
 	}
 
+	openModal(type: string, data: Adversary | Environment, update = false) {
+		if (type == "Adversary") {
+			this.openAdversaryModal(data as Adversary, update);
+		} else if (type == "Environment") {
+			this.openEnvironmentModal(data as Environment, update);
+		} else {
+			new Notice("Unable to open modal, invalid type.");
+		}
+	}
+
 	openAdversaryModal(adversary: Adversary, update = false) {
 		new AdversaryModal(this.app, this, adversary, update).open();
+	}
+
+	openEnvironmentModal(environment: Environment, update = false) {
+		new EnvironmentModal(this.app, this, environment, update).open();
 	}
 
 	onunload() {

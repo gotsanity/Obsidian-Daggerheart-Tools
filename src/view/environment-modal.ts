@@ -21,7 +21,7 @@ export class EnvironmentModal extends Modal {
     onOpen() {
         const {contentEl} = this;
         if (this.update) {
-            this.setTitle("Edit Adversary");
+            this.setTitle("Edit Environment");
             
             this.subscription = this.plugin.environments.subscribe((event, item) => {
                 if (item.id == this.environment!.id) {
@@ -47,7 +47,7 @@ export class EnvironmentModal extends Modal {
         this.$environmentBlock = mount(EnvironmentForm, {
             target: this.contentEl,
             props: {
-                adversary: this.environment,
+                environment: this.environment,
                 update: this.update,
                 plugin: this.plugin
             }
@@ -64,7 +64,7 @@ export class EnvironmentModal extends Modal {
     }
 
     addEnvironmentToDocument(item: Environment) {
-        console.log("inserting adversary if possible")
+        console.log("inserting environment if possible")
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
         if (view) {
@@ -80,9 +80,9 @@ export class EnvironmentModal extends Modal {
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 
         if (view) {
-            // TODO: implement updating existing adversaries from non-editor views.
-            new Notice("Feature not fully implemented yet: Please update existing adversary to the new name manually.");
-            // find the existing adversary name line
+            // TODO: implement updating existing environments from non-editor views.
+            new Notice("Feature not fully implemented yet: Please update existing environment to the new name manually.");
+            // find the existing environment name line
             // delete that line, insert new line
             // let cursor = { line: -1, ch: 0 };
             // view.editor.replaceRange(`name: ${item.name}\n`, cursor, cursor);
