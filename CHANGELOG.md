@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.7.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.6.0...1.7.0) (2025-08-09)
+
+
+### Features
+
+* added buttons to the select modal to bring up the create new adversary modals ([40a6bad](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/40a6bad6c7302c8c15772654088fc2763ab7535c))
+
+
+### Bug Fixes
+
+* fixed an issue with a missed property on the environment form and corrected a wording ([3b08d4b](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/3b08d4b2d21a72104f7fc94df4e227d1fc14d270))
+* updated styles on block insert modal to fix margin issue ([a2985e0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/a2985e006270342d71d6f8069a73edccda308a1d))
+
 ## [1.6.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.5.0...1.6.0) (2025-08-08)
 
 
