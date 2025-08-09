@@ -52,7 +52,7 @@
 <div class="dht-select-modal">
     <div class="form-group">
         <label for="selection">Type:</label>
-        <select bind:value={selectedType}>
+        <select class="dht-type-selector" bind:value={selectedType}>
             {#each objTypes as value}
                 <option {value}>{value}</option>
             {/each}
