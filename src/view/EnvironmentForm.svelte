@@ -199,7 +199,7 @@
       type: "text",
       value: "name",
       description: "The environment's name.",
-      placeholder: "Bandit"
+      placeholder: "Tavern"
     })}
 
     {#if environmentState.alias}
@@ -234,7 +234,7 @@
         class="resize-none"
         id="potential_adversaries"
         name="potential_adversaries"
-        bind:value={environmentState.text}
+        bind:value={environmentState.potential_adversaries}
       ></textarea>
       <p class="text-xs text-muted-foreground">
         This is the environment's potential adversaries.
