@@ -51,7 +51,12 @@
 
 <div class="dht-select-modal">
     <div class="form-group">
-        <label for="selection">Type:</label>
+        <button class="menu-button" onclick={() => modal.switchModal("new-adversary")}>New Adversary</button>
+        <button class="menu-button" onclick={() => modal.switchModal("new-environment")}>New Environment</button>
+    </div>
+    
+    <div class="form-group">
+        <label for="selection">Filter Type:</label>
         <select class="dht-type-selector" bind:value={selectedType}>
             {#each objTypes as value}
                 <option {value}>{value}</option>
@@ -59,7 +64,7 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="selection">Filter:</label>
+        <label for="selection">Filter Name:</label>
         <input type="text" bind:value={filteredObjects.filter} class="form-control" />
         <ul class="select-item-list">
             {#each filteredObjects.objects as object}
