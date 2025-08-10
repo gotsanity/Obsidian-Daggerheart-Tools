@@ -122,11 +122,12 @@
       definition: adversary.difficulty!
   });
 
+  let blockType = "Adversary";
 
 </script>
 
 <div class="dht-adversary">
-  <Menu {adversary}></Menu>
+  <Menu data={adversary} {blockType}></Menu>
   {#if adversary.image}
     <img src="#" alt={adversary.name}/>
   {/if}
