@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.7.0...1.8.0) (2025-08-10)
+
+
+### Features
+
+* added colossus as an adversary type in adversaryform ([d52ecea](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/d52ecea854d098473dc62e3ceabd1b44259c7fab))
+
+
+### Bug Fixes
+
+* fixed issue with adversary block edit and save as button not opening the modal ([c430d6b](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c430d6b33ebfc58b0730060e1bd5aef8295ec78c))
+
 ## [1.7.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.6.0...1.7.0) (2025-08-09)
 
 
