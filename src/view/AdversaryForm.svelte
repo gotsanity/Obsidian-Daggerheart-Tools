@@ -71,7 +71,8 @@
         "Social",
         "Solo",
         "Standard",
-        "Support"
+        "Support",
+        "Colossus"
     ];
 
     let adversaryRanges: string[] = [
@@ -115,19 +116,6 @@
         }
       }
     });
-
-
-    // $effect(() => {
-    //   if (!update) {
-    //     if (required(adversaryState.name)) {
-    //       errors.alias = "Name cannot be empty.";
-    //     } else if (plugin.adversaries.exists(adv => adv.name == adversaryState.alias)) {
-    //       errors.name = "Alias already exists, please choose another.";
-    //     } else {
-    //       errors.name = undefined;
-    //     }
-    //   }
-    // });
 
 
     $effect(() => {
