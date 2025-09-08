@@ -61,13 +61,9 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		Linkifier.initialize(this.app.metadataCache, this.app);
 
 		const ribbonIconEl = this.addRibbonIcon('daggerheart-compatible', 'Daggerheart Tools', (evt: MouseEvent) => {
-			new Notice('Opening an new adversary Modal!');
-			// TODO: add code to change into editor if not already in it.
 			const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
-			console.log("view", markdownView);
-
-			this.app.commands.executeCommandById('daggerheart-tools:open-new-adversary-modal');
+			this.app.commands.executeCommandById('daggerheart-tools:daggerheart-select-modal');
 		});
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
 
