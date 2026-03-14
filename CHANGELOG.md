@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.1.0...1.1.1) (2025-07-08)
+
+
+### Bug Fixes
+
+* fixes [#5](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/issues/5), issue with ITS Theme injecting extra content into existing layouts. ([6ae78b1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/6ae78b1727be701ba1db4f6076f9168f791bd001))
+
 ## [1.1.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/v1.0.0...1.1.0) (2025-07-07)
 
 

@@ -1,5 +1,5 @@
 import type DaggerheartToolsPlugin from "src/main";
-import { derived, writable } from "svelte/store";
+import { writable } from "svelte/store";
 import AdversaryBlockRenderer from "./adversary-renderer";
 import type { Encounter } from "src/types/encounter";
 

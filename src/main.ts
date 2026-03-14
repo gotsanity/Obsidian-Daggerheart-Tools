@@ -1,11 +1,14 @@
 import {
 	addIcon,
+	App,
 	Editor,
 	type MarkdownPostProcessorContext,
 	MarkdownView,
+	Modal,
 	Notice,
 	parseYaml,
 	Plugin,
+	type PluginManifest,
 	TFile,
 } from 'obsidian';
 import AdversaryBlockRenderer from 'src/view/adversary-renderer';
@@ -20,17 +23,25 @@ import { Bestiary } from './bestiary/bestiary';
 import type { Combatant, Encounter } from './types/encounter';
 import { nanoid } from './util/util';
 import { AbilityCardRepository, AdversaryRepository, EncounterRepository, EnvironmentRepository } from './bestiary/repository';
+import { SelectAdversaryModal } from './view/select-adversary-modal';
+import type { Environment, EnvironmentParameters } from './types/environment';
+import EnvironmentRenderer from './view/environment-renderer';
+import { DaggerheartSelectModal } from './view/daggerheart-select-modal';
+import { EnvironmentModal } from './view/environment-modal';
 
 
 
 export default class DaggerheartToolsPlugin extends Plugin {
 	settings: DaggerheartToolsSettings = Object.assign(DEFAULT_SETTINGS);
-	// TODO: disabled until it is updated for future versions
 	api: Api = new Api(this);
 	adversaries = new AdversaryRepository(this);
 	encounters = new EncounterRepository(this);
 	environments = new EnvironmentRepository(this);
 	abilityCards = new AbilityCardRepository(this);
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest)
+	}
 
 	async onload() {
 		console.log("Loaded Daggerheart-Tools")
@@ -39,9 +50,10 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 		this.adversaries.load();
 		this.encounters.load();
+		this.environments.load();
 
-		// (window["DaggerheartTools"] = this.api) &&
-        //     this.register(() => delete window["DaggerheartTools"]);
+		(window["DaggerheartTools"] = this.api) &&
+            this.register(() => delete window["DaggerheartTools"]);
 
 		
 		Bestiary.initialize(this);
@@ -49,35 +61,68 @@ export default class DaggerheartToolsPlugin extends Plugin {
 		Linkifier.initialize(this.app.metadataCache, this.app);
 
 		const ribbonIconEl = this.addRibbonIcon('daggerheart-compatible', 'Daggerheart Tools', (evt: MouseEvent) => {
-			new Notice('Opening an new adversary Modal!');
-			this.app.commands.executeCommandById('daggerheart-tools:open-new-adversary-modal');
+			const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+			this.app.commands.executeCommandById('daggerheart-tools:daggerheart-select-modal');
 		});
 		ribbonIconEl.addClass('daggerheart-tools-ribbon-class');
 
-		// This adds an editor command that can perform some operation on the current editor instance
-		// this.addCommand({
-		// 	id: 'add-adversary-to-note',
-		// 	name: 'Add adversary to current document',
-		// 	editorCallback: (editor: Editor, view: MarkdownView) => {
-		// 		new Notice("This feature does not work correctly yet.");
-		// 	}
-		// });
 
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'open-new-adversary-modal',
 			name: 'Add a new Adversary to the database',
 			checkCallback: (checking: boolean) => {
-				// Conditions to check
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
 				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
 					if (!checking) {
-						new AdversaryModal(this.app).open();
+						new AdversaryModal(this.app, this).open();
 					}
 
-					// This command will only show up in Command Palette when the check function returns true
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
+			id: 'open-new-environment-modal',
+			name: 'Add a new Environment to the database',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new EnvironmentModal(this.app, this).open();
+					}
+
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
+			id: 'select-adversary-modal',
+			name: 'Add an Adversary to the document',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new SelectAdversaryModal(this.app, this).open();
+					}
+
+					return true;
+				}
+			}
+		});
+
+		this.addCommand({
+			id: 'daggerheart-select-modal',
+			name: 'Add a Daggerheart Block to the document',
+			checkCallback: (checking: boolean) => {
+				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (markdownView) {
+					if (!checking) {
+						new DaggerheartSelectModal(this.app, this).open();
+					}
+
 					return true;
 				}
 			}
@@ -88,9 +133,33 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			this.postprocessor.bind(this)
 		);
 
+		this.registerMarkdownCodeBlockProcessor(
+			"environment",
+			this.environmentPostprocessor.bind(this)
+		);
+
+
 		this.registerEditorSuggest(new AdversarySuggester(this));
 
 		this.addSettingTab(new DaggerheartToolsSettingsTab(this.app, this));
+	}
+
+	openModal(type: string, data: Adversary | Environment, update = false) {
+		if (type == "Adversary") {
+			this.openAdversaryModal(data as Adversary, update);
+		} else if (type == "Environment") {
+			this.openEnvironmentModal(data as Environment, update);
+		} else {
+			new Notice("Unable to open modal, invalid type.");
+		}
+	}
+
+	openAdversaryModal(adversary: Adversary, update = false) {
+		new AdversaryModal(this.app, this, adversary, update).open();
+	}
+
+	openEnvironmentModal(environment: Environment, update = false) {
+		new EnvironmentModal(this.app, this, environment, update).open();
 	}
 
 	onunload() {
@@ -124,9 +193,69 @@ export default class DaggerheartToolsPlugin extends Plugin {
         });
 	}
 
+	addNewAdversary(adversary: Adversary) {
+		this.adversaries.add(adversary);
+		new Notice(adversary.name + " was added to the database.");
+	}
+
+	updateAdversary(id: string, adversary: Adversary) {
+		const exists = this.adversaries.exists(adv => adv.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find adversary to update. ID not recognized.");
+			return;
+		}
+
+		this.adversaries.update(id, adversary);
+
+		new Notice(adversary.name + " has been updated.");
+	}
+
+	deleteAdversary(id: string) {
+		const exists = this.adversaries.exists(adv => adv.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find adversary to delete. ID not recognized.");
+			return;
+		}
+
+		this.adversaries.delete(adv => adv.id == id);
+		new Notice("Delete succesfull");
+	}
+
+	addNewEnvironment(environment: Environment) {
+		this.environments.add(environment);
+		new Notice(environment.name + " was added to the database.");
+	}
+
+	updateEnvironment(id: string, environment: Environment) {
+		const exists = this.environments.exists(env => env.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find environment to update. ID not recognized.");
+			return;
+		}
+
+		this.environments.update(id, environment);
+
+		new Notice(environment.name + " has been updated.");
+	}
+
+	deleteEnvironment(id: string) {
+		const exists = this.environments.exists(env => env.id == id);
+
+		if (!exists) {
+			new Notice("Unable to find environment to delete. ID not recognized.");
+			return;
+		}
+
+		this.environments.delete(adv => adv.id == id);
+		new Notice("Delete succesfull");
+	}
+
 	// Adds an adversary to the combat and sets the file to an encounter.
 	async addCombatant(encounterId: string, adversary: Adversary) {
-		let combatant: Combatant = {
+		const combatant: Combatant = {
 			name: adversary.name,
 			parentId: adversary.id,
 			id: nanoid(),
@@ -136,7 +265,7 @@ export default class DaggerheartToolsPlugin extends Plugin {
 			maxStress: adversary.stress
 		}
 
-		let encounter = this.encounters.find(e => e.id == encounterId);
+		const encounter = this.encounters.find(e => e.id == encounterId);
 
 		if (encounter == undefined) {
 			new Notice("Error: Unable to add combatant, no encounter found.");
@@ -223,14 +352,14 @@ export default class DaggerheartToolsPlugin extends Plugin {
 
 	async postprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
 		try {
-            // /** Replace Links */
+            el.addClass("dht-plugin-container");
+            el.parentElement?.addClass("dht-plugin-parent");
+
+			// /** Replace Links */
             source = Linkifier.transformSource(source);
 
             /** Get Parameters */
             let params: AdversaryParameters = parseYaml(source);
-
-            el.addClass("dht-plugin-container");
-            el.parentElement?.addClass("dht-plugin-parent");
 
             let adversary = new AdversaryBlockRenderer({
                 container: el,
@@ -244,6 +373,38 @@ export default class DaggerheartToolsPlugin extends Plugin {
             console.error(`Daggerheart Adversary Error:\n${e}`);
             let pre = createEl("pre");
             pre.setText(`\`\`\`adversary
+				There was an error rendering the statblock:
+				${e.stack
+					.split("\n")
+					.filter((line: string) => !/^at/.test(line?.trim()))
+					.join("\n")}
+				\`\`\``);
+        }
+    }
+
+	async environmentPostprocessor(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) {
+		try {
+            el.addClass("dht-plugin-container");
+            el.parentElement?.addClass("dht-plugin-parent");
+
+			// /** Replace Links */
+            source = Linkifier.transformSource(source);
+
+            /** Get Parameters */
+            let params: EnvironmentParameters = parseYaml(source);
+
+            let environment = new EnvironmentRenderer({
+                container: el,
+                plugin: this,
+                params,
+                context: ctx.sourcePath
+            });
+
+            ctx.addChild(environment);
+        } catch (e: any) {
+            console.error(`Daggerheart Environment Error:\n${e}`);
+            let pre = createEl("pre");
+            pre.setText(`\`\`\`environment
 				There was an error rendering the statblock:
 				${e.stack
 					.split("\n")

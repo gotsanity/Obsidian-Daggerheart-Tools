@@ -39,16 +39,6 @@ export default class AdversaryBlockRenderer extends MarkdownRenderChild {
         this.init();
     }
 
-    // onAdversaryChangeCallbacks: ((adv: Adversary) => void)[] = [];
-
-    // onAdversaryChange(cb: (adv: Adversary) => void) {
-    //     this.onAdversaryChangeCallbacks.push(cb);
-    // }
-
-    // notifyAdversaryChange(adv: Adversary) {
-    //     this.onAdversaryChangeCallbacks.forEach(cb => cb(adv));
-    // }
-
     getAdversary(params: | { adversary: Adversary } | { params: Partial<AdversaryParameters> }) {
         if ("params" in params) {
             this.params = params.params

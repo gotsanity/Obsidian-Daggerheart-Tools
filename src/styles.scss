@@ -1,8 +1,85 @@
 .dht-plugin-container {
     background-color: var(--background-secondary);
 }
-.dht-adversary {
-    margin: 1rem;
+
+.dht-adversary-form,
+.dht-environment-form {
+    // form elements
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 80%;
+    }
+
+    .text-destructive {
+        color: var(--text-error);
+    }
+
+    .text-sm {
+        font-size: var(--font-small)
+    }
+
+    .text-xs {
+        font-size: var(--font-smallest);
+    }
+
+    .text-muted-foreground {
+        color: var(--text-muted)
+    }
+
+    .form-group {
+        margin: 1.5rem 0;
+    }
+
+    .sub-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 80%;
+        margin: 1.5rem 0;
+    }
+
+    .sub-group .added-button {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+    }
+
+    .sub-group .added-button button {
+        margin: 1.0rem 0;
+    }
+
+    .add-button {
+        margin: 1.0rem 0;
+    }
+
+    label {
+        font-weight: var(--font-semibold);
+    }
+
+    .label-heading {
+        font-size: 1.25rem;
+    }
+
+    .sub-group label {
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    p {
+        margin: 0.25rem 0;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+    }
+}
+
+
+.dht-adversary,
+.dht-environment {
+    margin: 1.0rem;
     padding: 1.0rem 0;
 
     .divider {
@@ -57,7 +134,8 @@
         font-size: larger;
     }
 
-    .experience dd, dt {
+    .experience dd, dt,
+    .impulses dd, dt {
         display: inline; 
     }
 
@@ -141,7 +219,10 @@
         padding-right: 0.75rem;
     }
 
-    .toggle-list .toggle-item::before {
+    // ITS Theme Overrides
+
+    .toggle-list .toggle-item::before,
+    .menu-list .menu-item::before {
         content: none;
     }
 
@@ -151,5 +232,79 @@
 
     h2::after, h3::after, h4::after, h5::after, h6::after {
         content: none;
+    }
+
+    .dht-menu {
+        position: absolute;
+        float: left;
+        top: 15px;
+        right: -15px;
+    }
+
+    .dht-menu-controls {
+        display: flex;
+        flex-direction: row;
+        align-items: end;
+        justify-content: end;
+    }
+
+    .menu-list,
+    .menu-item {
+        margin: 0;
+        margin-top: 0.5rem;
+        padding: 0;
+    }
+
+    .menu-list {
+        margin-top: 2.0rem;
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        justify-content: end;
+    }
+
+    .menu-item {
+        margin: 0.25rem;
+    }
+
+    /* .menu-reveal {
+        background-color: rgba(0, 0, 0, 0);
+        border: 0;
+        box-shadow: none;
+    }
+
+    .menu-reveal:hover {
+        background-color: var(--background-secondary-alt);
+        box-shadow: inset;
+    } */
+}
+
+.dht-select-modal {
+    text-align: center;
+
+    ul.select-item-list {
+        height: 400px;
+        overflow: scroll;
+        list-style: none;
+        margin: 1.0rem 0;
+        padding: 0;
+    }
+
+    .select-item {
+        width: 100%;
+        margin-top: 0.50rem;
+    }
+
+    .select-item-list .select-item::before
+    {
+        content: none;
+    }
+
+    .dht-type-selector {
+        margin-bottom: 1rem;
+    }
+    
+    .menu-button {
+        margin-bottom: 1.0rem;
     }
 }

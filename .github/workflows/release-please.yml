@@ -5,7 +5,7 @@ on:
         branches:
             - "main"
 env:
-    PLUGIN_NAME: daggerheart-tools
+    PLUGIN_NAME: Daggerheart-Tools
 
 permissions:
     contents: write
