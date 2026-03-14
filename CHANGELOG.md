@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.9.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.8.0...1.9.0) (2026-03-14)
+
+
+### Features
+
+* merge development into master ([65519c1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/65519c1ee5d215bfae3d5f3fd5f4b0f19165e1c1))
+* merge fix-complex-statblocks into development ([0c3d9c6](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/0c3d9c6870dabe1e3d5cf96af0177689dd02e47f))
+* switched ribbon command to open the search modal instead for usability ([81013d6](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/81013d6ae4119f1cd149167ddfdfd4369016d345))
+
+
+### Bug Fixes
+
+* auto-quote YAML values containing colons to fix stat block rendering ([ea837d8](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/ea837d8343bc5ee1057b98a87137fa617f578170)), closes [#34](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/issues/34)
+
 ## [1.8.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.7.0...1.8.0) (2025-08-10)
 
 
