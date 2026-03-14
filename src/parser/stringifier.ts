@@ -33,7 +33,7 @@ export class LinkStringifier {
      * @returns {string} A transformed source, with links replaced.
      */
     static transformSource(source: string) {
-        return source
+        const withLinks = source
             .replace(/\[\[([^\]]+?)\]\]/g, (_, $1) =>
                 LinkStringifier.replaceWikiLink($1)
             )
@@ -42,6 +42,41 @@ export class LinkStringifier {
                 (_, alias: string, path: string) =>
                     LinkStringifier.replaceMarkdownLink(path, alias)
             );
+        return LinkStringifier.sanitizeYamlColonValues(withLinks);
+    }
+
+    private static sanitizeYamlColonValues(source: string): string {
+        const KEY_VALUE = /^(\s*)(\w[\w_]*)(\s*:\s+)(.+)$/;
+        const BLOCK_SCALAR = /^[|>][\d\-+]?\s*$/;
+
+        return source
+            .split('\n')
+            .map(line => {
+                // Skip array item lines entirely
+                if (/^\s*-\s+/.test(line)) return line;
+
+                const match = line.match(KEY_VALUE);
+                if (!match) return line;
+
+                const [, indent, key, sep, value] = match;
+
+                // Already quoted
+                if (
+                    (value.startsWith('"') && value.endsWith('"')) ||
+                    (value.startsWith("'") && value.endsWith("'"))
+                ) return line;
+
+                // Block scalar header (|, >, |-, etc.)
+                if (BLOCK_SCALAR.test(value)) return line;
+
+                // Only act if value contains ': '
+                if (!value.includes(': ')) return line;
+
+                // Escape internal double quotes and wrap
+                const escaped = value.replace(/"/g, '\\"');
+                return `${indent}${key}${sep}"${escaped}"`;
+            })
+            .join('\n');
     }
     /**
      * This can be used to transform a source coming from frontmatter, that could possibly
