@@ -1,5 +1,94 @@
 # Changelog
 
+## [1.8.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.7.0...1.8.0) (2025-08-10)
+
+
+### Features
+
+* added colossus as an adversary type in adversaryform ([d52ecea](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/d52ecea854d098473dc62e3ceabd1b44259c7fab))
+
+
+### Bug Fixes
+
+* fixed issue with adversary block edit and save as button not opening the modal ([c430d6b](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c430d6b33ebfc58b0730060e1bd5aef8295ec78c))
+
+## [1.7.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.6.0...1.7.0) (2025-08-09)
+
+
+### Features
+
+* added buttons to the select modal to bring up the create new adversary modals ([40a6bad](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/40a6bad6c7302c8c15772654088fc2763ab7535c))
+
+
+### Bug Fixes
+
+* fixed an issue with a missed property on the environment form and corrected a wording ([3b08d4b](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/3b08d4b2d21a72104f7fc94df4e227d1fc14d270))
+* updated styles on block insert modal to fix margin issue ([a2985e0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/a2985e006270342d71d6f8069a73edccda308a1d))
+
+## [1.6.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.5.0...1.6.0) (2025-08-08)
+
+
+### Features
+
+* created Add new environment modal ([c3a46b3](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c3a46b3e9fc074840b332419b9a3c8501ab7e683))
+* Enabled the edit/save menu for environment blocks ([c79b188](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c79b188b06f0e159d657999115cbcaf2667215d4))
+
+## [1.5.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.4.0...1.5.0) (2025-08-08)
+
+
+### Features
+
+* added dynamic select modal to add any saved content to the current document. ([41d8e2e](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/41d8e2e4e0a4dd81e7b86aaac813a999fa93cbef))
+
+## [1.4.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.3.0...1.4.0) (2025-07-12)
+
+
+### Features
+
+* added ability to add an existing adversary to a document's markdown using the command pallette 'Add adversary to the document' ([8bd8da7](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/8bd8da7cd240424727b077aa77cfd97918072238))
+* Added environment block rendering, added SRD environments to the database ([c9c785e](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/c9c785e6aabd984b4246516d225d03c52fdc6005))
+
+## [1.3.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.2...1.3.0) (2025-07-09)
+
+
+### Features
+
+* added ability to delete features and experiences from adversary forms and adjusted styles of adversary form to be more readable ([ab4bd6a](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/ab4bd6abec89c65d61e756e90402dcc40354e956))
+
+## [1.2.2](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.1...1.2.2) (2025-07-09)
+
+
+### Bug Fixes
+
+* fixed error in .gitignore ([e220d41](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/e220d41b8a19205896a19693f67f9f4caba4b59b))
+
+## [1.2.1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.2.0...1.2.1) (2025-07-09)
+
+
+### Bug Fixes
+
+* fixed issue with id property on features and fixed error in tier datatype in daggerheart-srd-bestiary.ts ([87bdd24](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/87bdd24e510547d32b7d6aa7cd430fecf52b8004))
+
+## [1.2.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.1.1...1.2.0) (2025-07-09)
+
+
+### Features
+
+* added ability to dynamically add features and experiences to adversary modal form ([9ccfa37](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/9ccfa37b658d5fbde22bdd2d1050d725fae7d6e0))
+* added ability to insert new adversaries directly into active editor sessions at the cursor ([02ee940](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/02ee940c5f6cfbec7175da9fe66c217bb0089343))
+* added save as, edit, and new adversary modals with validation ([89fea67](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/89fea67e998d1b8b010cbfc4469a80b9e1c89a5e))
+* added validation to adversary modal form ([400efee](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/400efee0672011e2115cbd5a93886b1553ee99aa))
+* introduced method to insert updated name on edit into markdown ([80c1163](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80c1163c5d278300cd54d3853a310165a2c53b8e))
+
+
+### Bug Fixes
+
+* added styles.css, main.js to .gitignore ([971c514](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/971c5145a3d5a299dfadfbd5bf67cba973c6e785))
+* fixed [#8](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/issues/8) issue with frontmatter being overwritten on insert. ([80c1163](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80c1163c5d278300cd54d3853a310165a2c53b8e))
+* fixed issue with repository callbacks being unable to unsubscribe ([80c1163](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80c1163c5d278300cd54d3853a310165a2c53b8e))
+* fixed validation for saving adversaries with existing features and experiences ([1aa3beb](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/1aa3beb68415b8b659b7dfc79ec651e95d1310d5))
+* fixed validation to include features and experiences ([80b5faf](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/80b5fafb0d63f4d73de8ca2aeaedf20e62984b3d))
+
 ## [1.1.1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.1.0...1.1.1) (2025-07-08)
 
 
