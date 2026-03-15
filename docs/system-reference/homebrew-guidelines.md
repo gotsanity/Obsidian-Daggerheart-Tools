@@ -135,7 +135,7 @@ To scale an adversary to a different tier:
 
 | Document | Location |
 |----------|----------|
-| Daggerheart SRD | `docs/images/official-docs/Daggerheart-SRD-9-09-25.pdf` |
-| Daggerheart Homebrew Kit v1.0 | `docs/images/official-docs/Daggerheart-Homebrew-Kit-v1.0-July-31-2025.pdf` |
+| Daggerheart SRD | `docs/official-docs/Daggerheart-SRD-9-09-25.pdf` |
+| Daggerheart Homebrew Kit v1.0 | `docs/official-docs/Daggerheart-Homebrew-Kit-v1.0-July-31-2025.pdf` |
 | SRD Adversary Data | `src/bestiary/daggerheart-srd-bestiary.ts` |
 | SRD Environment Data | `src/bestiary/daggerheart-srd-environments.ts` |

@@ -133,7 +133,7 @@ Design constraint documentation derived from official Daggerheart documents. The
 | `docs/system-reference/environments.md` | All 4 environment types, fields, stat benchmarks, SRD environment list |
 | `docs/system-reference/homebrew-guidelines.md` | Balance constraints, stat ranges per type/tier, feature writing rules, scaling guidance |
 
-Source documents (in `docs/images/official-docs/`):
+Source documents (in `docs/official-docs/`):
 - `Daggerheart-SRD-9-09-25.pdf` — System Reference Document (public, free to use under DPCGL)
 - `Daggerheart-Homebrew-Kit-v1.0-July-31-2025.pdf` — Official homebrew design guidance
 
