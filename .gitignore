@@ -22,3 +22,6 @@ main.js
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+
+# Claude Code local settings (user-specific)
+.claude/settings.local.json

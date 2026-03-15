@@ -122,6 +122,21 @@ AdversaryBlock.svelte / EnvironmentBlock.svelte
 | `src/types/` | TypeScript interfaces for all domain types |
 | `src/view/` | All Svelte components and renderer classes |
 
+### System Reference Docs
+
+Design constraint documentation derived from official Daggerheart documents. These are authoritative sources for all design decisions — consult before adding fields, validations, or UI elements.
+
+| File | Purpose |
+|------|---------|
+| `docs/system-reference/core-mechanics.md` | Key terms, Hope/Fear economy, Spotlight, Duality Dice, Conditions, Countdowns |
+| `docs/system-reference/adversaries.md` | All 10 adversary types, stat fields, official stat benchmarks, encounter building |
+| `docs/system-reference/environments.md` | All 4 environment types, fields, stat benchmarks, SRD environment list |
+| `docs/system-reference/homebrew-guidelines.md` | Balance constraints, stat ranges per type/tier, feature writing rules, scaling guidance |
+
+Source documents (in `docs/images/official-docs/`):
+- `Daggerheart-SRD-9-09-25.pdf` — System Reference Document (public, free to use under DPCGL)
+- `Daggerheart-Homebrew-Kit-v1.0-July-31-2025.pdf` — Official homebrew design guidance
+
 ### Adversary Types
 
 `solo`, `horde`, `standard`, `skulk`, `bruiser`, `ranged`, `support`, `leader`, `artillery`, `colossus`
