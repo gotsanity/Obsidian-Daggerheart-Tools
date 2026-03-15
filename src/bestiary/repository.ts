@@ -7,6 +7,13 @@ import type { AbilityCard } from "src/types/card";
 import { nanoid } from "src/util/util";
 import { ENVIRONMENTS } from "./daggerheart-srd-environments";
 
+function sourceIncludes(item: { source?: string | string[] }, tag: string): boolean {
+    const src = item.source;
+    if (!src) return false;
+    if (typeof src === "string") return src === tag;
+    return src.includes(tag);
+}
+
 
 export interface IRepository<T> {
     state: string;
@@ -17,6 +24,7 @@ export interface IRepository<T> {
     addRange: (items: T[]) => void;
     update: (key: string, item: T) => void;
     delete: (filter: (item: T) => boolean) => void;
+    deleteBySource: (batchTag: string) => void;
     markCurrent: () => void;
     markDirty: () => void;
     save: () => void;
@@ -110,7 +118,7 @@ export abstract class Repository<T> implements IRepository<T> {
 
     delete = (predicate: (item: T) => boolean) => {
         let item = this.data.find(predicate);
-        
+
         if (item == undefined) {
             return;
         }
@@ -119,6 +127,15 @@ export abstract class Repository<T> implements IRepository<T> {
         this.markDirty();
         this.save();
         this.notify("delete", item);
+    };
+
+    deleteBySource = (batchTag: string) => {
+        const removed = this.data.filter(item => sourceIncludes(item as any, batchTag));
+        if (removed.length === 0) return;
+        this.data = this.data.filter(item => !sourceIncludes(item as any, batchTag));
+        this.markDirty();
+        this.save();
+        removed.forEach(item => this.notify("delete", item));
     };
 
     markCurrent = () => {
