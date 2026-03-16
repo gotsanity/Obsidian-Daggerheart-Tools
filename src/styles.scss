@@ -74,6 +74,32 @@
     .form-group select {
         width: 100%;
     }
+
+    .dht-form-divider {
+        margin: 1.5rem 0 0.25rem;
+        border: none;
+        border-top: 1px solid var(--background-modifier-border);
+    }
+
+    .dht-form-section-heading {
+        margin: 0 0 1rem;
+        font-size: var(--font-small);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+    }
+
+    .dht-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1.5rem 0;
+
+        .form-group {
+            min-width: unset;
+            margin: 0;
+        }
+    }
 }
 
 

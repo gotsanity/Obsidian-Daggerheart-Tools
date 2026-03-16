@@ -32,7 +32,7 @@
       console.log("setting id", id);
       environment.id = id;
     }
-    
+
     let environmentState = $state(environment);
 
     export interface EnvironmentErrorProps {
@@ -46,6 +46,7 @@
     };
 
     let errors: EnvironmentErrorProps = $state({})
+    let touched: Partial<Record<keyof EnvironmentErrorProps, boolean>> = $state({});
 
     let environmentTypes: string[] = [
       "Event",
@@ -55,7 +56,7 @@
     ];
 
     _plugin.set(plugin);
-    
+
     $effect(() => {
       if (update) {
         if (required(environmentState.name)) {
@@ -99,12 +100,16 @@
       }
     });
 
-    let features: { 
+    let features: {
       name?: string,
       text?: string,
       errors: {
         name?: string
         text?: string,
+      },
+      touched: {
+        name?: boolean,
+        text?: boolean,
       }
     }[] = $state([]);
 
@@ -113,7 +118,8 @@
         features.push({
           name: feat.name,
           text: feat.text,
-          errors: {}
+          errors: {},
+          touched: {}
         });
       })
     }
@@ -122,7 +128,8 @@
       features.push({
         name: "",
         text: "",
-        errors: {}
+        errors: {},
+        touched: {}
       })
     }
 
@@ -158,7 +165,7 @@
         }
     }
 
-    const valid = $derived.by(() => {
+    const hasErrors = $derived.by(() => {
       return Object.values(errors).some(val => typeof val === 'string');
     })
 
@@ -180,9 +187,9 @@
     placeholder?: string
   })}
     <div class="form-group">
-      <label for={label} class={errors[errorKey] && "text-destructive"}>{label}</label>
-      <input {type} id={label} name={label} {placeholder} bind:value={environmentState[value]} />
-      {#if errors[errorKey]}
+      <label for={label} class={errors[errorKey] && touched[errorKey] && "text-destructive"}>{label}</label>
+      <input {type} id={label} name={label} {placeholder} bind:value={environmentState[value]} onblur={() => (touched[errorKey] = true)} />
+      {#if errors[errorKey] && touched[errorKey]}
         <p class="text-sm text-destructive">{errors[errorKey]}</p>
       {/if}
       <p class="text-xs text-muted-foreground">
@@ -193,6 +200,7 @@
 
 <div class="dht-environment-form">
 
+    <!-- Identity -->
     {@render formInput({
       errorKey: "name",
       label: "Name",
@@ -202,16 +210,14 @@
       placeholder: "Tavern"
     })}
 
-    {#if environmentState.alias}
-      {@render formInput({
-        errorKey: "alias",
-        label: "Alias",
-        type: "text",
-        value: "alias",
-        description: "The environment's alias, used instead of name on save.",
-        placeholder: "Tim"
-      })}
-    {/if}
+    {@render formInput({
+      errorKey: "alias",
+      label: "Alias",
+      type: "text",
+      value: "alias",
+      description: "The environment's alias, used instead of name on save.",
+      placeholder: "Tim"
+    })}
 
     <div class="form-group">
       <label for="description">Description</label>
@@ -240,7 +246,11 @@
         This is the environment's potential adversaries.
       </p>
     </div>
-    
+
+    <!-- Classification -->
+    <hr class="dht-form-divider" />
+    <h4 class="dht-form-section-heading">Classification</h4>
+
     {@render formInput({
         errorKey: "tier",
         label: "Tier",
@@ -249,24 +259,36 @@
         description: "The environment's tier.",
         placeholder: "1"
       })}
-    
+
     <div class="form-group">
-      <label for="type" class={errors.environmentType && "text-destructive"}>Environment Type</label>
+      <label for="type" class={errors.environmentType && touched.environmentType && "text-destructive"}>Environment Type</label>
       <div>
-        <select bind:value={environmentState.environmentType} name="type">
+        <select bind:value={environmentState.environmentType} name="type" onblur={() => (touched.environmentType = true)}>
           {#each environmentTypes as advType}
-              <option value={advType} label={advType}></option>    
+              <option value={advType} label={advType}></option>
           {/each}
         </select>
       </div>
       <p class="text-xs text-muted-foreground">
         Select the type of environment.
       </p>
-      {#if errors.environmentType}
+      {#if errors.environmentType && touched.environmentType}
           <p class="text-sm text-destructive">{errors.environmentType}</p>
       {/if}
     </div>
 
+    {@render formInput({
+      errorKey: "source",
+      label: "Source",
+      type: "text",
+      value: "source",
+      description: "The environment's source.",
+      placeholder: "homebrew"
+    })}
+
+    <!-- Environment -->
+    <hr class="dht-form-divider" />
+    <h4 class="dht-form-section-heading">Environment</h4>
 
     <div class="form-group">
       <label for="impulses">Impulses</label>
@@ -284,31 +306,35 @@
       description: "The environment's difficulty. (empty for none, number otherwise)",
       placeholder: "-"
     })}
-    
+
+    <!-- Features -->
+    <hr class="dht-form-divider" />
+    <h4 class="dht-form-section-heading">Features</h4>
+
     <div class="form-group">
-      <label class="label-heading" for="features">Features</label>
       <p class="text-xs text-muted-foreground">
         These are the environment's features.
       </p>
       {#each features as feature}
         <div class="sub-group">
           <div class="added-button">
-            <label for="feature-name" class={feature.errors.name && "text-destructive"}>Feature Name</label>
+            <label for="feature-name" class={feature.errors.name && feature.touched.name && "text-destructive"}>Feature Name</label>
             <button onclick={() => {
               features.remove(feature);
             }}>X</button>
           </div>
-          <input type="text" name="feature-name" placeholder="Feature name here" bind:value={feature.name} />
-          <label for="feature-text" class={feature.errors.text && "text-destructive"}>Feature Text</label>
+          <input type="text" name="feature-name" placeholder="Feature name here" bind:value={feature.name} onblur={() => (feature.touched.name = true)} />
+          <label for="feature-text" class={feature.errors.text && feature.touched.text && "text-destructive"}>Feature Text</label>
           <textarea
             placeholder="Feature text here?"
             class="resize-none"
             bind:value={feature.text}
+            onblur={() => (feature.touched.text = true)}
           ></textarea>
-          {#if feature.errors.name}
+          {#if feature.errors.name && feature.touched.name}
             <p class="text-sm text-destructive">{feature.errors.name}</p>
           {/if}
-          {#if feature.errors.text}
+          {#if feature.errors.text && feature.touched.text}
             <p class="text-sm text-destructive">{feature.errors.text}</p>
           {/if}
         </div>
@@ -316,14 +342,5 @@
       <button class="add-button" onclick={addFeature}>Add Feature</button>
     </div>
 
-    {@render formInput({
-      errorKey: "source",
-      label: "Source",
-      type: "text",
-      value: "source",
-      description: "The environment's source.",
-      placeholder: "homebrew"
-    })}
-
-    <button type="submit" onclick={onSubmit} disabled={valid}>Submit</button>
+    <button type="submit" onclick={onSubmit} disabled={hasErrors}>Submit</button>
 </div>
