@@ -8,7 +8,16 @@
     import type { AbilityCard } from "src/types/card";
     import { serializeExport, parseImport, tagItemsWithBatch, isSRDItem } from "src/util/import-export";
     import type { ExportSelection } from "src/util/import-export";
+    import { BESTIARY } from "src/bestiary/daggerheart-srd-bestiary";
+    import { ENVIRONMENTS as SRD_ENVIRONMENTS } from "src/bestiary/daggerheart-srd-environments";
     import { nanoid } from "src/util/util";
+
+    // ID-based SRD detection — reliable even if the source field is missing from saved data.
+    // Environments don't have a source field at all, so source-based check always fails for them.
+    const SRD_ADVERSARY_IDS = new Set(BESTIARY.map(a => a.id));
+    const SRD_ENVIRONMENT_IDS = new Set(SRD_ENVIRONMENTS.map(e => e.id));
+    function isAdvSRD(a: Adversary): boolean { return SRD_ADVERSARY_IDS.has(a.id); }
+    function isEnvSRD(e: Environment): boolean { return SRD_ENVIRONMENT_IDS.has(e.id); }
 
     let { plugin }: { plugin: DaggerheartToolsPlugin } = $props();
 
@@ -29,55 +38,21 @@
     // --- Export: collapsible sections ---
     let openSections = $state({ adversaries: true, environments: false, encounters: false, abilityCards: false });
 
-    // --- Export: per-section search ---
+    // Search inputs — the only mutable export UI state needed.
+    // Filtering is done inline in the template so {#each} reacts directly to $state reads.
     let searchAdversaries = $state("");
     let searchEnvironments = $state("");
     let searchAbilityCards = $state("");
 
-    // --- Visible lists: $state updated by $effect (matches codebase pattern) ---
-    let visibleAdversaries: Adversary[] = $state([]);
-    let visibleEnvironments: Environment[] = $state([]);
-    let visibleEncounters: Encounter[] = $state([]);
-    let visibleAbilityCards: AbilityCard[] = $state([]);
-
-    $effect(() => {
-        visibleAdversaries = allAdversaries
-            .filter(a => !excludeSRD || !isSRDItem(a))
-            .filter(a => !searchAdversaries || a.name.toLowerCase().includes(searchAdversaries.toLowerCase()));
-    });
-
-    $effect(() => {
-        visibleEnvironments = allEnvironments
-            .filter(e => !excludeSRD || !isSRDItem(e))
-            .filter(e => !searchEnvironments || e.name.toLowerCase().includes(searchEnvironments.toLowerCase()));
-    });
-
-    $effect(() => {
-        visibleEncounters = allEncounters;
-    });
-
-    $effect(() => {
-        visibleAbilityCards = allAbilityCards
-            .filter(c => !excludeSRD || !isSRDItem(c))
-            .filter(c => !searchAbilityCards || c.name.toLowerCase().includes(searchAbilityCards.toLowerCase()));
-    });
-
-    // Clear SRD item selections when excludeSRD is toggled on
-    $effect(() => {
+    // When excludeSRD changes: clear SRD selections and collapse all sections so they
+    // re-evaluate their lists when reopened.
+    function onExcludeSRDChange() {
+        openSections = { adversaries: false, environments: false, encounters: false, abilityCards: false };
         if (excludeSRD) {
-            const newAdv = new Set(selectedAdversaryIds);
-            allAdversaries.filter(isSRDItem).forEach(a => newAdv.delete(a.id));
-            selectedAdversaryIds = newAdv;
-
-            const newEnv = new Set(selectedEnvironmentIds);
-            allEnvironments.filter(isSRDItem).forEach(e => newEnv.delete(e.id));
-            selectedEnvironmentIds = newEnv;
-
-            const newCards = new Set(selectedAbilityCardIds);
-            allAbilityCards.filter(isSRDItem).forEach(c => newCards.delete(c.id));
-            selectedAbilityCardIds = newCards;
+            selectedAdversaryIds = selectNone(allAdversaries.filter(isAdvSRD), selectedAdversaryIds);
+            selectedEnvironmentIds = selectNone(allEnvironments.filter(isEnvSRD), selectedEnvironmentIds);
         }
-    });
+    }
 
     function toggleItem(set: Set<string>, id: string): Set<string> {
         const next = new Set(set);
@@ -306,11 +281,24 @@
         <h4>Export</h4>
 
         <label class="dh-exclude-srd">
-            <input type="checkbox" bind:checked={excludeSRD} />
+            <input type="checkbox" bind:checked={excludeSRD} onchange={onExcludeSRDChange} />
             Exclude SRD items
         </label>
 
         <!-- Adversaries -->
+        {#snippet adversaryRows()}
+            {#each allAdversaries.filter(a => (!excludeSRD || !isAdvSRD(a)) && (!searchAdversaries || a.name.toLowerCase().includes(searchAdversaries.toLowerCase()))) as adv (adv.id)}
+                <label class="dh-item-row">
+                    <input
+                        type="checkbox"
+                        checked={selectedAdversaryIds.has(adv.id)}
+                        onchange={() => selectedAdversaryIds = toggleItem(selectedAdversaryIds, adv.id)}
+                    />
+                    <span class="dh-item-name">{adv.name}</span>
+                    {#if isAdvSRD(adv)}<span class="dh-srd-badge">SRD</span>{/if}
+                </label>
+            {/each}
+        {/snippet}
         <div class="dh-collapsible">
             <button
                 class="dh-collapsible-header"
@@ -320,48 +308,40 @@
                 <span class="dh-chevron">{openSections.adversaries ? "▾" : "▸"}</span>
                 <span>Adversaries</span>
                 <span class="dh-section-count">
-                    ({selectedCount(allAdversaries, selectedAdversaryIds)} selected, {allAdversaries.filter(a => !excludeSRD || !isSRDItem(a)).length} total)
+                    ({selectedCount(allAdversaries, selectedAdversaryIds)} selected,
+                    {allAdversaries.filter(a => !excludeSRD || !isAdvSRD(a)).length} total)
                 </span>
             </button>
             {#if openSections.adversaries}
                 <div class="dh-collapsible-body">
-                    {#if allAdversaries.filter(a => !excludeSRD || !isSRDItem(a)).length === 0}
+                    {#if allAdversaries.filter(a => !excludeSRD || !isAdvSRD(a)).length === 0}
                         <p class="dh-empty">No items.</p>
                     {:else}
                         <div class="dh-list-controls">
-                            <input
-                                class="dh-search"
-                                type="text"
-                                placeholder="Search..."
-                                bind:value={searchAdversaries}
-                            />
-                            <button class="dh-small-btn" onclick={() => selectedAdversaryIds = selectAll(visibleAdversaries, selectedAdversaryIds)}>All</button>
-                            <button class="dh-small-btn" onclick={() => selectedAdversaryIds = selectNone(visibleAdversaries, selectedAdversaryIds)}>None</button>
+                            <input class="dh-search" type="text" placeholder="Search..." bind:value={searchAdversaries} />
+                            <button class="dh-small-btn" onclick={() => selectedAdversaryIds = selectAll(allAdversaries.filter(a => !excludeSRD || !isAdvSRD(a)), selectedAdversaryIds)}>All</button>
+                            <button class="dh-small-btn" onclick={() => selectedAdversaryIds = selectNone(allAdversaries.filter(a => !excludeSRD || !isAdvSRD(a)), selectedAdversaryIds)}>None</button>
                         </div>
-                        <div class="dh-item-list">
-                            {#each visibleAdversaries as adv (adv.id)}
-                                <label class="dh-item-row">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedAdversaryIds.has(adv.id)}
-                                        onchange={() => selectedAdversaryIds = toggleItem(selectedAdversaryIds, adv.id)}
-                                    />
-                                    <span class="dh-item-name">{adv.name}</span>
-                                    {#if isSRDItem(adv)}
-                                        <span class="dh-srd-badge">SRD</span>
-                                    {/if}
-                                </label>
-                            {/each}
-                            {#if visibleAdversaries.length === 0}
-                                <p class="dh-empty">No matches.</p>
-                            {/if}
-                        </div>
+                        <div class="dh-item-list">{@render adversaryRows()}</div>
                     {/if}
                 </div>
             {/if}
         </div>
 
         <!-- Environments -->
+        {#snippet environmentRows()}
+            {#each allEnvironments.filter(e => (!excludeSRD || !isEnvSRD(e)) && (!searchEnvironments || e.name.toLowerCase().includes(searchEnvironments.toLowerCase()))) as env (env.id)}
+                <label class="dh-item-row">
+                    <input
+                        type="checkbox"
+                        checked={selectedEnvironmentIds.has(env.id)}
+                        onchange={() => selectedEnvironmentIds = toggleItem(selectedEnvironmentIds, env.id)}
+                    />
+                    <span class="dh-item-name">{env.name}</span>
+                    {#if isEnvSRD(env)}<span class="dh-srd-badge">SRD</span>{/if}
+                </label>
+            {/each}
+        {/snippet}
         <div class="dh-collapsible">
             <button
                 class="dh-collapsible-header"
@@ -371,42 +351,21 @@
                 <span class="dh-chevron">{openSections.environments ? "▾" : "▸"}</span>
                 <span>Environments</span>
                 <span class="dh-section-count">
-                    ({selectedCount(allEnvironments, selectedEnvironmentIds)} selected, {allEnvironments.filter(e => !excludeSRD || !isSRDItem(e)).length} total)
+                    ({selectedCount(allEnvironments, selectedEnvironmentIds)} selected,
+                    {allEnvironments.filter(e => !excludeSRD || !isEnvSRD(e)).length} total)
                 </span>
             </button>
             {#if openSections.environments}
                 <div class="dh-collapsible-body">
-                    {#if allEnvironments.filter(e => !excludeSRD || !isSRDItem(e)).length === 0}
+                    {#if allEnvironments.filter(e => !excludeSRD || !isEnvSRD(e)).length === 0}
                         <p class="dh-empty">No items.</p>
                     {:else}
                         <div class="dh-list-controls">
-                            <input
-                                class="dh-search"
-                                type="text"
-                                placeholder="Search..."
-                                bind:value={searchEnvironments}
-                            />
-                            <button class="dh-small-btn" onclick={() => selectedEnvironmentIds = selectAll(visibleEnvironments, selectedEnvironmentIds)}>All</button>
-                            <button class="dh-small-btn" onclick={() => selectedEnvironmentIds = selectNone(visibleEnvironments, selectedEnvironmentIds)}>None</button>
+                            <input class="dh-search" type="text" placeholder="Search..." bind:value={searchEnvironments} />
+                            <button class="dh-small-btn" onclick={() => selectedEnvironmentIds = selectAll(allEnvironments.filter(e => !excludeSRD || !isEnvSRD(e)), selectedEnvironmentIds)}>All</button>
+                            <button class="dh-small-btn" onclick={() => selectedEnvironmentIds = selectNone(allEnvironments.filter(e => !excludeSRD || !isEnvSRD(e)), selectedEnvironmentIds)}>None</button>
                         </div>
-                        <div class="dh-item-list">
-                            {#each visibleEnvironments as env (env.id)}
-                                <label class="dh-item-row">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedEnvironmentIds.has(env.id)}
-                                        onchange={() => selectedEnvironmentIds = toggleItem(selectedEnvironmentIds, env.id)}
-                                    />
-                                    <span class="dh-item-name">{env.name}</span>
-                                    {#if isSRDItem(env)}
-                                        <span class="dh-srd-badge">SRD</span>
-                                    {/if}
-                                </label>
-                            {/each}
-                            {#if visibleEnvironments.length === 0}
-                                <p class="dh-empty">No matches.</p>
-                            {/if}
-                        </div>
+                        <div class="dh-item-list">{@render environmentRows()}</div>
                     {/if}
                 </div>
             {/if}
@@ -431,11 +390,11 @@
                         <p class="dh-empty">No items.</p>
                     {:else}
                         <div class="dh-list-controls">
-                            <button class="dh-small-btn" onclick={() => selectedEncounterIds = selectAll(visibleEncounters, selectedEncounterIds)}>All</button>
-                            <button class="dh-small-btn" onclick={() => selectedEncounterIds = selectNone(visibleEncounters, selectedEncounterIds)}>None</button>
+                            <button class="dh-small-btn" onclick={() => selectedEncounterIds = selectAll(allEncounters, selectedEncounterIds)}>All</button>
+                            <button class="dh-small-btn" onclick={() => selectedEncounterIds = selectNone(allEncounters, selectedEncounterIds)}>None</button>
                         </div>
                         <div class="dh-item-list">
-                            {#each visibleEncounters as enc (enc.id)}
+                            {#each allEncounters as enc (enc.id)}
                                 <label class="dh-item-row">
                                     <input
                                         type="checkbox"
@@ -452,6 +411,18 @@
         </div>
 
         <!-- Ability Cards -->
+        {#snippet abilityCardRows()}
+            {#each allAbilityCards.filter(c => !searchAbilityCards || c.name.toLowerCase().includes(searchAbilityCards.toLowerCase())) as card (card.id)}
+                <label class="dh-item-row">
+                    <input
+                        type="checkbox"
+                        checked={selectedAbilityCardIds.has(card.id)}
+                        onchange={() => selectedAbilityCardIds = toggleItem(selectedAbilityCardIds, card.id)}
+                    />
+                    <span class="dh-item-name">{card.name}</span>
+                </label>
+            {/each}
+        {/snippet}
         <div class="dh-collapsible">
             <button
                 class="dh-collapsible-header"
@@ -461,42 +432,20 @@
                 <span class="dh-chevron">{openSections.abilityCards ? "▾" : "▸"}</span>
                 <span>Ability Cards</span>
                 <span class="dh-section-count">
-                    ({selectedCount(allAbilityCards, selectedAbilityCardIds)} selected, {allAbilityCards.filter(c => !excludeSRD || !isSRDItem(c)).length} total)
+                    ({selectedCount(allAbilityCards, selectedAbilityCardIds)} selected, {allAbilityCards.length} total)
                 </span>
             </button>
             {#if openSections.abilityCards}
                 <div class="dh-collapsible-body">
-                    {#if allAbilityCards.filter(c => !excludeSRD || !isSRDItem(c)).length === 0}
+                    {#if allAbilityCards.length === 0}
                         <p class="dh-empty">No items.</p>
                     {:else}
                         <div class="dh-list-controls">
-                            <input
-                                class="dh-search"
-                                type="text"
-                                placeholder="Search..."
-                                bind:value={searchAbilityCards}
-                            />
-                            <button class="dh-small-btn" onclick={() => selectedAbilityCardIds = selectAll(visibleAbilityCards, selectedAbilityCardIds)}>All</button>
-                            <button class="dh-small-btn" onclick={() => selectedAbilityCardIds = selectNone(visibleAbilityCards, selectedAbilityCardIds)}>None</button>
+                            <input class="dh-search" type="text" placeholder="Search..." bind:value={searchAbilityCards} />
+                            <button class="dh-small-btn" onclick={() => selectedAbilityCardIds = selectAll(allAbilityCards, selectedAbilityCardIds)}>All</button>
+                            <button class="dh-small-btn" onclick={() => selectedAbilityCardIds = selectNone(allAbilityCards, selectedAbilityCardIds)}>None</button>
                         </div>
-                        <div class="dh-item-list">
-                            {#each visibleAbilityCards as card (card.id)}
-                                <label class="dh-item-row">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedAbilityCardIds.has(card.id)}
-                                        onchange={() => selectedAbilityCardIds = toggleItem(selectedAbilityCardIds, card.id)}
-                                    />
-                                    <span class="dh-item-name">{card.name}</span>
-                                    {#if isSRDItem(card)}
-                                        <span class="dh-srd-badge">SRD</span>
-                                    {/if}
-                                </label>
-                            {/each}
-                            {#if visibleAbilityCards.length === 0}
-                                <p class="dh-empty">No matches.</p>
-                            {/if}
-                        </div>
+                        <div class="dh-item-list">{@render abilityCardRows()}</div>
                     {/if}
                 </div>
             {/if}
