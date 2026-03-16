@@ -4,6 +4,20 @@ import type { Adversary } from "src/types/adversary";
 import type { AbilityCard } from "src/types/card";
 import type { Encounter } from "src/types/encounter";
 import type { Environment } from "src/types/environment";
+import { mount, unmount } from "svelte";
+import ImportExportSection from "src/view/ImportExportSection.svelte";
+
+export interface ImportBatch {
+	id: string;
+	filename: string;
+	importedAt: string;
+	counts: {
+		adversaries: number;
+		environments: number;
+		encounters: number;
+		abilityCards: number;
+	};
+}
 
 export interface DaggerheartToolsSettings {
 	parseFrontmatter: boolean;
@@ -18,6 +32,7 @@ export interface DaggerheartToolsSettings {
     };
 	disableSRD: boolean;
 	saved: boolean;
+	importBatches: ImportBatch[];
 }
 
 export const DEFAULT_SETTINGS: DaggerheartToolsSettings = {
@@ -32,11 +47,13 @@ export const DEFAULT_SETTINGS: DaggerheartToolsSettings = {
         patch: 0,
     },
 	disableSRD: false,
-	saved: false
+	saved: false,
+	importBatches: [],
 }
 
 export class DaggerheartToolsSettingsTab extends PluginSettingTab {
 	plugin: DaggerheartToolsPlugin;
+	private $importExport: ReturnType<typeof ImportExportSection> | undefined;
 
 	constructor(app: App, plugin: DaggerheartToolsPlugin) {
 		super(app, plugin);
@@ -59,7 +76,7 @@ export class DaggerheartToolsSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
-		
+
 		new Setting(containerEl)
 			.setName('Disable SRD Content')
 			.setDesc('Turn this on to remove SRD content.')
@@ -71,5 +88,18 @@ export class DaggerheartToolsSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
+
+		const importExportContainer = containerEl.createDiv();
+		this.$importExport = mount(ImportExportSection, {
+			target: importExportContainer,
+			props: { plugin: this.plugin }
+		});
+	}
+
+	hide(): void {
+		if (this.$importExport) {
+			unmount(this.$importExport);
+			this.$importExport = undefined;
+		}
 	}
 }

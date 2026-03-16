@@ -12,12 +12,47 @@ Daggerheart Tools is an Obsidian plugin (TypeScript + Svelte) that provides a GM
 ## Branch & Deployment Pipeline
 
 ```
-feature-branch → development-branch → main
+feature-branch → development → master
 ```
 
-- **Feature branches** are where individual fixes and features are developed (e.g. `fix-complex-statblocks`).
-- **Development branch** is the integration branch — PRs from feature branches merge here first.
-- **`main`** is the release branch. Merging to `main` triggers the automated release pipeline.
+- **Feature branches** are where individual fixes and features are developed (e.g. `fix-complex-statblocks`). Always branch from `development`.
+- **`development`** is the integration branch — PRs from feature branches merge here first.
+- **`master`** is the release branch (the repo default). Merging to `master` triggers the automated release pipeline.
+
+### Development Workflow (step-by-step)
+
+This is the process to follow for every feature or fix:
+
+1. **Create a feature branch from `development`**
+   ```bash
+   git checkout development
+   git pull origin development
+   git checkout -b feat/my-feature-name
+   ```
+
+2. **Implement the feature** — only make changes relevant to the feature being worked on. Do not mix unrelated fixes or refactors into the same branch.
+
+3. **Verify it works** — run `npm run build` to confirm no type errors or build failures before committing.
+
+4. **Commit using Conventional Commits**
+   ```bash
+   git add <specific files>
+   git commit -m "feat: add per-item export selection"
+   ```
+   Common prefixes: `feat:`, `fix:`, `docs:`, `refactor:`, `chore:`. These drive the CHANGELOG and version bump — write subject lines as customer-facing descriptions.
+
+5. **Push and sync with origin**
+   ```bash
+   git push -u origin feat/my-feature-name
+   ```
+
+6. **Open a merge request (PR) targeting `development`** via GitHub. Merge once reviewed/verified.
+
+7. **If the work addresses a tracked GitHub issue**, comment on the issue with a summary of what was changed and how it resolves the problem. Close the issue once the feature branch has been merged into `development` and the fix is fully integrated — do not close prematurely while the PR is still open or the feature is incomplete.
+
+8. **When all features for a release are in `development`**, open a PR from `development` → `master` and merge it.
+
+8. **release-please runs automatically** on push to `master`, opening or updating a release PR. **Merging the release PR requires manual action by the repo owner** — it triggers the GitHub Release, artifact upload, and npm publish.
 
 ### Automated Release (release-please)
 
@@ -49,9 +84,9 @@ feature-branch → development-branch → main
 | Action | Effect |
 |--------|--------|
 | Push feature branch | Nothing automated |
-| Merge to development | Nothing automated |
-| Merge to `main` | release-please opens/updates a release PR |
-| Merge the release PR | GitHub Release created + build artifacts uploaded + npm publish |
+| Merge to `development` | Nothing automated |
+| Merge to `master` | release-please opens/updates a release PR |
+| Merge the release PR (manual) | GitHub Release created + build artifacts uploaded + npm publish |
 
 > **Do not manually bump versions or create tags.** release-please manages `package.json` version, `CHANGELOG.md`, and git tags based on conventional commit messages.
 
@@ -121,6 +156,21 @@ AdversaryBlock.svelte / EnvironmentBlock.svelte
 | `src/settings/settings.ts` | Plugin settings shape and defaults |
 | `src/types/` | TypeScript interfaces for all domain types |
 | `src/view/` | All Svelte components and renderer classes |
+
+### System Reference Docs
+
+Design constraint documentation derived from official Daggerheart documents. These are authoritative sources for all design decisions — consult before adding fields, validations, or UI elements.
+
+| File | Purpose |
+|------|---------|
+| `docs/system-reference/core-mechanics.md` | Key terms, Hope/Fear economy, Spotlight, Duality Dice, Conditions, Countdowns |
+| `docs/system-reference/adversaries.md` | All 10 adversary types, stat fields, official stat benchmarks, encounter building |
+| `docs/system-reference/environments.md` | All 4 environment types, fields, stat benchmarks, SRD environment list |
+| `docs/system-reference/homebrew-guidelines.md` | Balance constraints, stat ranges per type/tier, feature writing rules, scaling guidance |
+
+Source documents (in `docs/official-docs/`):
+- `Daggerheart-SRD-9-09-25.pdf` — System Reference Document (public, free to use under DPCGL)
+- `Daggerheart-Homebrew-Kit-v1.0-July-31-2025.pdf` — Official homebrew design guidance
 
 ### Adversary Types
 
