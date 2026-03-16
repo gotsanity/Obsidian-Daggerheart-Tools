@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.10.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.9.0...1.10.0) (2026-03-16)
+
+
+### Features
+
+* add data import/export with per-item selection ([6106316](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/6106316f3dc27c60f89a0688cd949e84b01ae9dc))
+
+
+### Bug Fixes
+
+* collapse all sections when exclude SRD toggle changes ([4afa427](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/4afa427ab4014e51c8ef7d82ef1aa0e924c7a05e))
+* move official source documents to correct docs root location ([a7139f1](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/a7139f1dff837b10ad543acae2dbba65d5d504ce))
+* replace \$derived with \$state+\$effect for export visibility filtering ([026175e](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/026175e9b1d9e290ca6d5d69d6e0cf2a232b46eb))
+
 ## [1.9.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.8.0...1.9.0) (2026-03-14)
 
 
