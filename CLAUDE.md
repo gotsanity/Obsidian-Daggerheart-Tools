@@ -164,6 +164,13 @@ AdversaryBlock.svelte / EnvironmentBlock.svelte
 | `src/types/` | TypeScript interfaces for all domain types |
 | `src/view/` | All Svelte components and renderer classes |
 
+### Architecture Docs
+
+| File | Purpose |
+|------|---------|
+| `docs/architecture/uml-class-diagram.md` | Full UML class diagram (Mermaid source) — all classes, interfaces, inheritance, and relationships |
+| `docs/architecture/uml-class-diagram-1.png` | Rendered PNG of the UML class diagram |
+
 ### System Reference Docs
 
 Design constraint documentation derived from official Daggerheart documents. These are authoritative sources for all design decisions — consult before adding fields, validations, or UI elements.
