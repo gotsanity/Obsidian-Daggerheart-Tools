@@ -34,23 +34,33 @@
     let searchEnvironments = $state("");
     let searchAbilityCards = $state("");
 
-    // --- Derived: visible lists (filtered by search + excludeSRD) ---
-    let visibleAdversaries = $derived(
-        allAdversaries
+    // --- Visible lists: $state updated by $effect (matches codebase pattern) ---
+    let visibleAdversaries: Adversary[] = $state([]);
+    let visibleEnvironments: Environment[] = $state([]);
+    let visibleEncounters: Encounter[] = $state([]);
+    let visibleAbilityCards: AbilityCard[] = $state([]);
+
+    $effect(() => {
+        visibleAdversaries = allAdversaries
             .filter(a => !excludeSRD || !isSRDItem(a))
-            .filter(a => !searchAdversaries || a.name.toLowerCase().includes(searchAdversaries.toLowerCase()))
-    );
-    let visibleEnvironments = $derived(
-        allEnvironments
+            .filter(a => !searchAdversaries || a.name.toLowerCase().includes(searchAdversaries.toLowerCase()));
+    });
+
+    $effect(() => {
+        visibleEnvironments = allEnvironments
             .filter(e => !excludeSRD || !isSRDItem(e))
-            .filter(e => !searchEnvironments || e.name.toLowerCase().includes(searchEnvironments.toLowerCase()))
-    );
-    let visibleEncounters = $derived(allEncounters);
-    let visibleAbilityCards = $derived(
-        allAbilityCards
+            .filter(e => !searchEnvironments || e.name.toLowerCase().includes(searchEnvironments.toLowerCase()));
+    });
+
+    $effect(() => {
+        visibleEncounters = allEncounters;
+    });
+
+    $effect(() => {
+        visibleAbilityCards = allAbilityCards
             .filter(c => !excludeSRD || !isSRDItem(c))
-            .filter(c => !searchAbilityCards || c.name.toLowerCase().includes(searchAbilityCards.toLowerCase()))
-    );
+            .filter(c => !searchAbilityCards || c.name.toLowerCase().includes(searchAbilityCards.toLowerCase()));
+    });
 
     // Clear SRD item selections when excludeSRD is toggled on
     $effect(() => {
