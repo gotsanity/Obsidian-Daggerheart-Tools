@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.10.0...1.11.0) (2026-03-16)
+
+
+### Features
+
+* add horde_count field and display unit count per HP in stat block ([23c40ac](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/23c40ac5cbe41121180a0a85b6962df5d5dd12dd))
+* improve adversary and environment form UX ([f1a0009](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/commit/f1a00094b973a7fd7446c8012237e7e063c1bd7b))
+
 ## [1.10.0](https://github.com/gotsanity/Obsidian-Daggerheart-Tools/compare/1.9.0...1.10.0) (2026-03-16)
 
 
