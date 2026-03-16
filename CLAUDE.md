@@ -50,7 +50,14 @@ This is the process to follow for every feature or fix:
 
 7. **If the work addresses a tracked GitHub issue**, comment on the issue with a summary of what was changed and how it resolves the problem. Close the issue once the feature branch has been merged into `development` and the fix is fully integrated — do not close prematurely while the PR is still open or the feature is incomplete.
 
-8. **When all features for a release are in `development`**, open a PR from `development` → `master` and merge it.
+8. **After the PR is merged, return to `development` and sync**
+   ```bash
+   git checkout development
+   git pull origin development
+   ```
+   Always do this before starting a new feature to avoid accidentally committing new work onto a stale feature branch.
+
+9. **When all features for a release are in `development`**, open a PR from `development` → `master` and merge it.
 
 8. **release-please runs automatically** on push to `master`, opening or updating a release PR. **Merging the release PR requires manual action by the repo owner** — it triggers the GitHub Release, artifact upload, and npm publish.
 
