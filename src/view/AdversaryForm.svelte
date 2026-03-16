@@ -412,6 +412,16 @@
       placeholder: "1"
     })}
 
+    {#if adversaryState.adversaryType === "Horde"}
+      <div class="form-group">
+        <label for="horde_count">#/HP</label>
+        <input type="number" id="horde_count" name="horde_count" placeholder="3" bind:value={adversaryState.horde_count} />
+        <p class="text-xs text-muted-foreground">
+          Number of units defeated per 1 HP of damage dealt.
+        </p>
+      </div>
+    {/if}
+
     {@render formInput({
       errorKey: "stress",
       label: "Stress",

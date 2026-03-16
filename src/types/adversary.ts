@@ -20,6 +20,7 @@ export interface AdversaryProps {
     range?: string;
     damage?: string;
     experience?: string;
+    horde_count?: number;
 
     // [key: string]: any;
 }

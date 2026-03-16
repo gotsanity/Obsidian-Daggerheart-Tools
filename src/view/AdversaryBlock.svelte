@@ -89,7 +89,9 @@
   let hp: LabeledItem = $derived({
       className: "hp",
       name: "HP:",
-      definition: adversary.hp!
+      definition: adversary.horde_count
+          ? `${adversary.hp} (${adversary.horde_count}/HP)`
+          : adversary.hp!
   });
 
   let stress: LabeledItem = $derived({
